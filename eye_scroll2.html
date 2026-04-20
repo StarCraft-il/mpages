@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /><title>Eye Scroll — גלילה בעיניים</title><style>  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --accent: #00e5ff;
+    --accent2: #ff3d6e;
+    --text: #e8eaf6;
+    --muted: #5c6080;
+    --zone-h: 22vh;
+    --scroll-speed: 0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: 'Heebo', sans-serif;
+    color: var(--text);
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  /* ── OVERLAY UI ── */
+  #ui {
+    position: fixed; inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+  }
+
+  /* Top dead zone */
+  .zone-top {
+    height: var(--zone-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom,
+      rgba(0,229,255,0.06) 0%,
+      transparent 100%);
+    border-bottom: 1px solid rgba(0,229,255,0.15);
+    position: relative;
+  }
+
+  /* Bottom dead zone */
+  .zone-bot {
+    height: var(--zone-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to top,
+      rgba(255,61,110,0.06) 0%,
+      transparent 100%);
+    border-top: 1px solid rgba(255,61,110,0.15);
+  }
+
+  .zone-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+  .zone-top .zone-label { color: var(--accent); }
+  .zone-bot .zone-label { color: var(--accent2); }
+
+  /* arrows */
+  .arrow {
+    position: absolute;
+    font-size: 20px;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .zone-top .arrow { bottom: 10px; }
+  .zone-bot .arrow { top: 10px; }
+  @keyframes pulse {
+    0%,100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-4px); }
+  }
+  .zone-bot .arrow { animation-name: pulse-down; }
+  @keyframes pulse-down {
+    0%,100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(4px); }
+  }
+
+  /* Middle safe zone label */
+  .zone-mid {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── STATUS BAR ── */
+  #status {
+    position: fixed;
+    top: calc(var(--zone-h) + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: rgba(10,10,15,0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    backdrop-filter: blur(12px);
+    white-space: nowrap;
+    transition: color 0.3s;
+  }
+  #status.active-up { color: var(--accent); border-color: rgba(0,229,255,0.3); }
+  #status.active-down { color: var(--accent2); border-color: rgba(255,61,110,0.3); }
+
+  /* ── EYE CURSOR ── */
+  #eye-cursor {
+    position: fixed;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    pointer-events: none;
+    z-index: 300;
+    transform: translate(-50%, -50%);
+    transition: border-color 0.2s;
+    mix-blend-mode: screen;
+  }
+  #eye-cursor::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+  #eye-cursor.down { border-color: var(--accent2); }
+  #eye-cursor.down::after { background: var(--accent2); }
+
+  /* ── GAZE BAR ── */
+  #gaze-bar {
+    position: fixed;
+    left: 0; right: 0;
+    height: 3px;
+    z-index: 250;
+    pointer-events: none;
+    transition: top 0.05s linear;
+    background: var(--accent);
+    opacity: 0;
+    box-shadow: 0 0 12px var(--accent);
+    transition: opacity 0.2s;
+  }
+  #gaze-bar.active { opacity: 0.8; }
+
+  /* ── SCROLL CONTENT ── */
+  #content-wrap {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  #content {
+    padding: calc(var(--zone-h) + 24px) 20px calc(var(--zone-h) + 40px);
+    will-change: transform;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .card:nth-child(3n+1)::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .card:nth-child(3n+2)::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card:nth-child(3n)::before   { background: linear-gradient(90deg, #a855f7, transparent); }
+
+  .card-num {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.06;
+    position: absolute;
+    top: 10px; left: 16px;
+  }
+  .card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(232,234,246,0.65);
+  }
+  .card-footer {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    position: fixed; inset: 0;
+    z-index: 500;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px;
+    text-align: center;
+  }
+  .eye-icon {
+    width: 80px; height: 80px;
+    position: relative;
+  }
+  .eye-icon svg { width: 100%; height: 100%; }
+
+  #start-screen h1 {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #start-screen p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 280px;
+  }
+  #start-btn {
+    margin-top: 8px;
+    padding: 14px 36px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 30px rgba(0,229,255,0.3);
+    pointer-events: all;
+    touch-action: manipulation;
+  }
+  #start-btn:active { transform: scale(0.97); }
+
+  .note {
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  /* ── PERMISSION SCREEN ── */
+  #perm-screen {
+    position: fixed; inset: 0;
+    z-index: 600;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 32px;
+    text-align: center;
+  }
+  #perm-screen h2 { font-size: 22px; font-weight: 700; }
+  #perm-screen p { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 260px; }
+  #perm-btn {
+    padding: 12px 28px;
+    border-radius: 50px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    pointer-events: all;
+    touch-action: manipulation;
+  }
+
+  /* ── CALIBRATION ── */
+  #calibration {
+    position: fixed; inset: 0;
+    z-index: 400;
+    background: rgba(10,10,15,0.95);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 24px;
+  }
+  #calibration h2 { font-size: 20px; font-weight: 700; }
+  #calibration p { font-size: 13px; color: var(--muted); max-width: 260px; line-height: 1.6; }
+  .cal-target {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    animation: ping 1.5s ease-in-out infinite;
+  }
+  .cal-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  @keyframes ping {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(0,229,255,0); }
+  }
+  #cal-count {
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--accent);
+  }
+
+  /* ── FALLBACK (mouse/touch) ── */
+  .fallback-hint {
+    position: fixed;
+    bottom: calc(var(--zone-h) + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 200;
+    white-space: nowrap;
+  }</style></head><body><div id="start-screen"><div class="eye-icon"><svg viewbox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" opacity="0.4" /><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" stroke-dasharray="6 3" opacity="0.6"><animatetransform attributename="transform" type="rotate" from="0 40 40" to="360 40 40" dur="8s" repeatcount="indefinite" /></ellipse><circle cx="40" cy="40" r="14" stroke="#00e5ff" stroke-width="2" /><circle cx="40" cy="40" r="6" fill="#00e5ff" opacity="0.8" /><circle cx="44" cy="36" r="2.5" fill="white" opacity="0.6" /></svg></div><h1>גלילה בעיניים</h1><p>הזז את מבטך לחלק העליון או התחתון של המסך כדי לגלול — ללא נגיעה</p><button id="start-btn">הפעל מצלמה</button> <span class="note">נדרשת גישה למצלמה הקדמית</span></div><div id="perm-screen"><h2>📷 נדרשת הרשאה</h2><p>כדי לזהות את תנועת העיניים, האפליקציה צריכה גישה למצלמה הקדמית שלך</p><button id="perm-btn">נסה שוב</button><p style="font-size:11px;opacity:0.5">בינתיים תוכל לגלול ע"י לחיצה ממושכת בתחתית/עליית המסך</p></div><div id="calibration"><h2>כיול</h2><p>הסתכל על הנקודה ולחץ על המסך כדי לכייל את המרכז</p><div class="cal-target"><div class="cal-dot"></div></div><div id="cal-count">3</div></div><div id="gaze-bar"></div><div id="eye-cursor" style="display:none"></div><div id="ui"><div class="zone-top"><span class="zone-label">↑ הסתכל כאן לגלילה למעלה</span> <span class="arrow">▲</span></div><div class="zone-mid"></div><div class="zone-bot"><span class="arrow">▼</span> <span class="zone-label">↓ הסתכל כאן לגלילה למטה</span></div></div><div id="status">מחכה לכיול...</div><div id="content-wrap"><div id="content"></div></div><div class="fallback-hint" id="fallback-hint" style="display:none">✋ לחץ לחיצה ממושכת בתחתית / עליית המסך לגלול</div><script>// ── CONTENT GENERATION ──
+const articles = [
+  { tag: "טכנולוגיה", title: "ממשק אדם-מחשב: עתיד האינטראקציה", body: "זיהוי מבט הוא אחת הטכנולוגיות המרתקות ביותר של העשור הנוכחי. מערכות מודרניות מסוגלות לעקוב אחרי תנועות עדינות של העין בדיוק של מילישניות.", chips: ["#UI", "#Gaze", "#Camera"] },
+  { tag: "מדע", title: "כיצד העין האנושית מעבדת מידע?", body: "הרשתית מכילה כ-120 מיליון קונוסים ומוטות. אזור הפובאה האחראי על ראייה חדה מכסה רק 2 מעלות מהשדה הויזואלי — אך המוח ממלא את השאר.", chips: ["#ראייה", "#מוח", "#אבולוציה"] },
+  { tag: "עיצוב", title: "Gaze-Based UX — עיצוב לממשקי עיניים", body: "כאשר מעצבים ממשק שמגיב למבט, יש לקחת בחשבון את אפקט 'מיינות הרגלים' — המשתמש צריך להיות מסוגל לקרוא טקסט ב-dead zone מבלי לגרום לפעולה.", chips: ["#UX", "#Accessibility", "#Design"] },
+  { tag: "בריאות", title: "טיפול בלקות שמיעה ותקשורת AAC", body: "עבור אנשים עם ALS, שיתוק מוחין ומגבלות תנועה אחרות, ממשקי עיניים הם לא רק נוחות — הם כלי תקשורת חיוני שמאפשר עצמאות.", chips: ["#נגישות", "#AAC", "#בריאות"] },
+  { tag: "מחקר", title: "דיוק מעקב עיניים בניידים — אתגרים", body: "שלא כמו מערכות ייעודיות עם IR LED, מצלמות סמארטפון רגילות מציגות אתגרים: תאורה משתנה, זיזה יד לא יציבה, ורזולוציה מוגבלת של קרניות.", chips: ["#מחקר", "#Mobile", "#Accuracy"] },
+  { tag: "AI", title: "למידת מכונה לזיהוי מבט", body: "מודלים מבוססי CNN יכולים לחזות נקודת מבט מתמונה אחת בלבד. MediaPipe FaceMesh של גוגל מספק 468 נקודות ציון על הפנים בזמן אמת, כולל נתוני רשת הקשת.", chips: ["#ML", "#MediaPipe", "#CNN"] },
+  { tag: "פרטיות", title: "נתוני עיניים — שאלות אתיות", body: "דפוסי תנועת עיניים יכולים לחשוף מידע רגיש: מצב רגשי, העדפות, אפילו מחלות נוירולוגיות. חשוב לעבד מידע זה locally ולא לשלוח לשרתים.", chips: ["#Privacy", "#Ethics", "#Local"] },
+  { tag: "עתיד", title: "עדשות AR עם מעקב עיניים מובנה", body: "חברות כמו Meta, Apple ו-Google עובדות על עדשות חכמות שיכילו חיישני eye-tracking miniaturized. זה יאפשר ממשקים שמגיבים למבט ללא מכשיר כלשהו.", chips: ["#AR", "#Future", "#Wearables"] },
+];
+
+const content = document.getElementById('content');
+articles.forEach((a, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="card-tag">${a.tag}</div>
+    <h2>${a.title}</h2>
+    <p>${a.body}</p>
+    <div class="card-footer">${a.chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+  `;
+  content.appendChild(card);
+});
+
+// ── STATE ──
+let scrollY = 0;
+let maxScroll = 0;
+let animFrame = null;
+let gazeY = -1; // normalized 0-1 of face y in video frame
+let eyeTracking = false;
+let calibrated = false;
+let calBaseline = 0.5; // face center baseline
+let faceMeshReady = false;
+let usingFallback = false;
+
+const ZONE = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zone-h')) / 100;
+const screenH = window.innerHeight;
+const ZONE_PX = screenH * ZONE;
+
+const statusEl = document.getElementById('status');
+const cursor = document.getElementById('eye-cursor');
+const gazeBar = document.getElementById('gaze-bar');
+const startScreen = document.getElementById('start-screen');
+const permScreen = document.getElementById('perm-screen');
+const calScreen = document.getElementById('calibration');
+const calCountEl = document.getElementById('cal-count');
+const fallbackHint = document.getElementById('fallback-hint');
+
+// ── SCROLL ENGINE ──
+function updateMaxScroll() {
+  maxScroll = content.scrollHeight - screenH;
+}
+updateMaxScroll();
+
+function applyScroll() {
+  content.style.transform = `translateY(${-scrollY}px)`;
+}
+
+let lastTs = 0;
+function scrollLoop(ts) {
+  const dt = Math.min(ts - lastTs, 50);
+  lastTs = ts;
+
+  let speed = 0;
+  if (eyeTracking && calibrated && gazeY >= 0) {
+    // Map normalized gaze to screen Y
+    const screenGazeY = gazeY * screenH;
+    cursor.style.top = screenGazeY + 'px';
+    cursor.style.left = '50%';
+    cursor.style.display = 'block';
+
+    gazeBar.style.top = screenGazeY + 'px';
+
+    if (screenGazeY < ZONE_PX) {
+      // Scroll up
+      const t = 1 - screenGazeY / ZONE_PX;
+      speed = -t * t * 8;
+      statusEl.className = 'active-up';
+      statusEl.textContent = '⬆ גולל למעלה';
+      cursor.className = '';
+      gazeBar.className = 'active';
+      gazeBar.style.background = 'var(--accent)';
+    } else if (screenGazeY > screenH - ZONE_PX) {
+      // Scroll down
+      const t = (screenGazeY - (screenH - ZONE_PX)) / ZONE_PX;
+      speed = t * t * 8;
+      statusEl.className = 'active-down';
+      statusEl.textContent = '⬇ גולל למטה';
+      cursor.className = 'down';
+      gazeBar.className = 'active';
+      gazeBar.style.background = 'var(--accent2)';
+    } else {
+      statusEl.className = '';
+      statusEl.textContent = '👁 עוקב אחרי המבט';
+      gazeBar.className = '';
+    }
+  } else if (usingFallback) {
+    speed = fallbackSpeed;
+  }
+
+  if (speed !== 0) {
+    scrollY = Math.max(0, Math.min(maxScroll, scrollY + speed * dt * 0.12));
+    applyScroll();
+  }
+
+  animFrame = requestAnimationFrame(scrollLoop);
+}
+requestAnimationFrame(ts => { lastTs = ts; scrollLoop(ts); });
+
+// ── FACEMESH / MEDIAPIPE ──
+let videoEl = null;
+let faceMesh = null;
+
+function loadMediaPipe() {
+  return new Promise((resolve, reject) => {
+    // Check if already loaded
+    if (window.FaceMesh) { resolve(); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/face_mesh.js';
+    script.crossOrigin = 'anonymous';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function startEyeTracking() {
+  startScreen.style.display = 'none';
+
+  // Show calibration
+  calScreen.style.display = 'flex';
+  let count = 3;
+  calCountEl.textContent = count;
+  const countTimer = setInterval(() => {
+    count--;
+    calCountEl.textContent = count;
+    if (count <= 0) {
+      clearInterval(countTimer);
+      beginCamera();
+    }
+  }, 1000);
+}
+
+async function beginCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } },
+      audio: false
+    });
+
+    videoEl = document.createElement('video');
+    videoEl.srcObject = stream;
+    videoEl.autoplay = true;
+    videoEl.playsInline = true;
+    videoEl.muted = true;
+    videoEl.style.cssText = 'position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;';
+    document.body.appendChild(videoEl);
+    await videoEl.play();
+
+    calScreen.style.display = 'none';
+
+    try {
+      await loadMediaPipe();
+      await setupFaceMesh();
+    } catch(e) {
+      // MediaPipe failed — use simpler face position
+      useSimpleTracking();
+    }
+
+  } catch(err) {
+    calScreen.style.display = 'none';
+    permScreen.style.display = 'flex';
+    enableFallback();
+  }
+}
+
+async function setupFaceMesh() {
+  faceMesh = new window.FaceMesh({
+    locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/${file}`
+  });
+  faceMesh.setOptions({
+    maxNumFaces: 1,
+    refineLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  faceMesh.onResults(onFaceResults);
+
+  eyeTracking = true;
+  faceMeshReady = true;
+  statusEl.textContent = '👁 מכייל...';
+
+  // Calibrate: collect baseline for 2 seconds
+  let samples = [];
+  let calDone = false;
+  const calInterval = setInterval(() => {
+    if (rawGazeY >= 0) samples.push(rawGazeY);
+  }, 100);
+  setTimeout(() => {
+    clearInterval(calInterval);
+    if (samples.length > 0) {
+      calBaseline = samples.reduce((a,b)=>a+b,0)/samples.length;
+    }
+    calibrated = true;
+    cursor.style.display = 'block';
+    statusEl.textContent = '👁 עוקב אחרי המבט';
+  }, 2000);
+
+  processVideo();
+}
+
+let rawGazeY = -1;
+
+function onFaceResults(results) {
+  if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
+    rawGazeY = -1;
+    return;
+  }
+  const landmarks = results.multiFaceLandmarks[0];
+
+  // Use nose tip (landmark 1) Y as primary gaze proxy
+  // Also use eye center landmarks
+  const noseTip = landmarks[1];
+  const leftEyeCenter = landmarks[468]; // left iris center (refined)
+  const rightEyeCenter = landmarks[473]; // right iris center (refined)
+
+  let faceY;
+  if (leftEyeCenter && rightEyeCenter) {
+    faceY = (leftEyeCenter.y + rightEyeCenter.y) / 2;
+  } else {
+    faceY = noseTip.y;
+  }
+
+  rawGazeY = faceY;
+
+  // Map face movement to screen scroll zone
+  // Face looking up = lower y value, looking down = higher y
+  const delta = (faceY - calBaseline) * 3.5; // amplify
+  gazeY = Math.max(0, Math.min(1, 0.5 + delta));
+}
+
+async function processVideo() {
+  if (!faceMeshReady || !faceMesh) return;
+  try {
+    await faceMesh.send({ image: videoEl });
+  } catch(e) {}
+  requestAnimationFrame(processVideo);
+}
+
+// ── SIMPLE TRACKING FALLBACK (canvas pixel analysis) ──
+function useSimpleTracking() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 160; canvas.height = 120;
+  const ctx = canvas.getContext('2d');
+  eyeTracking = true;
+  calibrated = true;
+  cursor.style.display = 'block';
+  statusEl.textContent = '👁 מצב פשוט';
+
+  let baseline = -1;
+  let calSamples = [];
+
+  function detect() {
+    ctx.drawImage(videoEl, 0, 0, 160, 120);
+    const data = ctx.getImageData(0, 0, 160, 120).data;
+
+    // Find brightest region Y (approximates face position)
+    let sumY = 0, total = 0;
+    for (let y = 0; y < 120; y++) {
+      for (let x = 0; x < 160; x++) {
+        const i = (y*160+x)*4;
+        const brightness = (data[i]+data[i+1]+data[i+2])/3;
+        if (brightness > 100) {
+          sumY += y * brightness;
+          total += brightness;
+        }
+      }
+    }
+    const fy = total > 0 ? (sumY/total) / 120 : 0.5;
+
+    if (baseline < 0) {
+      calSamples.push(fy);
+      if (calSamples.length >= 20) {
+        baseline = calSamples.reduce((a,b)=>a+b,0)/calSamples.length;
+      }
+    } else {
+      const delta = (fy - baseline) * 4;
+      gazeY = Math.max(0, Math.min(1, 0.5 + delta));
+    }
+    requestAnimationFrame(detect);
+  }
+  detect();
+}
+
+// ── FALLBACK: touch/mouse hold ──
+let fallbackSpeed = 0;
+let fallbackTimer = null;
+let holdStartY = -1;
+
+function enableFallback() {
+  usingFallback = true;
+  fallbackHint.style.display = 'block';
+  statusEl.textContent = 'מצב מגע — לחץ לחיצה ממושכת';
+}
+
+// Touch fallback
+document.addEventListener('touchstart', e => {
+  if (eyeTracking) return;
+  holdStartY = e.touches[0].clientY;
+  evaluateFallback(holdStartY);
+}, { passive: true });
+document.addEventListener('touchend', () => { fallbackSpeed = 0; }, { passive: true });
+document.addEventListener('touchmove', e => {
+  if (eyeTracking) return;
+  holdStartY = e.touches[0].clientY;
+  evaluateFallback(holdStartY);
+}, { passive: true });
+
+function evaluateFallback(y) {
+  if (y < ZONE_PX) {
+    const t = 1 - y / ZONE_PX;
+    fallbackSpeed = -t * t * 8;
+    statusEl.textContent = '⬆ גולל למעלה';
+    statusEl.className = 'active-up';
+  } else if (y > screenH - ZONE_PX) {
+    const t = (y - (screenH - ZONE_PX)) / ZONE_PX;
+    fallbackSpeed = t * t * 8;
+    statusEl.textContent = '⬇ גולל למטה';
+    statusEl.className = 'active-down';
+  } else {
+    fallbackSpeed = 0;
+    statusEl.textContent = '✋ גלול בגבולות';
+    statusEl.className = '';
+  }
+}
+
+// ── BUTTONS ──
+document.getElementById('start-btn').addEventListener('click', startEyeTracking);
+document.getElementById('perm-btn').addEventListener('click', () => {
+  permScreen.style.display = 'none';
+  startEyeTracking();
+});
+
+// ── RESIZE ──
+window.addEventListener('resize', () => {
+  updateMaxScroll();
+});</script></body></html>
