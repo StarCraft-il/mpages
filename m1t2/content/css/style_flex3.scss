@@ -1,0 +1,274 @@
+$pasukFontSize: 100px;
+$pasukLineHeight: 112px;
+
+$pasukPaddingTop: 14px;
+$pasukPaddingBottom: 10px;
+$pasukPaddingRight: 6px;
+$pasukPaddingLeft: 6px;
+
+$aliyaHeaderFontSize: 70px;
+$aliyaHeaderPaddingTop: 40px;
+$aliyaHeaderColor: red;
+
+$verseHeaderFontSize: 56px;
+$verseHeaderPaddingTop: 70px;
+$verseMarginBottom: 0px;
+$verseHeaderColor: navy;
+$page-break-on: auto;
+$page-break-off: avoid;
+
+$pasukFontSize: 146px;
+$pasukLineHeight: 175px;
+
+// FOR: font-family: 'Times New Roman';
+$pasukFontSize: 820%;
+$pasukLineHeight: 110%;
+
+$tajFontSize: 682%;
+$tajLineHeight: 110%;
+
+$tajFontSize: $pasukFontSize;
+
+html, body {
+    font-family: 'Guttman Frnew';
+    font-family: 'Guttman Frank';
+    font-size: 22px;
+    line-height: 28px;
+    background-color: #FFFAF0;
+    transform: scaleX(0.96);
+    -webkit-transform: scaleX(0.96);
+}
+
+.base-header {
+    font-size: $verseHeaderFontSize;
+    padding-top: $verseHeaderPaddingTop;
+    margin-bottom: $verseMarginBottom;
+    color: $verseHeaderColor;
+    line-height: ($verseHeaderFontSize + 18px);
+}
+
+.base-pasuk {
+    font-family: 'SBL Hebrew';
+    font-weight: normal !important;
+    text-align: justify;
+    font-size: $pasukFontSize;
+    line-height: $pasukLineHeight;
+    padding-right: $pasukPaddingRight;
+    padding-left: $pasukPaddingLeft;
+}
+
+ul#aliyusTableLinks {
+    font-size: 200%;
+    line-height: 130%;
+    list-style-position: inside;
+    list-style: hebrew;
+    padding-right: 6%;
+}
+
+#parashaContentRow {
+    display: block;
+    grid-template-columns: repeat(2, auto);
+    column-gap: 40px;
+    row-gap: 20px;
+    align-content: center;
+    justify-content: center;
+    align-items: start;
+    justify-items: center;
+    background-color: #FFFAF0;
+    padding: 20px;
+
+    .aliya {
+        padding-top: $aliyaHeaderPaddingTop;
+
+        .a-header {
+            font-size: $aliyaHeaderFontSize;
+            color: $aliyaHeaderColor;
+            font-weight: bold;
+            letter-spacing: 18px;
+        }
+
+        .verse {
+            background-color: #FFFAF0;
+
+            .pasuk2m1t {
+                .header {
+                    @extend .base-header;
+                    letter-spacing: 2px;
+                    //word-spacing: 8px;
+                    //font-weight: bold;
+
+                    .prefix-header {
+                        color: #D60A0A;
+
+                        .riseDesc {
+                            color: mediumblue;
+                        }
+
+                        .verseLeft {
+                            color: mediumblue;
+                        }
+                    }
+
+                    .suffix-header {
+                        color: maroon;
+
+                        .chapterNum {
+                            color: blue;
+                        }
+
+                        .verseNum {
+                            color: blue;
+                        }
+
+                        .currVerseInTotal {
+                            color: blue;
+                        }
+                    }
+
+                    .contentHeader {
+                        background-color: lightblue;
+                    }
+                }
+
+                .pasuk_mikra_1 {
+                    @extend .base-pasuk;
+                    padding-top: $pasukPaddingTop;
+                    padding-bottom: $pasukPaddingBottom;
+                    color: #1F00CC;
+                }
+
+                .pasuk_mikra_2 {
+                    @extend .base-pasuk;
+                    padding-top: ($pasukPaddingTop - 6px);
+                    padding-bottom: ($pasukPaddingBottom - 6px);
+                    color: green;
+                }
+
+                .pasuk_taj_1 {
+                    @extend .base-pasuk;
+                    font-family: Tahoma;
+                    font-family: 'MFT NarkisClassic';
+                    font-family: 'Taamey Frank CLM';
+                    font-size: $tajFontSize;
+                    line-height: $tajLineHeight;
+                    padding-top: ($pasukPaddingTop - 6px);
+                    padding-bottom: ($pasukPaddingBottom - 6px);
+                    color: maroon;
+                }
+            }
+        }
+    }
+}
+
+.lastVerse {
+    .header {
+        @extend .base-header;
+    }
+
+    .base-last-verse {
+        @extend .base-pasuk;
+        font-size: $tajFontSize;
+        line-height: 118%;
+        padding-top: $pasukPaddingTop;
+        padding-bottom: $pasukPaddingBottom;
+    }
+
+    .last_pasuk_mikra_1 {
+        @extend .base-last-verse;
+        color: #1F00CC;
+    }
+
+    .last_pasuk_mikra_2 {
+        @extend .base-last-verse;
+        color: green;
+    }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        background-color: #FFFAF0;
+        transform: scaleX(0.96);
+        -webkit-transform: scaleX(0.96);
+    }
+
+    #torahStatistcsForPortion {
+        display: none;
+    }
+
+    a:link:after {
+        /*content: " (" attr(href) ") ";*/
+    }
+
+    ul#aliyusTableLinks {
+        font-size: 300%;
+        line-height: 150%;
+        list-style-position: outside;
+        list-style: hebrew;
+        margin-right: 4%;
+    }
+
+    div#parashaContentRow {
+        display: block;
+        width: 120%;
+        margin-right: -4%;
+        background-color: #FFFAF0;
+
+        .aliya {
+            page-break-before: always;
+            page-break-after: auto;
+            break-after: auto;
+            break-before: page;
+            break-inside: auto;
+
+            .verse {
+                page-break-before: always;
+                page-break-after: always;
+                break-after: always;
+                break-before: auto;
+                break-inside: auto;
+
+                .pasuk2m1t {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                    page-break-before: avoid;
+                    page-break-after: avoid;
+
+                    .header {
+                        break-inside: avoid;
+                        break-after: avoid;
+                        break-before: auto;
+                        page-break-before: auto;
+                        page-break-after: avoid;
+
+                        .contentHeader {
+                            break-inside: avoid;
+                            page-break-inside: avoid;
+                            page-break-before: avoid;
+                            page-break-after: avoid;
+                        }
+                    }
+
+                    .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+                        //break-inside: avoid;
+                        //page-break-inside: avoid;
+                        padding-top: $pasukPaddingTop !important;
+                        padding-bottom: $pasukPaddingBottom !important;
+                    }
+
+                    .pasuk_taj_1 {
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+                }
+            }
+        }
+    }
+}
+

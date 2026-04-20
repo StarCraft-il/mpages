@@ -1,0 +1,324 @@
+$pasukFontSize: 100px;
+$pasukLineHeight: 112px;
+
+$pasukPaddingTop: 10px;
+$pasukPaddingBottom: 10px;
+$pasukPaddingRight: 1px;
+$pasukPaddingLeft: 1px;
+
+$aliyaHeaderFontSize: 50px;
+$aliyaHeaderPaddingTop: 40px;
+$aliyaHeaderColor: red;
+
+$verseHeaderFontSize: 44px;
+$verseHeaderPaddingTop: 70px;
+$verseMarginBottom: 0px;
+$verseHeaderColor: navy;
+$page-break-on: auto;
+$page-break-off: avoid;
+
+$pasukFontSize: 146px;
+$pasukLineHeight: 175px;
+
+$pasukLineHeight2Add: 46;
+$tajLineHeight2Add: 20;
+
+// FOR: font-family: 'Times New Roman';
+$pasukFontSize: 170px;
+$pasukLineHeight: $pasukFontSize + $pasukLineHeight2Add;
+
+$tajFontSize: 150px;
+$tajFontSize: $pasukFontSize;
+$tajLineHeight: $tajFontSize + $tajLineHeight2Add;
+
+@font-face {
+    font-family: 'SBL_Hebrew';
+    src: url('fonts/SBL_Hbrw.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'SIL';
+    src: url('fonts/SILEOT.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'SILSR';
+    src: url('fonts/SILEOTSR.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'MVilna';
+    src: url('fonts/Mekorot-Vilna.ttf') format('truetype');
+}
+
+
+@font-face {
+    font-family: 'tfrank_clm';
+    src: url('fonts/TaameyFrankCLM.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'nrkis';
+    src: url('fonts/mft_narkisclassic-regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'KeterAramTsova';
+    src: url('fonts/KeterAramTsova.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'DroidSansMono';
+    src: url('fonts/DroidSansMono.ttf') format('truetype');
+}
+
+
+@font-face {
+    font-family: 'shofar';
+    src: url('fonts/shofarregular.ttf') format('truetype');
+}
+
+
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 22px;
+    line-height: 28px;
+    background-color: #FFFAF0;
+    transform: scaleX(0.9);
+}
+
+ul#aliyusTableLinks {
+    font-size: 200%;
+    line-height: 130%;
+    list-style-position: inside;
+    list-style: hebrew;
+}
+
+#parashaContentRow {
+    display: block;
+    grid-template-columns: repeat(2, auto);
+    column-gap: 40px;
+    row-gap: 20px;
+    align-content: center;
+    justify-content: center;
+    align-items: start;
+    justify-items: center;
+    background-color: #FFFAF0;
+    padding: 20px;
+
+    .verse {
+        background-color: #FFFAF0;
+
+        .pasuk2m1t {
+            .header {
+                font-size: $verseHeaderFontSize;
+                padding-top: $verseHeaderPaddingTop;
+                margin-bottom: $verseMarginBottom;
+                color: $verseHeaderColor;
+                line-height: $verseHeaderFontSize + 6px;
+                font-weight: bold;
+                letter-spacing: 2px;
+                word-spacing: 2px;
+
+
+                .prefix-header {
+                    color: #D60A0A;
+
+                    .riseDesc {
+                        color: navy;
+                    }
+
+                    .verseLeft {
+                        color: navy;
+                    }
+                }
+
+                .suffix-header {
+                    color: maroon;
+
+                    .chapterNum {
+                        color: blue;
+                    }
+
+                    .verseNum {
+                        color: blue;
+                    }
+
+                    .currVerseInTotal {
+                        color: blue;
+                    }
+                }
+
+                .contentHeader {
+                    background-color: lightblue;
+                }
+            }
+
+            .pasuk-base {
+                font-family: 'Taamey Frank CLM';
+                font-weight: normal;
+                text-align: justify;
+                font-size: $pasukFontSize;
+                line-height: $pasukLineHeight;
+                padding-top: $pasukPaddingTop;
+                padding-bottom: $pasukPaddingBottom;
+                padding-right: $pasukPaddingRight;
+                padding-left: $pasukPaddingLeft;
+            }
+
+            .pasuk_mikra_1 {
+                @extend .pasuk-base;
+                color: #1F00CC;
+            }
+
+            .pasuk_mikra_2 {
+                @extend .pasuk-base;
+                color: green;
+            }
+
+            .pasuk_taj_1 {
+                @extend .pasuk-base;
+                font-family: Tahoma;
+                font-family: 'MFT NarkisClassic';
+                font-family: 'Taamey Frank CLM';
+                font-size: $tajFontSize;
+                line-height: $tajLineHeight;
+                color: maroon;
+            }
+        }
+    }
+}
+
+.aliya {
+    padding-top: $aliyaHeaderPaddingTop;
+
+    .header {
+        font-size: $aliyaHeaderFontSize;
+        color: $aliyaHeaderColor;
+        font-weight: bold;
+    }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 0px;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        background-color: #FFFAF0;
+    }
+
+    #torahStatistcsForPortion {
+        display: none;
+    }
+
+    a:link:after {
+        /*content: " (" attr(href) ") ";*/
+    }
+
+    ul#aliyusTableLinks {
+        font-size: 300%;
+        line-height: 150%;
+        list-style-position: inside;
+        list-style: hebrew;
+    }
+
+    div#parashaContentRow {
+        display: block;
+        width: 110%;
+        margin-right: -10%;
+        background-color: #FFFAF0;
+
+        .verse .pasuk2m1t {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            page-break-before: avoid;
+            page-break-after: avoid;
+
+            .header {
+                page-break-before: avoid;
+                page-break-after: avoid;
+            }
+
+            .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+                /*break-inside: avoid;
+                page-break-inside: avoid;*/
+            }
+        }
+
+        .aliya {
+            page-break-before: auto;
+            page-break-after: auto;
+            break-after: auto;
+            break-before: always;
+            break-inside: auto;
+        }
+    }
+
+    /*
+
+    .pasuk2m1t {
+        break-inside: $page-break-off;
+        page-break-inside: $page-break-off;
+
+        .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+            break-inside: $page-break-off;
+            page-break-inside: $page-break-off;
+        }
+
+        .pasuk_taj_1 {
+            break-inside: $page-break-off;
+            page-break-inside: $page-break-off;
+            page-break-after: $page-break-on;
+        }
+    }
+
+    .aliya.header {
+        page-break-before: $page-break-off;
+        page-break-after: avoid;
+        break-after: avoid-page;
+    }
+
+    div#parashaContentRow {
+        break-inside: $page-break-off;
+        page-break-inside: $page-break-off;
+    }
+
+    div#parashaContentRow1 {
+        /*width: 1100px;
+        margin-right: -180px;
+
+        .verse {
+            /*break-inside: avoid;
+            page-break-inside: avoid;
+            break-after: always;
+            break-before: always;
+            page-break-after: always;
+            page-break-before: always;
+            break-inside: $page-break-off;
+            page-break-before: $page-break-on;
+            page-break-after: $page-break-on;
+            page-break-inside: $page-break-off;
+
+            .pasuk2m1t {
+                break-inside: $page-break-off;
+                page-break-inside: $page-break-off;
+
+                .header {
+                    page-break-before: always;
+                    page-break-after: avoid;
+                    break-after: avoid-page;
+                }
+
+                .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+                    break-inside: $page-break-off;
+                    page-break-inside: $page-break-off;
+                }
+            }
+        }
+    }*/
+}
+
