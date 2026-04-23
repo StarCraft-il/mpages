@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eye Scroll v3 — גלילה בעיניים</title>
+    <title>Eye Scroll v4 — גלילה בעיניים לנייד</title>
     <style>
         :root {
             --bg: #070b14;
@@ -17,7 +17,7 @@
             --ok: #34d399;
             --warn: #fbbf24;
             --bad: #f87171;
-            --zone-size: 22vh;
+            --zone-size: 30vh;
         }
 
         * {
@@ -552,7 +552,7 @@
         }
 
         body.mobile-mode {
-            --zone-size: 28vh;
+            --zone-size: 31vh;
         }
 
         body.mobile-mode #mobileTip {
@@ -674,24 +674,24 @@
 <body>
     <div id="controls">
         <button id="recalibrateBtn" class="ghost-btn">כיול מחדש</button>
-        <button id="manualBtn" class="secondary-btn">מצב בדיקה ידני</button>
+        <button id="manualBtn" class="secondary-btn">מגע ידני</button>
         <button id="previewToggleBtn" class="ghost-btn panel-toggle-btn">מצלמה</button>
         <button id="debugToggleBtn" class="ghost-btn panel-toggle-btn">אבחון</button>
         <button id="helpBtn" class="ghost-btn">הוראות</button>
     </div>
 
-    <div id="status">v3 מוכן. פתח הוראות וקרא מה לעשות לפני התחלה.</div>
-    <div id="mobileTip">טיפ לנייד: החזק את הטלפון יציב בגובה העיניים, במרחק של בערך 30–40 ס"מ, עם אור על הפנים.</div>
+    <div id="status">v4 מוכן לנייד. קרא הוראות קצרות ואז התחל.</div>
+    <div id="mobileTip">v4 לנייד: החזק את הטלפון אנכי, יציב, בגובה העיניים, במרחק של בערך 30–40 ס"מ.</div>
     <div id="gaze-line"></div>
     <div id="gaze-cursor"></div>
 
     <div id="ui">
         <div class="zone zone-top">
-            <div class="zone-label"><strong>למעלה = גלילה למעלה</strong><br />בזמן הבדיקה הסתכל מעט מעל המרכז או הזז מעט את הראש למעלה.</div>
+            <div class="zone-label"><strong>למעלה = גלילה למעלה</strong><br />בנייד עדיף להרים מעט את הראש או המבט, לא תנועה חדה.</div>
         </div>
         <div class="zone zone-mid"></div>
         <div class="zone zone-bot">
-            <div class="zone-label"><strong>למטה = גלילה למטה</strong><br />בזמן הבדיקה הסתכל מעט מתחת למרכז או הזז מעט את הראש למטה.</div>
+            <div class="zone-label"><strong>למטה = גלילה למטה</strong><br />בנייד עדיף להוריד מעט את הראש או המבט, לא תנועה חדה.</div>
         </div>
     </div>
 
@@ -706,7 +706,7 @@
     </div>
 
     <div id="debug">
-        <h3>אבחון v3</h3>
+        <h3>אבחון v4</h3>
         <div class="debug-row"><span class="debug-label">דף מאובטח</span><span id="dbgSecure" class="debug-value">-</span></div>
         <div class="debug-row"><span class="debug-label">מצלמה</span><span id="dbgCamera" class="debug-value">כבויה</span></div>
         <div class="debug-row"><span class="debug-label">FaceMesh</span><span id="dbgFaceMesh" class="debug-value">לא נטען</span></div>
@@ -719,44 +719,44 @@
 
     <div id="introScreen" class="screen visible">
         <div class="panel">
-            <div class="hero-note">Eye Scroll v3 · הדרכה מפורטת לפני התחלה</div>
-            <h1>אם עד עכשיו המעקב לא עבד — כאן כתוב בדיוק מה לעשות</h1>
-            <p>בגרסה הזאת הוספתי <strong>הסבר מפורט לפני פתיחת המצלמה</strong>, <strong>השהיה ארוכה יותר</strong> כדי שיהיה לך זמן להגיב, <strong>כיול בשלושה שלבים</strong> ו<strong>מסך אבחון</strong> שמראה אם המצלמה והזיהוי באמת עובדים.</p>
+            <div class="hero-note">Eye Scroll v4 · Mobile First</div>
+            <h1>v4 בנוי במיוחד לבדיקה בטלפון</h1>
+            <p>בגרסה הזאת המסך פשוט יותר, אזורי הגלילה גדולים יותר, ההשהיה ארוכה יותר, והכיול מותאם לכך שהטלפון זז קצת ביד. עדיין יש אבחון, אבל ברירת המחדל נקייה יותר לנייד.</p>
 
             <div id="secureHint" class="warn-box">בודק האם הדף נפתח בהקשר מאובטח…</div>
 
             <div class="step-grid">
                 <div class="step-card">
-                    <strong>1. איך לפתוח את הדף</strong>
-                    <span>מומלץ לפתוח דרך <b>http://localhost</b> או <b>https</b>. אם אתה פותח דרך <b>file://</b> ייתכן שהמצלמה בכלל לא תעבוד.</span>
+                    <strong>1. איך לפתוח</strong>
+                    <span>פתח דרך <b>http://localhost</b> או <b>https</b>. אם אתה פותח דרך <b>file://</b> ייתכן שהמצלמה לא תעבוד.</span>
                 </div>
                 <div class="step-card">
-                    <strong>2. איך לשבת</strong>
+                    <strong>2. איך להחזיק טלפון</strong>
                     <span>בנייד מומלץ להחזיק את הטלפון במצב אנכי, בגובה העיניים, במרחק של בערך 30–40 ס"מ. האור צריך להיות על הפנים שלך, לא מאחוריך.</span>
                 </div>
                 <div class="step-card">
-                    <strong>3. מה לעשות בחלון ההרשאה</strong>
-                    <span>אחרי שתלחץ התחלה יופיע חלון של הדפדפן. אתה צריך ללחוץ <b>Allow / אפשר</b> למצלמה הקדמית.</span>
+                    <strong>3. חלון ההרשאה</strong>
+                    <span>אחרי שתלחץ התחלה יופיע חלון של הדפדפן. לחץ <b>Allow / אפשר</b> למצלמה הקדמית.</span>
                 </div>
                 <div class="step-card">
                     <strong>4. בזמן הכיול</strong>
-                    <span>תתבקש להסתכל <b>למרכז</b>, אחר כך <b>מעט למעלה</b>, ואז <b>מעט למטה</b>. בכל שלב החזק את הראש יחסית יציב עד שהטיימר נגמר.</span>
+                    <span>הסתכל <b>למרכז</b>, אחר כך <b>מעט למעלה</b>, ואז <b>מעט למטה</b>. עדיף תנועה קטנה ועדינה של הראש ולא רק של האישון.</span>
                 </div>
             </div>
 
             <ul class="checklist">
                 <li><strong>מה לבדוק לפני התחלה:</strong> המצלמה שלך פנויה, לא חסומה על ידי אפליקציה אחרת, והפנים שלך נראות בפריוויו.</li>
-                <li><strong>מה לעשות אם אין תגובה:</strong> תסתכל קודם על תיבת <b>אבחון v3</b> — אם כתוב <b>פנים לא זוהו</b>, צריך לשפר תאורה/מרחק/זווית.</li>
+                <li><strong>מה לעשות אם אין תגובה:</strong> תסתכל קודם על תיבת <b>אבחון v4</b> — אם כתוב <b>פנים לא זוהו</b>, צריך לשפר תאורה/מרחק/זווית.</li>
                 <li><strong>מה לעשות אם FaceMesh לא נטען:</strong> כנראה שאין גישה לרשת עבור הספריה. במקרה כזה המעקב בעיניים לא יתחיל, אבל עדיין אפשר לבדוק גלילה עם <b>מצב בדיקה ידני</b>.</li>
-                <li><strong>מה לעשות אם הדפדפן מבקש הרשאה ואתה לא מספיק:</strong> ב-v3 יש השהיה ארוכה לפני בקשת המצלמה (בנייד אפילו יותר), כדי שיהיה לך זמן להבין מה עומד לקרות.</li>
+                <li><strong>מה לעשות אם הדפדפן מבקש הרשאה ואתה לא מספיק:</strong> ב-v4 יש השהיה ארוכה לפני בקשת המצלמה, במיוחד בנייד, כדי שיהיה לך זמן להבין מה עומד לקרות.</li>
                 <li><strong>טיפ חשוב לנייד:</strong> אל תנסה להזיז רק את האישון. בטלפון עדיף להזיז מעט ועדין גם את הראש למעלה/למטה, כי זה יציב יותר ממעקב עיניים זעיר.</li>
             </ul>
 
-            <div class="ok-box">המלצה: בפעם הראשונה תפתח את הדף, תקרא הכל, תלחץ התחלה, תאשר מצלמה, ותבדוק קודם שבתצוגת המצלמה רואים אותך ברור.</div>
+            <div class="ok-box">המלצה: בפעם הראשונה תפעיל v4, תאשר מצלמה, ותבדוק קודם שבתצוגת המצלמה רואים אותך ברור. רק אחר כך תנסה גלילה.</div>
 
             <div class="actions">
-                <button id="startGuideBtn" class="primary-btn">קראתי. התחל הדרכה והרשאת מצלמה</button>
-                <button id="introManualBtn" class="secondary-btn">דלג למצב בדיקה ידני</button>
+                <button id="startGuideBtn" class="primary-btn">התחל v4 והרשאת מצלמה</button>
+                <button id="introManualBtn" class="secondary-btn">דלג לבדיקה ידנית</button>
             </div>
         </div>
     </div>
@@ -806,13 +806,13 @@
     <script>
         const contentItems = [
             {
-                title: 'מטרת v3',
-                body: 'הגרסה הזאת נועדה לעזור להבין מה בדיוק לעשות כדי שהגלילה בעיניים תעבוד. לכן יש כאן מסך הוראות מפורט, טיימר ארוך לפני ההרשאה, כיול מסודר, חלון מצלמה קטן, ותיבת אבחון שמציגה אם באמת מזוהים פנים ונתונים.',
-                chips: ['v3', 'Onboarding', 'Debug']
+                title: 'מטרת v4',
+                body: 'גרסת v4 ממוקדת בנייד: מסך פשוט יותר, כיול איטי יותר, רגישות שמותאמת ליד מעט רועדת, ואבחון שאפשר לפתוח רק כשצריך.',
+                chips: ['v4', 'Mobile', 'Debug']
             },
             {
                 title: 'מה לעשות קודם',
-                body: 'פתח את הדף, קרא את ההוראות, ודא שהפנים שלך מוארות. אל תלחץ מהר על כפתורים בלי לקרוא — הגרסה הזאת בנויה לתת לך זמן להגיב לפני שכל שלב מתחיל.',
+                body: 'פתח את הדף, קרא את ההוראות, ודא שהפנים שלך מוארות, והחזק את הטלפון אנכי. הגרסה הזאת בנויה לתת לך זמן להגיב לפני שכל שלב מתחיל.',
                 chips: ['Before Start', 'Lighting', 'Distance']
             },
             {
@@ -831,8 +831,8 @@
                 chips: ['Permission', 'localhost', 'HTTPS']
             },
             {
-                title: 'כיול v3',
-                body: 'הכיול נעשה בשלושה שלבים: מרכז, למעלה, למטה. המטרה היא למדוד מה הערך הרגיל שלך ומה הערכים כאשר אתה מזיז את המבט או הראש מעט. כך הסף לגלילה נקבע לפי המשתמש שלך ולא לפי ערך קשיח.',
+                title: 'כיול v4',
+                body: 'הכיול נעשה בשלושה שלבים: מרכז, למעלה, למטה. ב-v4 כל שלב איטי יותר כדי לתת לטלפון להתייצב ולמדידה להפוך לאמינה יותר.',
                 chips: ['Calibration', 'Center', 'Thresholds']
             },
             {
@@ -847,7 +847,7 @@
             },
             {
                 title: 'השהיה ארוכה יותר',
-                body: 'ביקשת יותר זמן להגיב. לכן לפני בקשת המצלמה יש ספירה של 10 שניות, ובכיול עצמו כל שלב מחזיק כמה שניות כדי שלא תצטרך לנחש מה לעשות.',
+                body: 'ב-v4 יש עוד יותר זמן להגיב בנייד. לפני בקשת המצלמה יש ספירה ארוכה יותר, וגם שלבי הכיול עצמם ארוכים יותר.',
                 chips: ['Delay', 'Countdown', 'Usability']
             },
             {
@@ -937,11 +937,11 @@
         }
 
         function getPrepareDelaySeconds() {
-            return isMobileLayout ? 12 : 10;
+            return isMobileLayout ? 14 : 10;
         }
 
         function getScrollPower() {
-            return isMobileLayout ? 6.8 : 8;
+            return isMobileLayout ? 6.2 : 8;
         }
 
         function updateMobileTip() {
@@ -956,7 +956,7 @@
             }
 
             if (manualMode) {
-                mobileTipEl.textContent = 'מצב ידני בנייד: לחץ והחזק למעלה או למטה כדי לבדוק את הגלילה גם בלי eye tracking.';
+                mobileTipEl.textContent = 'מצב ידני בנייד: לחץ והחזק למעלה או למטה כדי לבדוק גלילה גם בלי מצלמה.';
                 return;
             }
 
@@ -1004,7 +1004,7 @@
 
         function buildContent() {
             const moreItems = [];
-            for (let index = 0; index < 22; index += 1) {
+            for (let index = 0; index < 18; index += 1) {
                 const base = contentItems[index % contentItems.length];
                 moreItems.push({
                     title: `${index + 1}. ${base.title}`,
@@ -1228,7 +1228,7 @@
                 ? (leftIris.y + rightIris.y) / 2
                 : nose.y;
             const mixY = isMobileLayout
-                ? (eyeY * 0.58) + (nose.y * 0.42)
+                ? (eyeY * 0.52) + (nose.y * 0.48)
                 : (eyeY * 0.72) + (nose.y * 0.28);
             return (mixY - forehead.y) / faceHeight;
         }
@@ -1253,7 +1253,7 @@
             faceDetected = true;
             lastFaceSeenAt = Date.now();
             rawMetric = metric;
-            const smoothFactor = isMobileLayout ? 0.14 : 0.22;
+            const smoothFactor = isMobileLayout ? 0.10 : 0.22;
             smoothMetric = smoothMetric === null
                 ? metric
                 : (smoothMetric * (1 - smoothFactor)) + (metric * smoothFactor);
@@ -1354,8 +1354,8 @@
             smoothMetric = null;
             updateMobileTip();
 
-            const centerDurationMs = isMobileLayout ? 5200 : 4200;
-            const edgeDurationMs = isMobileLayout ? 4200 : 3600;
+            const centerDurationMs = isMobileLayout ? 6200 : 4200;
+            const edgeDurationMs = isMobileLayout ? 5000 : 3600;
 
             try {
                 metricCenter = await waitForSamples(
