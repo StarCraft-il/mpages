@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mobile Zoom Test Page</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --box-color: #007bff;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+            touch-action: auto; /* Allows default browser gestures */
+        }
+        #dashboard {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        .test-zone {
+            margin-top: 160px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .zoom-box {
+            width: 250px;
+            height: 250px;
+            background-color: var(--box-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            /* This property allows us to capture pinch gestures in JS */
+            touch-action: none; 
+        }
+        .instruction {
+            color: #666;
+            font-size: 0.9rem;
+            max-width: 300px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard">
+        <strong>Zoom Diagnostics</strong><br>
+        Visual Viewport Scale: <span id="scale-val">1.0</span><br>
+        Pinch Distance: <span id="dist-val">0</span><br>
+        Last Event: <span id="event-val">None</span>
+    </div>
+
+    <div class="test-zone">
+        <div id="gesture-target" class="zoom-box">
+            PINCH OR DOUBLE-TAP ME
+        </div>
+        <p class="instruction">
+            1. <strong>Pinch</strong> inside the blue box to change its color manually via JS.<br>
+            2. <strong>Pinch outside</strong> the box to test standard browser viewport zoom.<br>
+            3. <strong>Double-tap</strong> the text to test browser auto-zoom.
+        </p>
+    </div>
+
+    <script>
+        const target = document.getElementById('gesture-target');
+        const scaleDisplay = document.getElementById('scale-val');
+        const distDisplay = document.getElementById('dist-val');
+        const eventDisplay = document.getElementById('event-val');
+
+        let evCache = [];
+        let prevDiff = -1;
+
+        // 1. Monitor Browser Viewport Zoom
+        window.visualViewport.addEventListener('resize', () => {
+            scaleDisplay.innerText = window.visualViewport.scale.toFixed(2);
+            eventDisplay.innerText = "Viewport Resize (Zoom)";
+        });
+
+        // 2. Custom Pinch Logic (Inside the box)
+        target.onpointerdown = (ev) => { evCache.push(ev); };
+        target.onpointermove = (ev) => {
+            const index = evCache.findIndex((c) => c.pointerId === ev.pointerId);
+            evCache[index] = ev;
+
+            if (evCache.length === 2) {
+                const curDiff = Math.hypot(
+                    evCache[0].clientX - evCache[1].clientX,
+                    evCache[0].clientY - evCache[1].clientY
+                );
+                distDisplay.innerText = Math.round(curDiff);
+
+                if (prevDiff > 0) {
+                    if (curDiff > prevDiff) {
+                        target.style.background = "limegreen";
+                        eventDisplay.innerText = "Pinch Out (Zoom In)";
+                    } else if (curDiff < prevDiff) {
+                        target.style.background = "tomato";
+                        eventDisplay.innerText = "Pinch In (Zoom Out)";
+                    }
+                }
+                prevDiff = curDiff;
+            }
+        };
+
+        target.onpointerup = target.onpointerleave = (ev) => {
+            evCache = evCache.filter((c) => c.pointerId !== ev.pointerId);
+            if (evCache.length < 2) prevDiff = -1;
+        };
+    </script>
+</body>
+</html>
