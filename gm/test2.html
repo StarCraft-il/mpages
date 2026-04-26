@@ -1,131 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mobile Zoom Test Page</title>
+    <title>Mobile Zoom & RTL Test</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --box-color: #007bff;
+            --primary: #6200ee;
+            --secondary: #03dac6;
         }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s;
-            touch-action: auto; /* Allows default browser gestures */
+            padding: 0;
+            background: #fafafa;
+            color: #333;
         }
-        #dashboard {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-            font-size: 14px;
-            pointer-events: none;
-        }
-        .test-zone {
-            margin-top: 160px;
+        /* Dashboard for real-time stats */
+        #status-bar {
+            position: sticky;
+            top: 0;
+            background: #333;
+            color: white;
+            padding: 10px;
+            font-size: 0.85rem;
+            z-index: 100;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
+            justify-content: space-around;
         }
-        .zoom-box {
-            width: 250px;
-            height: 250px;
-            background-color: var(--box-color);
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        section {
+            background: white;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; }
+
+        /* Gesture Box */
+        .touch-area {
+            width: 100%;
+            height: 150px;
+            background: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            text-align: center;
+            border-radius: 8px;
+            touch-action: none; /* Disables browser zoom only on this element */
             font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            /* This property allows us to capture pinch gestures in JS */
-            touch-action: none; 
         }
-        .instruction {
-            color: #666;
-            font-size: 0.9rem;
-            max-width: 300px;
+
+        /* Image Test */
+        .img-container {
+            overflow: hidden;
+            border: 2px dashed #ccc;
             text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.1s;
+        }
+
+        /* Responsive Text */
+        .fluid-text {
+            font-size: clamp(1rem, 5vw, 2.5rem);
+            background: #eee;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div id="dashboard">
-        <strong>Zoom Diagnostics</strong><br>
-        Visual Viewport Scale: <span id="scale-val">1.0</span><br>
-        Pinch Distance: <span id="dist-val">0</span><br>
-        Last Event: <span id="event-val">None</span>
-    </div>
+<div id="status-bar">
+    <span>Scale: <b id="sc">1.0</b></span>
+    <span>Touches: <b id="tc">0</b></span>
+    <span>Dir: <b>RTL (Hebrew)</b></span>
+</div>
 
-    <div class="test-zone">
-        <div id="gesture-target" class="zoom-box">
-            PINCH OR DOUBLE-TAP ME
+<div class="container">
+    
+    <section dir="ltr">
+        <h2>1. Gesture Capture</h2>
+        <p>Pinch the box below. It uses <code>touch-action: none</code> to intercept your zoom gestures.</p>
+        <div id="box-en" class="touch-area">PINCH ME</div>
+    </section>
+
+    <section>
+        <h2>2. בדיקת זום בעברית (RTL)</h2>
+        <p>כאן ניתן לבדוק כיצד הטקסט נשבר (Wrap) בזמן זום. האם היישור לימין נשמר?</p>
+        <div class="fluid-text">טקסט משתנה לפי גודל מסך</div>
+        <p>נסה לבצע "צביטה" (Pinch) על הטקסט הזה כדי לראות אם הדפדפן מגדיל את כל העמוד או רק את האלמנט.</p>
+    </section>
+
+    <section>
+        <h2>3. Image Test / בדיקת תמונה</h2>
+        <div class="img-container">
+            <img src="https://via.placeholder.com/400x200/6200ee/ffffff?text=Zoom+Test+Image" id="test-img" alt="Test">
         </div>
-        <p class="instruction">
-            1. <strong>Pinch</strong> inside the blue box to change its color manually via JS.<br>
-            2. <strong>Pinch outside</strong> the box to test standard browser viewport zoom.<br>
-            3. <strong>Double-tap</strong> the text to test browser auto-zoom.
-        </p>
-    </div>
+        <p style="font-size: 0.8rem; color: #666;">צביטה על התמונה תגדיל אותה ידנית באמצעות JS.</p>
+    </section>
 
-    <script>
-        const target = document.getElementById('gesture-target');
-        const scaleDisplay = document.getElementById('scale-val');
-        const distDisplay = document.getElementById('dist-val');
-        const eventDisplay = document.getElementById('event-val');
+</div>
 
-        let evCache = [];
-        let prevDiff = -1;
+<script>
+    const scDisplay = document.getElementById('sc');
+    const tcDisplay = document.getElementById('tc');
+    const testImg = document.getElementById('test-img');
+    
+    // Track Visual Viewport Zoom (Browser Level)
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('scroll', updateZoom);
+        window.visualViewport.addEventListener('resize', updateZoom);
+    }
 
-        // 1. Monitor Browser Viewport Zoom
-        window.visualViewport.addEventListener('resize', () => {
-            scaleDisplay.innerText = window.visualViewport.scale.toFixed(2);
-            eventDisplay.innerText = "Viewport Resize (Zoom)";
-        });
+    function updateZoom() {
+        scDisplay.innerText = window.visualViewport.scale.toFixed(2);
+    }
 
-        // 2. Custom Pinch Logic (Inside the box)
-        target.onpointerdown = (ev) => { evCache.push(ev); };
-        target.onpointermove = (ev) => {
-            const index = evCache.findIndex((c) => c.pointerId === ev.pointerId);
-            evCache[index] = ev;
+    // Manual Pinch-to-Zoom logic for the image
+    let initialDist = 0;
+    let currentScale = 1;
 
-            if (evCache.length === 2) {
-                const curDiff = Math.hypot(
-                    evCache[0].clientX - evCache[1].clientX,
-                    evCache[0].clientY - evCache[1].clientY
-                );
-                distDisplay.innerText = Math.round(curDiff);
+    document.addEventListener('touchstart', (e) => {
+        tcDisplay.innerText = e.touches.length;
+        if (e.touches.length === 2) {
+            initialDist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+        }
+    });
 
-                if (prevDiff > 0) {
-                    if (curDiff > prevDiff) {
-                        target.style.background = "limegreen";
-                        eventDisplay.innerText = "Pinch Out (Zoom In)";
-                    } else if (curDiff < prevDiff) {
-                        target.style.background = "tomato";
-                        eventDisplay.innerText = "Pinch In (Zoom Out)";
-                    }
-                }
-                prevDiff = curDiff;
-            }
-        };
+    document.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && e.target.id === 'test-img') {
+            const currentDist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            
+            const zoomFactor = currentDist / initialDist;
+            testImg.style.transform = `scale(${currentScale * zoomFactor})`;
+        }
+    });
 
-        target.onpointerup = target.onpointerleave = (ev) => {
-            evCache = evCache.filter((c) => c.pointerId !== ev.pointerId);
-            if (evCache.length < 2) prevDiff = -1;
-        };
-    </script>
+    document.addEventListener('touchend', (e) => {
+        tcDisplay.innerText = e.touches.length;
+        // Reset scale memory on release
+        if (e.touches.length < 2) {
+            initialDist = 0;
+        }
+    });
+</script>
+
 </body>
 </html>

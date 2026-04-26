@@ -1,131 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mobile Zoom Test Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>מבחן זום מלא לעמוד</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --box-color: #007bff;
+            --zoom-level: 1;
         }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s;
-            touch-action: auto; /* Allows default browser gestures */
-        }
-        #dashboard {
+        
+        /* The UI controls must stay fixed and NOT zoom with the page */
+        #controls {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-            font-size: 14px;
-            pointer-events: none;
-        }
-        .test-zone {
-            margin-top: 160px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-        .zoom-box {
-            width: 250px;
-            height: 250px;
-            background-color: var(--box-color);
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #333;
             color: white;
+            padding: 15px;
+            z-index: 9999;
+            direction: ltr; /* UI controls usually easier in LTR for sliders */
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            /* This property allows us to capture pinch gestures in JS */
-            touch-action: none; 
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .instruction {
-            color: #666;
-            font-size: 0.9rem;
-            max-width: 300px;
-            text-align: center;
+
+        /* This wrapper scales the entire content */
+        #page-wrapper {
+            margin-top: 80px; /* Space for the fixed header */
+            transform-origin: top right; /* Critical for RTL zooming */
+            transition: transform 0.2s ease-out;
+            padding: 20px;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow-x: hidden; /* Prevent horizontal mess during zoom */
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 { color: #0056b3; }
+        
+        .demo-box {
+            width: 100px;
+            height: 100px;
+            background: #e91e63;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
-    <div id="dashboard">
-        <strong>Zoom Diagnostics</strong><br>
-        Visual Viewport Scale: <span id="scale-val">1.0</span><br>
-        Pinch Distance: <span id="dist-val">0</span><br>
-        Last Event: <span id="event-val">None</span>
+    <div id="controls">
+        <button onclick="changeZoom(-0.1)">-</button>
+        <input type="range" id="zoomSlider" min="0.5" max="3" step="0.1" value="1" oninput="setZoom(this.value)">
+        <button onclick="changeZoom(0.1)">+</button>
+        <span id="valDisplay">100%</span>
     </div>
 
-    <div class="test-zone">
-        <div id="gesture-target" class="zoom-box">
-            PINCH OR DOUBLE-TAP ME
-        </div>
-        <p class="instruction">
-            1. <strong>Pinch</strong> inside the blue box to change its color manually via JS.<br>
-            2. <strong>Pinch outside</strong> the box to test standard browser viewport zoom.<br>
-            3. <strong>Double-tap</strong> the text to test browser auto-zoom.
-        </p>
+    <div id="page-wrapper">
+        <section class="card">
+            <h1>בדיקת זום כללית (Full Page Zoom)</h1>
+            <p>הכפתורים למעלה משנים את ה-CSS Transform של כל העמוד. זה מדמה זום מבלי להסתמך על תנועת האצבעות של המשתמש.</p>
+        </section>
+
+        <section class="card">
+            <h2>טקסט עברי ותוכן</h2>
+            <p>כאשר מגדילים את כל העמוד, חשוב לבדוק אם הטקסט "בורח" מהצדדים. בגלל שהגדרנו <code>transform-origin: top right</code>, הזום מתבצע מהפינה הימנית העליונה, שהיא העוגן של השפה העברית.</p>
+            <div class="demo-box"></div>
+            <p>עוד קצת טקסט כדי למלא את המרחב ולראות את השפעת ההגדלה על פריסת האלמנטים (Layout).</p>
+        </section>
+
+        <section class="card">
+            <h2>English Content Check</h2>
+            <p>Testing how mixed content reacts when the parent container is scaled globally.</p>
+        </section>
     </div>
 
     <script>
-        const target = document.getElementById('gesture-target');
-        const scaleDisplay = document.getElementById('scale-val');
-        const distDisplay = document.getElementById('dist-val');
-        const eventDisplay = document.getElementById('event-val');
+        let currentScale = 1;
+        const wrapper = document.getElementById('page-wrapper');
+        const display = document.getElementById('valDisplay');
+        const slider = document.getElementById('zoomSlider');
 
-        let evCache = [];
-        let prevDiff = -1;
+        function setZoom(scale) {
+            currentScale = parseFloat(scale);
+            wrapper.style.transform = `scale(${currentScale})`;
+            
+            // Adjust width to prevent content from shrinking away from the left edge
+            wrapper.style.width = `${100 / currentScale}%`;
+            
+            display.innerText = Math.round(currentScale * 100) + "%";
+            slider.value = currentScale;
+        }
 
-        // 1. Monitor Browser Viewport Zoom
-        window.visualViewport.addEventListener('resize', () => {
-            scaleDisplay.innerText = window.visualViewport.scale.toFixed(2);
-            eventDisplay.innerText = "Viewport Resize (Zoom)";
-        });
-
-        // 2. Custom Pinch Logic (Inside the box)
-        target.onpointerdown = (ev) => { evCache.push(ev); };
-        target.onpointermove = (ev) => {
-            const index = evCache.findIndex((c) => c.pointerId === ev.pointerId);
-            evCache[index] = ev;
-
-            if (evCache.length === 2) {
-                const curDiff = Math.hypot(
-                    evCache[0].clientX - evCache[1].clientX,
-                    evCache[0].clientY - evCache[1].clientY
-                );
-                distDisplay.innerText = Math.round(curDiff);
-
-                if (prevDiff > 0) {
-                    if (curDiff > prevDiff) {
-                        target.style.background = "limegreen";
-                        eventDisplay.innerText = "Pinch Out (Zoom In)";
-                    } else if (curDiff < prevDiff) {
-                        target.style.background = "tomato";
-                        eventDisplay.innerText = "Pinch In (Zoom Out)";
-                    }
-                }
-                prevDiff = curDiff;
+        function changeZoom(delta) {
+            let newScale = currentScale + delta;
+            if (newScale >= 0.5 && newScale <= 3) {
+                setZoom(newScale);
             }
-        };
-
-        target.onpointerup = target.onpointerleave = (ev) => {
-            evCache = evCache.filter((c) => c.pointerId !== ev.pointerId);
-            if (evCache.length < 2) prevDiff = -1;
-        };
+        }
     </script>
 </body>
 </html>

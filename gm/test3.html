@@ -1,131 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mobile Zoom Test Page</title>
+    <title>מבחן זום וטקסט עברי</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --box-color: #007bff;
+            --primary: #0056b3;
+            --accent: #e91e63;
         }
         body {
             font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
             margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s;
-            touch-action: auto; /* Allows default browser gestures */
+            background-color: #f4f4f9;
+            color: #222;
         }
-        #dashboard {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
+        #status-bar {
+            position: sticky;
+            top: 0;
+            background: #222;
+            color: #0f0;
+            padding: 8px;
+            font-family: monospace;
+            text-align: center;
+            z-index: 2000;
+            border-bottom: 2px solid var(--accent);
+        }
+        .container {
             padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-            font-size: 14px;
-            pointer-events: none;
+            max-width: 800px;
+            margin: auto;
         }
-        .test-zone {
-            margin-top: 160px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-        .zoom-box {
-            width: 250px;
-            height: 250px;
-            background-color: var(--box-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
             border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            /* This property allows us to capture pinch gestures in JS */
-            touch-action: none; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        .instruction {
-            color: #666;
-            font-size: 0.9rem;
-            max-width: 300px;
-            text-align: center;
+        h2 {
+            color: var(--primary);
+            border-right: 4px solid var(--accent);
+            padding-right: 10px;
+            margin-top: 0;
+        }
+        /* Testing text wrapping and RTL alignment during zoom */
+        .article-content {
+            column-count: 1;
+            column-gap: 20px;
+        }
+        @media (min-width: 600px) {
+            .article-content { column-count: 2; }
+        }
+        .mixed-text {
+            background: #fff3f3;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffcdd2;
+            direction: rtl;
+        }
+        .scroll-box {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            background: #eee;
+            padding: 10px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
-    <div id="dashboard">
-        <strong>Zoom Diagnostics</strong><br>
-        Visual Viewport Scale: <span id="scale-val">1.0</span><br>
-        Pinch Distance: <span id="dist-val">0</span><br>
-        Last Event: <span id="event-val">None</span>
-    </div>
+<div id="status-bar">
+    Scale: <span id="zoom-level">1.0</span> | 
+    Width: <span id="width-val">0</span>px
+</div>
 
-    <div class="test-zone">
-        <div id="gesture-target" class="zoom-box">
-            PINCH OR DOUBLE-TAP ME
+<div class="container">
+
+    <section>
+        <h2>1. בדיקת טקסט ארוך (Long Text Test)</h2>
+        <div class="article-content">
+            <p>
+                כאשר מבצעים זום במכשירים ניידים, אחד האתגרים הגדולים ביותר בעברית הוא שמירה על כיוון הקריאה. 
+                בפסקה זו אנחנו בודקים האם הטקסט נשאר מיושר לימין גם כשהוא גדל מעבר לגבולות המסך. 
+                האם הדפדפן מאפשר "Reflow" (זרימה מחדש) של הטקסט או שהוא מחייב גלילה אופקית?
+            </p>
+            <p>
+                <b>בדיקת שבירת שורות:</b>
+                נסו להגדיל את הטקסט ולראות אם המילים נחתכות באמצע או אם המשפטים שומרים על המבנה הלוגי שלהם. 
+                בעברית, סימני פיסוק בסוף משפט לפעמים קופצים לצד הלא נכון בזמן זום לא תקין.
+            </p>
         </div>
-        <p class="instruction">
-            1. <strong>Pinch</strong> inside the blue box to change its color manually via JS.<br>
-            2. <strong>Pinch outside</strong> the box to test standard browser viewport zoom.<br>
-            3. <strong>Double-tap</strong> the text to test browser auto-zoom.
-        </p>
-    </div>
+    </section>
 
-    <script>
-        const target = document.getElementById('gesture-target');
-        const scaleDisplay = document.getElementById('scale-val');
-        const distDisplay = document.getElementById('dist-val');
-        const eventDisplay = document.getElementById('event-val');
+    <section>
+        <h2>2. בדיקת טקסט מעורב (Mixed LTR/RTL)</h2>
+        <p>בדיקה של שילוב אנגלית בתוך משפט עברי בזמן זום:</p>
+        <div class="mixed-text">
+            המשתנה שנקרא <code>window.visualViewport.scale</code> הוא קריטי לזיהוי Zoom. 
+            אם נכתוב באנגלית: "Hello World!" ונחזור לעברית, האם הכל נשאר במקום?
+            נקודה בסוף משפט באנגלית. (English point). ונקודה בעברית.
+        </div>
+    </section>
 
-        let evCache = [];
-        let prevDiff = -1;
+    <section>
+        <h2>3. גלילה אופקית (Horizontal Scroll)</h2>
+        <p>אלמנט רחב במיוחד לבדיקת גלילה בזמן זום:</p>
+        <div class="scroll-box">
+            אלמנט רחב מאוד: עברית -> עברית -> עברית -> עברית -> עברית -> עברית -> עברית -> עברית -> עברית
+        </div>
+    </section>
 
-        // 1. Monitor Browser Viewport Zoom
-        window.visualViewport.addEventListener('resize', () => {
-            scaleDisplay.innerText = window.visualViewport.scale.toFixed(2);
-            eventDisplay.innerText = "Viewport Resize (Zoom)";
-        });
+    <section dir="ltr" style="text-align: left;">
+        <h2>4. English Baseline</h2>
+        <p>This section is LTR to compare how the browser handles the zoom transition between directions on the same page.</p>
+    </section>
 
-        // 2. Custom Pinch Logic (Inside the box)
-        target.onpointerdown = (ev) => { evCache.push(ev); };
-        target.onpointermove = (ev) => {
-            const index = evCache.findIndex((c) => c.pointerId === ev.pointerId);
-            evCache[index] = ev;
+</div>
 
-            if (evCache.length === 2) {
-                const curDiff = Math.hypot(
-                    evCache[0].clientX - evCache[1].clientX,
-                    evCache[0].clientY - evCache[1].clientY
-                );
-                distDisplay.innerText = Math.round(curDiff);
+<script>
+    const zoomDisplay = document.getElementById('zoom-level');
+    const widthDisplay = document.getElementById('width-val');
 
-                if (prevDiff > 0) {
-                    if (curDiff > prevDiff) {
-                        target.style.background = "limegreen";
-                        eventDisplay.innerText = "Pinch Out (Zoom In)";
-                    } else if (curDiff < prevDiff) {
-                        target.style.background = "tomato";
-                        eventDisplay.innerText = "Pinch In (Zoom Out)";
-                    }
-                }
-                prevDiff = curDiff;
-            }
-        };
+    function updateMetrics() {
+        if (window.visualViewport) {
+            zoomDisplay.innerText = window.visualViewport.scale.toFixed(2);
+            widthDisplay.innerText = Math.round(window.visualViewport.width);
+        }
+    }
 
-        target.onpointerup = target.onpointerleave = (ev) => {
-            evCache = evCache.filter((c) => c.pointerId !== ev.pointerId);
-            if (evCache.length < 2) prevDiff = -1;
-        };
-    </script>
+    window.visualViewport.addEventListener('resize', updateMetrics);
+    window.visualViewport.addEventListener('scroll', updateMetrics);
+    
+    // Initial call
+    updateMetrics();
+</script>
+
 </body>
 </html>
