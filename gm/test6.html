@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" id="root-element">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>מבחן צביטה לשינוי גופן</title>
+    <style>
+        :root {
+            font-size: 18px;
+            --primary: #007bff;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            touch-action: none; /* Prevents default browser zoom */
+            overflow-y: auto;
+        }
+
+        #status-overlay {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            pointer-events: none;
+            direction: ltr;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 { font-size: 2rem; color: var(--primary); }
+        p { font-size: 1rem; line-height: 1.6; }
+
+        .instruction-box {
+            background: #e7f3ff;
+            border-right: 5px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-overlay">
+        Font Size: <span id="size-val">18</span>px<br>
+        Zoom: <span id="percent-val">100</span>%
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>צביטה לשינוי גופן (Pinch-to-Font)</h1>
+            <div class="instruction-box">
+                <b>הוראות:</b> השתמשו בשתי אצבעות על המסך ופתחו/סגרו אותן כדי להגדיל או להקטין את הטקסט.
+            </div>
+            <p>
+                בשיטה זו, אנחנו מנטרלים את הזום המובנה של הדפדפן באמצעות <code>touch-action: none</code> ומחשבים את המרחק בין האצבעות באופן ידני.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>בדיקת קריאות בעברית</h2>
+            <p>
+                כאשר מגדילים את הטקסט בעברית, חשוב לוודא שהיישור לימין נשמר ושאין גלילה אופקית מיותרת. 
+                מכיוון שאנחנו משנים את ה-Font Size של אלמנט ה-HTML, כל היחידות שמוגדרות ב-REM יגדלו בהתאמה.
+            </p>
+            <p>
+                טקסט מעורב: Testing RTL stability at <span id="inner-px">18</span> pixels.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const root = document.getElementById('root-element');
+        const sizeVal = document.getElementById('size-val');
+        const percentVal = document.getElementById('percent-val');
+        const innerPx = document.getElementById('inner-px');
+
+        let initialFontSize = 18;
+        let currentFontSize = 18;
+        let initialDistance = 0;
+
+        // Limits for sanity
+        const MIN_FONT = 12;
+        const MAX_FONT = 50;
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // Calculate initial distance between two fingers
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialFontSize = currentFontSize;
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault(); // Stop standard browser zoom
+
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+
+                // Calculate the ratio of change
+                const ratio = currentDistance / initialDistance;
+                
+                // Calculate new font size based on the pinch ratio
+                let newSize = initialFontSize * ratio;
+
+                // Apply constraints
+                if (newSize < MIN_FONT) newSize = MIN_FONT;
+                if (newSize > MAX_FONT) newSize = MAX_FONT;
+
+                currentFontSize = newSize;
+                updateUI(currentFontSize);
+            }
+        }, { passive: false });
+
+        function updateUI(size) {
+            root.style.fontSize = size + "px";
+            sizeVal.innerText = Math.round(size);
+            innerPx.innerText = Math.round(size);
+            percentVal.innerText = Math.round((size / 18) * 100);
+        }
+    </script>
+</body>
+</html>
