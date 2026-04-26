@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" id="root-element">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבחן הגדלת גופן (Font Size Zoom)</title>
+    <style>
+        :root {
+            /* 16px is the default (100%) */
+            font-size: 16px; 
+            --primary: #007bff;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            /* Prevents the browser from doing its own text auto-adjustment */
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* Fixed UI that does NOT change size */
+        #zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            direction: ltr;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        button {
+            background: #444;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        button:active { background: var(--primary); }
+
+        /* CONTENT AREAS - Use 'rem' for everything you want to scale */
+        .container {
+            padding: 1rem;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: white;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        h1 { font-size: 1.8rem; margin-top: 0; color: var(--primary); }
+        h2 { font-size: 1.4rem; }
+        p { font-size: 1rem; line-height: 1.5; }
+
+        .demo-box {
+            width: 5rem;
+            height: 5rem;
+            background: var(--primary);
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="zoom-controls">
+        <button onclick="adjustFont(-2)">-</button>
+        <span id="percent-label">100%</span>
+        <button onclick="adjustFont(2)">+</button>
+    </div>
+
+    <div class="container">
+        <section class="card">
+            <h1>הגדלת טקסט חכמה</h1>
+            <p>במקום לבצע "זום" שמותח את התמונה וגורם לטקסט לצאת מהמסך, הקוד הזה משנה את גודל הגופן הבסיסי (Base Font Size).</p>
+        </section>
+
+        <section class="card">
+            <h2>יתרונות ה-Text Reflow</h2>
+            <p>שימו לב שגם כשהטקסט גדל מאוד, השורות פשוט נשברות מוקדם יותר. אין צורך לגלול ימינה ושמאלה (Horizontal Scrolling), מה שהופך את הקריאה בעברית להרבה יותר נוחה בנייד.</p>
+            <div class="demo-box"></div>
+            <p>גם הריבוע הכחול למעלה משתנה כי הוא מוגדר ביחידות <code>rem</code>. זה מאפשר לשמור על יחס תקין בין הטקסט לאלמנטים הגרפיים.</p>
+        </section>
+
+        <section class="card">
+            <h2>בדיקת שילוב English</h2>
+            <p>Testing mixed sentences like "The font size is now <span id="current-px">16</span>px". Everything stays aligned to the right (RTL).</p>
+        </section>
+    </div>
+
+    <script>
+        let currentFontSize = 16;
+        const root = document.getElementById('root-element');
+        const label = document.getElementById('percent-label');
+        const pxDisplay = document.getElementById('current-px');
+
+        function adjustFont(delta) {
+            currentFontSize += delta;
+            
+            // Limits: Don't go smaller than 10px or larger than 40px
+            if (currentFontSize < 10) currentFontSize = 10;
+            if (currentFontSize > 40) currentFontSize = 40;
+
+            // Apply to the HTML element
+            root.style.fontSize = currentFontSize + "px";
+            
+            // Update UI
+            const percent = Math.round((currentFontSize / 16) * 100);
+            label.innerText = percent + "%";
+            pxDisplay.innerText = currentFontSize;
+        }
+    </script>
+</body>
+</html>
