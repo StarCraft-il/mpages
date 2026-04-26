@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" id="root-element">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>מבחן גלילה וצביטה</title>
+    <style>
+        :root {
+            font-size: 18px;
+            --primary: #007bff;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            /* התיקון הקריטי: מאפשר גלילה אנכית אך חוסם זום דפדפן */
+            touch-action: pan-y; 
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #status-overlay {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+            direction: ltr;
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 { font-size: 1.8rem; color: var(--primary); margin-top: 0; }
+        p { font-size: 1rem; line-height: 1.6; }
+
+        /* יצירת גובה כדי שנוכל לבדוק גלילה */
+        .spacer {
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eee;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            border: 2px dashed #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-overlay">
+        Font: <span id="size-val">18</span>px | Zoom: <span id="percent-val">100</span>%
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>תיקון גלילה + צביטה</h1>
+            <p>עכשיו ניתן <b>לגלול למטה</b> בחופשיות. הגלילה האנכית פעילה, ורק ה-Pinch Zoom משנה את גודל הטקסט.</p>
+        </div>
+
+        <div class="spacer">גוללים למטה כדי לראות עוד תוכן...</div>
+
+        <div class="card">
+            <h2>בדיקת שבירת שורות</h2>
+            <p>
+                נסו לבצע צביטה כאן. הטקסט יגדל ויתכווץ, אבל העמוד תמיד יישאר ברוחב המסך. אין גלילה אופקית (ימינה-שמאלה), מה ששומר על חוויית קריאה נוחה בעברית.
+            </p>
+            <p>
+                גם כשהטקסט הופך לענק, הדפדפן מחשב מחדש את מיקום המילים (Reflow).
+            </p>
+        </div>
+
+        <div class="spacer">סוף העמוד - הכל עובד!</div>
+    </div>
+
+    <script>
+        const root = document.getElementById('root-element');
+        const sizeVal = document.getElementById('size-val');
+        const percentVal = document.getElementById('percent-val');
+
+        let currentFontSize = 18;
+        let initialFontSize = 18;
+        let initialDistance = 0;
+
+        const MIN_FONT = 12;
+        const MAX_FONT = 60;
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // מזהה התחלת צביטה
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialFontSize = currentFontSize;
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                // מונע את הזום המובנה של הדפדפן בזמן הצביטה
+                e.preventDefault(); 
+
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+
+                const ratio = currentDistance / initialDistance;
+                let newSize = initialFontSize * ratio;
+
+                // הגבלות גודל
+                if (newSize < MIN_FONT) newSize = MIN_FONT;
+                if (newSize > MAX_FONT) newSize = MAX_FONT;
+
+                currentFontSize = newSize;
+                
+                // עדכון ה-DOM
+                root.style.fontSize = currentFontSize + "px";
+                
+                // עדכון תצוגת סטטוס
+                sizeVal.innerText = Math.round(currentFontSize);
+                percentVal.innerText = Math.round((currentFontSize / 18) * 100);
+            }
+        }, { passive: false });
+
+    </script>
+</body>
+</html>
