@@ -3,19 +3,23 @@
 <head>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" /><title>TestZoom</title>
+    <meta http-equiv="Expires" content="0" /><title>TestZoomMultiply</title>
     <meta charset="utf-8">
         <meta http-equiv="content-language" content="he" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="cleartype" content="on">
     <link href="content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link href="content/css/style_portion_razor.css?v=20260426-test2" rel="stylesheet" />
-        <link href="content/css/style_flex2.css?v=20260426-test2" rel="stylesheet" />
-        <script src="content/lib/jquery/3.5.1/jquery.js?v=20260426-test2"></script>
-        <script src="content/js/site_flex2.js?v=20260426-test2"></script>
+        <link href="content/css/style_portion_razor.css?v=20260426-zoommulti1" rel="stylesheet" />
+        <link href="content/css/style_flex2.css?v=20260426-zoommulti1" rel="stylesheet" />
+        <script src="content/lib/jquery/3.5.1/jquery.js?v=20260426-zoommulti1"></script>
+        <script src="content/js/site_flex2.js?v=20260426-zoommulti1"></script>
         <style>
 
 div.allText {
+}
+
+.mobileZoomLab {
+    display: none;
 }
 
 div.chapterText {
@@ -36,8 +40,65 @@ div.chapterText {
         --mobile-meta-font-size: 1rem;
         --mobile-side-padding: 12px;
         --mobile-fit-width: 100%;
+        --font-multiplier: 1;
     }
 
+    .mobileZoomLab {
+        display: block;
+        position: sticky;
+        top: 0;
+        z-index: 1200;
+        margin: 0 calc(var(--mobile-side-padding) * -1) 12px;
+        padding: 10px 12px 12px;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .mobileZoomLabTitle {
+        font-size: 0.98rem;
+        line-height: 1.35;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #10233e;
+    }
+
+    .mobileZoomLabStatus {
+        font-size: 0.92rem;
+        line-height: 1.45;
+        color: #29476b;
+        margin-bottom: 8px;
+    }
+
+    .mobileZoomLabButtons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .mobileZoomLabButtons button {
+        border: 1px solid #8fb4d8;
+        background: #ffffff;
+        color: #123458;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.92rem;
+        line-height: 1;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .mobileZoomLabButtons button.is-active {
+        background: #123458;
+        color: #ffffff;
+        border-color: #123458;
+    }
+
+    .mobileZoomLabHint {
+        margin-top: 8px;
+        font-size: 0.88rem;
+        line-height: 1.45;
+        color: #476889;
+    }
     html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
@@ -60,7 +121,7 @@ div.chapterText {
         touch-action: auto;
         overscroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
-        font-size: var(--mobile-base-font-size);
+        font-size: calc(var(--mobile-base-font-size) * var(--font-multiplier));
         line-height: 1.6;
         background: #ffffff;
     }
@@ -81,7 +142,7 @@ div.chapterText {
     #parashaContentRow .contentHeader,
     #parashaContentRow .lastVerse,
     div.allText,
-    div.chapterText {
+div.chapterText {
         width: 100%;
         max-width: 100%;
         min-width: 0;
@@ -99,7 +160,7 @@ div.chapterText {
     }
 
     #parashaContentRow #parashaName {
-        font-size: var(--mobile-title-font-size) !important;
+        font-size: calc(var(--mobile-title-font-size) * var(--font-multiplier)) !important;
         line-height: 1.25;
         margin-bottom: 0.8rem;
         text-align: center;
@@ -115,7 +176,7 @@ div.chapterText {
         padding-inline-start: 1rem !important;
         margin-top: 0.75rem !important;
         margin-bottom: 1rem !important;
-        font-size: var(--mobile-meta-font-size) !important;
+        font-size: calc(var(--mobile-meta-font-size) * var(--font-multiplier)) !important;
         line-height: 1.7 !important;
     }
 
@@ -130,7 +191,7 @@ div.chapterText {
     }
 
     #torahStatistcsForPortion {
-        font-size: var(--mobile-meta-font-size) !important;
+        font-size: calc(var(--mobile-meta-font-size) * var(--font-multiplier)) !important;
         line-height: 1.55;
         overflow-wrap: anywhere;
         margin-bottom: 0.8rem;
@@ -141,7 +202,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
-        font-size: var(--mobile-reading-font-size) !important;
+        font-size: calc(var(--mobile-reading-font-size) * var(--font-multiplier)) !important;
         line-height: 1.62 !important;
         letter-spacing: -1px !important;
         word-spacing: 0.08em !important;
@@ -155,12 +216,12 @@ div.chapterText {
     div.allText span.shemot,
     div.allText span.book,
     div.allText span.godName {
-        font-size: var(--mobile-inline-highlight-font-size) !important;
+        font-size: calc(var(--mobile-inline-highlight-font-size) * var(--font-multiplier)) !important;
         line-height: 1.4 !important;
     }
 
     div.allText span.small {
-        font-size: var(--mobile-small-font-size) !important;
+        font-size: calc(var(--mobile-small-font-size) * var(--font-multiplier)) !important;
         line-height: 1.45 !important;
     }
 
@@ -170,13 +231,13 @@ div.chapterText {
 
     #parashaContentRow .aliya .toStartOfPortion {
         display: inline-block;
-        font-size: 1rem !important;
+        font-size: calc(1rem * var(--font-multiplier)) !important;
         margin-bottom: 0.55rem;
     }
 
     #parashaContentRow .aliya .a-header {
         display: inline-block;
-        font-size: var(--mobile-section-font-size) !important;
+        font-size: calc(var(--mobile-section-font-size) * var(--font-multiplier)) !important;
         letter-spacing: 0.16rem !important;
         line-height: 1.2 !important;
         overflow-wrap: anywhere;
@@ -187,7 +248,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
-        font-size: 1.2rem !important;
+        font-size: calc(1.2rem * var(--font-multiplier)) !important;
         line-height: 1.45 !important;
         letter-spacing: normal !important;
         padding-top: 14px !important;
@@ -206,7 +267,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
-        font-size: 1.12rem !important;
+        font-size: calc(1.12rem * var(--font-multiplier)) !important;
         line-height: 1.35 !important;
     }
 
@@ -219,7 +280,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
-        font-size: 1.2rem !important;
+        font-size: calc(1.2rem * var(--font-multiplier)) !important;
         line-height: 1.4 !important;
     }
 
@@ -227,7 +288,7 @@ div.chapterText {
     .lastVerse .base-last-verse,
     .lastVerse .last_pasuk_mikra_1,
     .lastVerse .last_pasuk_mikra_2 {
-        font-size: var(--mobile-reading-font-size-secondary) !important;
+        font-size: calc(var(--mobile-reading-font-size-secondary) * var(--font-multiplier)) !important;
         line-height: 1.62 !important;
         letter-spacing: -1px !important;
         word-spacing: 0.08em !important;
@@ -248,31 +309,25 @@ div.chapterText {
         padding-left: 6px !important;
     }
 
-    body.mobile-zoom-active #parashaContentRow #parashaName {
-        font-size: 1.35rem !important;
-    }
 
-    body.mobile-zoom-active ul#aliyusTableLinks,
-    body.mobile-zoom-active #torahStatistcsForPortion {
-        font-size: 0.92rem !important;
-    }
 
-    body.mobile-zoom-active #parashaContentRow .aliya .a-header {
-        font-size: 1.55rem !important;
-        letter-spacing: 0.08rem !important;
-    }
 
-    body.mobile-zoom-active .base-header,
-    body.mobile-zoom-active .lastVerse .header,
-    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header,
-    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
-    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
-        font-size: 0.95rem !important;
-    }
 }
         </style>
 </head>
 <body dir="rtl">
+        <div class="mobileZoomLab">
+            <div class="mobileZoomLabTitle">Zoom multiply test</div>
+            <div class="mobileZoomLabStatus" id="mobileZoomLabStatus">Font 100% · Pinch zoom x1.00</div>
+            <div class="mobileZoomLabButtons">
+                <button type="button" data-font-multiplier="1.00" class="is-active">100%</button>
+                <button type="button" data-font-multiplier="1.10">110%</button>
+                <button type="button" data-font-multiplier="1.20">120%</button>
+                <button type="button" data-font-multiplier="1.35">135%</button>
+                <button type="button" data-font-multiplier="1.50">150%</button>
+            </div>
+            <div class="mobileZoomLabHint">Tap a font multiplier, then pinch zoom and see how the layout refits the visible mobile width.</div>
+        </div>
         <div id="parashaContentRow">
             <div id="parashaName"><h1>זום פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
 <ul id="aliyusTableLinks">
@@ -3868,18 +3923,52 @@ div.chapterText {
 
                 <hr />
         </div>
-        <script>
+                <script>
             (function () {
+                const fontButtons = Array.from(document.querySelectorAll("[data-font-multiplier]"));
+                const statusElement = document.getElementById("mobileZoomLabStatus");
+                const rootElement = document.documentElement;
+                const storageKey = "p.f2.zoom.multiply.fontMultiplier";
+                let currentFontMultiplier = 1;
+                let updateHandle = 0;
+
+                function setActiveFontButton(multiplier) {
+                    for (const button of fontButtons) {
+                        const buttonMultiplier = Number(button.getAttribute("data-font-multiplier") || 1);
+                        button.classList.toggle("is-active", Math.abs(buttonMultiplier - multiplier) < 0.001);
+                    }
+                }
+
+                function updateStatus(scale) {
+                    if (!statusElement) {
+                        return;
+                    }
+
+                    const safeScale = Number.isFinite(scale) ? scale : 1;
+                    statusElement.textContent = "Font " + Math.round(currentFontMultiplier * 100) + "% · Pinch zoom x" + safeScale.toFixed(2);
+                }
+
+                function applyFontMultiplier(multiplier) {
+                    currentFontMultiplier = multiplier;
+                    rootElement.style.setProperty("--font-multiplier", String(multiplier));
+                    setActiveFontButton(multiplier);
+                    window.localStorage.setItem(storageKey, String(multiplier));
+                    const currentScale = window.visualViewport ? Number(window.visualViewport.scale || 1) : 1;
+                    updateStatus(currentScale);
+                }
+
                 function updateMobileZoomLayout() {
                     if (!window.matchMedia("(max-width: 768px)").matches) {
-                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        rootElement.style.setProperty("--mobile-fit-width", "100%");
                         document.body.classList.remove("mobile-zoom-active");
+                        updateStatus(1);
                         return;
                     }
 
                     if (!window.visualViewport) {
-                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        rootElement.style.setProperty("--mobile-fit-width", "100%");
                         document.body.classList.remove("mobile-zoom-active");
+                        updateStatus(1);
                         return;
                     }
 
@@ -3887,20 +3976,34 @@ div.chapterText {
                     const visibleWidth = Math.max(280, Math.floor(window.visualViewport.width || window.innerWidth));
 
                     if (scale > 1.01) {
-                        document.documentElement.style.setProperty("--mobile-fit-width", visibleWidth + "px");
+                        rootElement.style.setProperty("--mobile-fit-width", visibleWidth + "px");
                         document.body.classList.add("mobile-zoom-active");
-                        return;
+                    } else {
+                        rootElement.style.setProperty("--mobile-fit-width", "100%");
+                        document.body.classList.remove("mobile-zoom-active");
                     }
 
-                    document.documentElement.style.setProperty("--mobile-fit-width", "100%");
-                    document.body.classList.remove("mobile-zoom-active");
+                    updateStatus(scale);
                 }
-
-                let updateHandle = 0;
 
                 function scheduleMobileZoomLayoutUpdate() {
                     window.cancelAnimationFrame(updateHandle);
                     updateHandle = window.requestAnimationFrame(updateMobileZoomLayout);
+                }
+
+                for (const button of fontButtons) {
+                    button.addEventListener("click", function () {
+                        const multiplier = Number(button.getAttribute("data-font-multiplier") || 1);
+                        applyFontMultiplier(multiplier);
+                        scheduleMobileZoomLayoutUpdate();
+                    }, { passive: true });
+                }
+
+                const savedMultiplier = Number(window.localStorage.getItem(storageKey) || 1);
+                if (Number.isFinite(savedMultiplier) && savedMultiplier > 0) {
+                    applyFontMultiplier(savedMultiplier);
+                } else {
+                    applyFontMultiplier(1);
                 }
 
                 window.addEventListener("load", scheduleMobileZoomLayoutUpdate, { passive: true });
