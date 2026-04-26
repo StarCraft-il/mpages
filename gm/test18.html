@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Android Zoom Gesture Test With Range Variables</title>
+  <style>
+    :root {
+      --page-font-size: 16px;
+      --bg-1: #f4e7d7;
+      --bg-2: #d7ebf7;
+      --panel: rgba(255, 255, 255, 0.84);
+      --text: #17202a;
+      --muted: #4f5e6d;
+      --accent: #b6472f;
+      --border: rgba(23, 32, 42, 0.14);
+      --shadow: 0 18px 50px rgba(23, 32, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: var(--page-font-size);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(182, 71, 47, 0.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(49, 112, 173, 0.18), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    main {
+      width: min(920px, calc(100% - 1.5rem));
+      margin: 0 auto;
+      padding: 1rem 0 3rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4.8vw, 3.5rem);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .lead,
+    .panel p,
+    li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .value {
+      min-width: 4.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .limits {
+      font-size: 0.95rem;
+    }
+
+    input[type="range"] {
+      flex: 1 1 14rem;
+      accent-color: var(--accent);
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 0.6rem 0.95rem;
+      font: inherit;
+      cursor: pointer;
+      color: #fff;
+      background: var(--text);
+    }
+
+    button.secondary {
+      color: var(--text);
+      background: #fff;
+      border-color: var(--border);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .sample-input {
+      width: 100%;
+      padding: 0.7rem;
+      font: inherit;
+      border: 1px solid rgba(23, 32, 42, 0.18);
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>Android Zoom Test</h1>
+      <p class="lead">
+        This version reads the slider range from JavaScript variables. Update the minimum and maximum values
+        once, reload, and test how Android gesture zoom behaves across that configured font-size span.
+      </p>
+    </section>
+
+    <section class="panel controls" aria-label="Font size controls">
+      <div class="row">
+        <label for="fontSize"><strong>Root font size</strong></label>
+        <input id="fontSize" type="range" value="16">
+        <span class="value" id="fontSizeValue">16px</span>
+      </div>
+      <div class="row limits" id="limitsText"></div>
+      <div class="row" id="presetButtons"></div>
+      <div class="row">
+        <button type="button" class="secondary" id="resetSize">Reset</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Reading Sample</h2>
+        <p>
+          Pinch zoom the page, then change the slider, then repeat in reverse order. This makes it easier to
+          spot how page scaling and text reflow interact in Android Chrome or a WebView host app.
+        </p>
+      </article>
+
+      <article class="panel">
+        <h2>Wrapped Labels</h2>
+        <ul>
+          <li>Compact text</li>
+          <li>Medium length descriptive text</li>
+          <li>Longer text to expose wrapping under larger root font sizes</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h2>Input Check</h2>
+        <p>Focus the field and test zoom behavior while the soft keyboard is open.</p>
+        <input class="sample-input" type="text" placeholder="Type here">
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const MIN_FONT_SIZE = 12;
+    const MAX_FONT_SIZE = 32;
+    const DEFAULT_FONT_SIZE = 16;
+    const PRESET_FONT_SIZES = [MIN_FONT_SIZE, 16, 20, 24, MAX_FONT_SIZE];
+
+    const root = document.documentElement;
+    const slider = document.getElementById("fontSize");
+    const value = document.getElementById("fontSizeValue");
+    const limitsText = document.getElementById("limitsText");
+    const presetButtons = document.getElementById("presetButtons");
+    const resetButton = document.getElementById("resetSize");
+
+    function clampFontSize(size) {
+      return Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, size));
+    }
+
+    function applyFontSize(size) {
+      const nextSize = clampFontSize(Number(size));
+      root.style.setProperty("--page-font-size", `${nextSize}px`);
+      slider.value = nextSize;
+      value.textContent = `${nextSize}px`;
+    }
+
+    function buildPresetButtons() {
+      const uniqueSizes = [...new Set(PRESET_FONT_SIZES)].filter((size) => {
+        return size >= MIN_FONT_SIZE && size <= MAX_FONT_SIZE;
+      });
+
+      uniqueSizes.forEach((size) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${size}px`;
+        button.addEventListener("click", () => applyFontSize(size));
+        presetButtons.appendChild(button);
+      });
+    }
+
+    slider.min = String(MIN_FONT_SIZE);
+    slider.max = String(MAX_FONT_SIZE);
+    slider.step = "1";
+    limitsText.textContent = `Minimum: ${MIN_FONT_SIZE}px   Maximum: ${MAX_FONT_SIZE}px`;
+
+    slider.addEventListener("input", (event) => {
+      applyFontSize(event.target.value);
+    });
+
+    resetButton.addEventListener("click", () => {
+      applyFontSize(DEFAULT_FONT_SIZE);
+    });
+
+    buildPresetButtons();
+    applyFontSize(DEFAULT_FONT_SIZE);
+  </script>
+</body>
+</html>

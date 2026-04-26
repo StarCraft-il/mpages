@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="us-ascii" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" /><title>Android Zoom Gesture Test</title><style>    :root {
+      --page-font-size: 16px;
+      --bg-1: #f6efe5;
+      --bg-2: #d9ecff;
+      --panel: rgba(255, 255, 255, 0.84);
+      --text: #18212f;
+      --muted: #516071;
+      --accent: #d64933;
+      --accent-2: #1f6feb;
+      --border: rgba(24, 33, 47, 0.14);
+      --shadow: 0 18px 50px rgba(24, 33, 47, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: var(--page-font-size);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(214, 73, 51, 0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(31, 111, 235, 0.22), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    main {
+      width: min(980px, calc(100% - 1.5rem));
+      margin: 0 auto;
+      padding: 1rem 0 3rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      line-height: 0.95;
+      margin-bottom: 0.75rem;
+    }
+
+    .lead {
+      max-width: 40rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+
+    .controls {
+      display: grid;
+      gap: 0.9rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .row label {
+      font-weight: 700;
+    }
+
+    .value {
+      min-width: 4.25rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    input[type="range"] {
+      flex: 1 1 14rem;
+      accent-color: var(--accent);
+    }
+
+    button {
+      border: 1px solid transparent;
+      background: var(--text);
+      color: #fff;
+      padding: 0.6rem 0.95rem;
+      border-radius: 999px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    button:hover,
+    button:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .card {
+      padding: 1rem;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .card p,
+    .sample-list {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .sample-list {
+      padding-left: 1.2rem;
+      margin: 0;
+    }
+
+    .ruler {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0.35rem;
+      margin-top: 1rem;
+    }
+
+    .tick {
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      background: rgba(31, 111, 235, 0.08);
+      border: 1px solid rgba(31, 111, 235, 0.16);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--accent-2);
+    }
+
+    .sticky-note {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-left: 4px solid var(--accent);
+      background: rgba(214, 73, 51, 0.08);
+      color: var(--text);
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100% - 1rem, 980px);
+      }
+
+      .hero,
+      .controls,
+      .card {
+        padding: 0.95rem;
+      }
+
+      h1 {
+        line-height: 1.02;
+      }
+    }
+  </style></head><body><main><section class="hero panel"><h1>Android Zoom Gesture Test</h1><p class="lead">Use pinch zoom in Chrome or WebView, then change the page font size to compare browser zoom, text scaling, and layout reflow on the same screen.</p><div class="sticky-note">Viewport allows user scaling. The slider below updates the root <code>html</code> font size in real time.</div></section><section class="controls panel" aria-label="Font size controls"><div class="row"><label for="fontSize">Root font size</label> <input id="fontSize" type="range" min="12" max="32" step="1" value="16"></input> <span class="value" id="fontSizeValue">16px</span></div><div class="row"><button type="button" data-size="12">12px</button> <button type="button" data-size="16">16px</button> <button type="button" data-size="20">20px</button> <button type="button" data-size="24">24px</button> <button type="button" class="secondary" id="resetZoom">Reset slider</button></div></section><section class="grid"><article class="card panel"><h2>Reading Sample</h2><p>This paragraph is long enough to wrap across multiple lines on a phone. It helps show whether pinch zoom simply scales the rendered page, whether text autosizing is active, and how line length changes once the root font size is increased.</p><p>Resize the text first, then zoom the page, then reload and do it in the opposite order. Android browsers often reveal edge cases when those two operations interact.</p></article><article class="card panel"><h2>Mixed Elements</h2><ul class="sample-list"><li>Short label: <strong>Density</strong></li><li>Medium label: <strong>Gesture scaling response</strong></li><li>Long label: <strong>Overflow behavior for narrow mobile viewports</strong></li></ul><div class="ruler" aria-hidden="true"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div><div class="tick">7</div><div class="tick">8</div></div></article><article class="card panel"><h2>Input Surface</h2><p>Focus into fields and pinch around them to test keyboard launch, viewport resizing, and font-size interactions in forms.</p><p><label for="sampleInput">Sample input</label></p><p><input id="sampleInput" type="text" placeholder="Type here" style="width:100%;padding:0.7rem;font:inherit;border:1px solid rgba(24,33,47,0.18);border-radius:6px;"></input></p></article></section></main><script>    const root = document.documentElement;
+    const slider = document.getElementById("fontSize");
+    const value = document.getElementById("fontSizeValue");
+    const resetButton = document.getElementById("resetZoom");
+    const presetButtons = document.querySelectorAll("button[data-size]");
+
+    function applyFontSize(size) {
+      root.style.setProperty("--page-font-size", `${size}px`);
+      slider.value = size;
+      value.textContent = `${size}px`;
+    }
+
+    slider.addEventListener("input", (event) => {
+      applyFontSize(event.target.value);
+    });
+
+    presetButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        applyFontSize(button.dataset.size);
+      });
+    });
+
+    resetButton.addEventListener("click", () => {
+      applyFontSize(16);
+    });
+
+    applyFontSize(16);
+  </script></body></html>
