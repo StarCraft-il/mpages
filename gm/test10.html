@@ -1,147 +1,404 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" id="root-element">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>מבחן צביטה לשינוי גופן</title>
-    <style>
-        :root {
-            font-size: 18px;
-            --primary: #007bff;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Text Size & Line Height Gesture Test</title>
+  <style>
+    :root {
+      --page-bg: #f3f4f6;
+      --surface: #ffffff;
+      --header-bg: #1f2937;
+      --footer-bg: #111827;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border: #d1d5db;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --content-font-size: 16px;
+      --content-line-height: 1.6;
+      --content-width: min(100%, 860px);
+    }
 
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f6;
-            touch-action: none; /* Prevents default browser zoom */
-            overflow-y: auto;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        #status-overlay {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 1000;
-            pointer-events: none;
-            direction: ltr;
-        }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--page-bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overflow-x: hidden;
+    }
 
-        .container {
-            padding: 2rem;
-            max-width: 100%;
-        }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
 
-        .card {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem 1rem;
+      box-shadow: var(--shadow);
+    }
 
-        h1 { font-size: 2rem; color: var(--primary); }
-        p { font-size: 1rem; line-height: 1.6; }
+    .header-wrap,
+    .footer-wrap,
+    main {
+      width: var(--content-width);
+      margin: 0 auto;
+    }
 
-        .instruction-box {
-            background: #e7f3ff;
-            border-right: 5px solid var(--primary);
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-    </style>
+    .title {
+      margin: 0;
+      font-size: clamp(1.15rem, 4vw, 1.5rem);
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-top: 0.45rem;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: #d1d5db;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #0f172a;
+      border-radius: 999px;
+      padding: 0.65rem 0.95rem;
+      font-size: 0.95rem;
+      line-height: 1.2;
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .gesture-zone {
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+      border: 2px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 1rem;
+      touch-action: pan-x pan-y;
+      overscroll-behavior: contain;
+    }
+
+    .gesture-zone.active {
+      border-color: #2563eb;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }
+
+    .content {
+      font-size: var(--content-font-size);
+      line-height: var(--content-line-height);
+      transition: font-size 100ms linear, line-height 100ms linear;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .content h2 {
+      margin: 0 0 0.75em;
+      font-size: 1.45em;
+      line-height: 1.2;
+    }
+
+    .content h3 {
+      margin: 1.2em 0 0.5em;
+      font-size: 1.15em;
+      line-height: 1.25;
+    }
+
+    .content p {
+      margin: 0 0 1em;
+    }
+
+    .content .small {
+      font-size: 0.9em;
+    }
+
+    .content .large {
+      font-size: 1.2em;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .chip {
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+      font-size: 0.85em;
+      line-height: 1.2;
+    }
+
+    footer {
+      background: var(--footer-bg);
+      color: #cbd5e1;
+      padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+  </style>
 </head>
 <body>
-
-    <div id="status-overlay">
-        Font Size: <span id="size-val">18</span>px<br>
-        Zoom: <span id="percent-val">100</span>%
+  <header>
+    <div class="header-wrap">
+      <h1 class="title">Text Size & Line Height Gesture Test</h1>
+      <div class="subtitle">
+        Two-finger pinch changes only the article text size and line height. The page itself does not zoom.
+      </div>
     </div>
+  </header>
 
-    <div class="container">
-        <div class="card">
-            <h1>צביטה לשינוי גופן (Pinch-to-Font)</h1>
-            <div class="instruction-box">
-                <b>הוראות:</b> השתמשו בשתי אצבעות על המסך ופתחו/סגרו אותן כדי להגדיל או להקטין את הטקסט.
-            </div>
-            <p>
-                בשיטה זו, אנחנו מנטרלים את הזום המובנה של הדפדפן באמצעות <code>touch-action: none</code> ומחשבים את המרחק בין האצבעות באופן ידני.
-            </p>
+  <main>
+    <section class="panel controls">
+      <div class="status" id="statusText">
+        Use two fingers inside the reading area to change text size and line height.
+      </div>
+      <div class="button-row">
+        <button type="button" id="decreaseBtn">A−</button>
+        <button type="button" id="resetBtn">Reset</button>
+        <button type="button" id="increaseBtn">A+</button>
+      </div>
+    </section>
+
+    <section class="panel gesture-zone" id="gestureZone">
+      <article class="content" id="contentArea">
+        <h2>Responsive Reading Area</h2>
+        <p>
+          This test page is built for mobile. It keeps the page layout stable while allowing you to adjust only the
+          text size and line height inside this content block. Scroll with one finger as usual. Use a two-finger pinch
+          in this area to make the text smaller or larger.
+        </p>
+
+        <div class="chips">
+          <span class="chip">One finger: scroll</span>
+          <span class="chip">Two fingers: resize text</span>
+          <span class="chip">Header and footer stay fixed</span>
+          <span class="chip">No page zoom logic</span>
         </div>
 
-        <div class="card">
-            <h2>בדיקת קריאות בעברית</h2>
-            <p>
-                כאשר מגדילים את הטקסט בעברית, חשוב לוודא שהיישור לימין נשמר ושאין גלילה אופקית מיותרת. 
-                מכיוון שאנחנו משנים את ה-Font Size של אלמנט ה-HTML, כל היחידות שמוגדרות ב-REM יגדלו בהתאמה.
-            </p>
-            <p>
-                טקסט מעורב: Testing RTL stability at <span id="inner-px">18</span> pixels.
-            </p>
-        </div>
+        <h3>Small Text Sample</h3>
+        <p class="small">
+          This smaller paragraph helps verify that relative sizing still looks clean when the base content font changes.
+          Line height is recalculated together with the font size, so text should remain readable and not look cramped.
+        </p>
+
+        <h3>Normal Text Sample</h3>
+        <p>
+          The main reading size is controlled by a single CSS variable. Everything inside this article uses relative
+          units, so headings, chips, and body text all scale in proportion. That makes the content reflow naturally
+          according to the mobile screen width.
+        </p>
+
+        <h3>Large Text Sample</h3>
+        <p class="large">
+          This larger paragraph is useful for checking readability, wrapping, and vertical rhythm. The goal is to adjust
+          typography only, not browser zoom. That means the viewport stays stable while the content becomes easier or
+          harder to read based on your gesture.
+        </p>
+
+        <h3>Long Paragraph Test</h3>
+        <p>
+          Mobile reading experiences often fail when text size changes without matching line height. In this demo,
+          line height is linked to the active font size so that each paragraph keeps comfortable spacing. The page also
+          updates itself on orientation change and window resize, which helps keep the content ordered on different
+          screen sizes.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-wrap" id="footerInfo">
+      Font size: <span class="mono" id="fontSizeValue">16px</span>
+      &nbsp;|&nbsp;
+      Line height: <span class="mono" id="lineHeightValue">1.60</span>
+      &nbsp;|&nbsp;
+      Screen: <span class="mono" id="screenValue">0 × 0</span>
     </div>
+  </footer>
 
-    <script>
-        const root = document.getElementById('root-element');
-        const sizeVal = document.getElementById('size-val');
-        const percentVal = document.getElementById('percent-val');
-        const innerPx = document.getElementById('inner-px');
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const zone = document.getElementById('gestureZone');
+      const statusText = document.getElementById('statusText');
+      const fontSizeValue = document.getElementById('fontSizeValue');
+      const lineHeightValue = document.getElementById('lineHeightValue');
+      const screenValue = document.getElementById('screenValue');
+      const increaseBtn = document.getElementById('increaseBtn');
+      const decreaseBtn = document.getElementById('decreaseBtn');
+      const resetBtn = document.getElementById('resetBtn');
 
-        let initialFontSize = 18;
-        let currentFontSize = 18;
-        let initialDistance = 0;
+      const minFont = 14;
+      const maxFont = 32;
+      const baseFont = 16;
+      const minLine = 1.35;
+      const maxLine = 2.1;
+      const baseLine = 1.6;
 
-        // Limits for sanity
-        const MIN_FONT = 12;
-        const MAX_FONT = 50;
+      let currentFont = baseFont;
+      let currentLine = baseLine;
+      let gestureActive = false;
+      let startDistance = 0;
+      let startFont = baseFont;
 
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                // Calculate initial distance between two fingers
-                initialDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-                initialFontSize = currentFontSize;
-            }
-        }, { passive: false });
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
 
-        document.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault(); // Stop standard browser zoom
+      function lineHeightFor(fontPx) {
+        const ratio = (fontPx - minFont) / (maxFont - minFont || 1);
+        const value = baseLine + (ratio - 0.15) * 0.35;
+        return clamp(value, minLine, maxLine);
+      }
 
-                const currentDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
+      function applyTypography(fontPx) {
+        currentFont = clamp(fontPx, minFont, maxFont);
+        currentLine = lineHeightFor(currentFont);
+        root.style.setProperty('--content-font-size', currentFont.toFixed(2) + 'px');
+        root.style.setProperty('--content-line-height', currentLine.toFixed(2));
+        fontSizeValue.textContent = currentFont.toFixed(2) + 'px';
+        lineHeightValue.textContent = currentLine.toFixed(2);
+      }
 
-                // Calculate the ratio of change
-                const ratio = currentDistance / initialDistance;
-                
-                // Calculate new font size based on the pinch ratio
-                let newSize = initialFontSize * ratio;
+      function updateScreenInfo() {
+        screenValue.textContent = window.innerWidth + ' × ' + window.innerHeight;
+      }
 
-                // Apply constraints
-                if (newSize < MIN_FONT) newSize = MIN_FONT;
-                if (newSize > MAX_FONT) newSize = MAX_FONT;
+      function getDistance(touchA, touchB) {
+        const dx = touchA.clientX - touchB.clientX;
+        const dy = touchA.clientY - touchB.clientY;
+        return Math.hypot(dx, dy);
+      }
 
-                currentFontSize = newSize;
-                updateUI(currentFontSize);
-            }
-        }, { passive: false });
-
-        function updateUI(size) {
-            root.style.fontSize = size + "px";
-            sizeVal.innerText = Math.round(size);
-            innerPx.innerText = Math.round(size);
-            percentVal.innerText = Math.round((size / 18) * 100);
+      function startGesture(event) {
+        if (event.touches.length !== 2) {
+          return;
         }
-    </script>
+
+        gestureActive = true;
+        startDistance = getDistance(event.touches[0], event.touches[1]);
+        startFont = currentFont;
+        zone.classList.add('active');
+        statusText.textContent = 'Pinch detected: resizing text and line height only.';
+      }
+
+      function moveGesture(event) {
+        if (!gestureActive || event.touches.length !== 2) {
+          return;
+        }
+
+        event.preventDefault();
+        const currentDistance = getDistance(event.touches[0], event.touches[1]);
+        const scale = currentDistance / startDistance;
+        const nextFont = startFont * scale;
+        applyTypography(nextFont);
+      }
+
+      function endGesture() {
+        if (!gestureActive) {
+          return;
+        }
+
+        gestureActive = false;
+        zone.classList.remove('active');
+        statusText.textContent = 'One-finger scroll still works. Two-finger pinch changes text size only.';
+      }
+
+      function resizeForScreen() {
+        const screenWidth = Math.max(320, Math.min(window.innerWidth, 860));
+        const autoFont = clamp(15 + ((screenWidth - 320) / 540) * 2, 15, 17);
+
+        if (!gestureActive && Math.abs(currentFont - baseFont) < 0.01) {
+          applyTypography(autoFont);
+        }
+
+        updateScreenInfo();
+      }
+
+      zone.addEventListener('touchstart', startGesture, { passive: true });
+      zone.addEventListener('touchmove', moveGesture, { passive: false });
+      zone.addEventListener('touchend', endGesture, { passive: true });
+      zone.addEventListener('touchcancel', endGesture, { passive: true });
+
+      increaseBtn.addEventListener('click', function () {
+        applyTypography(currentFont + 1);
+        statusText.textContent = 'Text increased manually.';
+      });
+
+      decreaseBtn.addEventListener('click', function () {
+        applyTypography(currentFont - 1);
+        statusText.textContent = 'Text decreased manually.';
+      });
+
+      resetBtn.addEventListener('click', function () {
+        currentFont = baseFont;
+        applyTypography(baseFont);
+        resizeForScreen();
+        statusText.textContent = 'Typography reset to the screen-based default.';
+      });
+
+      window.addEventListener('resize', resizeForScreen, { passive: true });
+      window.addEventListener('orientationchange', resizeForScreen, { passive: true });
+
+      applyTypography(baseFont);
+      resizeForScreen();
+    })();
+  </script>
 </body>
 </html>
