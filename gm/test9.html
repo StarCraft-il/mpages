@@ -1,147 +1,247 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" id="root-element">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>מבחן צביטה לשינוי גופן</title>
-    <style>
-        :root {
-            font-size: 18px;
-            --primary: #007bff;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mobile Font Zoom Test</title>
+  <style>
+    :root {
+      font-size: 16px;
+      --page-bg: #f5f6f8;
+      --card-bg: #ffffff;
+      --header-bg: #1f2937;
+      --footer-bg: #111827;
+      --text-main: #222222;
+      --text-light: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
 
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f6;
-            touch-action: none; /* Prevents default browser zoom */
-            overflow-y: auto;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        #status-overlay {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 1000;
-            pointer-events: none;
-            direction: ltr;
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--page-bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
 
-        .container {
-            padding: 2rem;
-            max-width: 100%;
-        }
+    body {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
 
-        .card {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--header-bg);
+      color: white;
+      padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem 1rem;
+      box-shadow: var(--shadow);
+    }
 
-        h1 { font-size: 2rem; color: var(--primary); }
-        p { font-size: 1rem; line-height: 1.6; }
+    .header-title {
+      margin: 0;
+      font-size: clamp(1.1rem, 4vw, 1.4rem);
+      line-height: 1.2;
+      font-weight: 700;
+    }
 
-        .instruction-box {
-            background: #e7f3ff;
-            border-right: 5px solid var(--primary);
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-    </style>
+    .debug {
+      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      line-height: 1.35;
+      color: var(--text-light);
+      opacity: 0.92;
+      word-break: break-word;
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .intro {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 16px;
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+      overflow-wrap: break-word;
+    }
+
+    .card h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    .small-text {
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+
+    .normal-text {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .large-text {
+      font-size: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .xlarge-text {
+      font-size: 1.5rem;
+      line-height: 1.8;
+    }
+
+    footer {
+      background: var(--footer-bg);
+      color: var(--text-muted);
+      padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    .pill {
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+      line-height: 1.2;
+      color: #374151;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1 class="header-title">Mobile Font Zoom Test</h1>
+    <div class="debug" id="headerInfo">Loading viewport info…</div>
+  </header>
 
-    <div id="status-overlay">
-        Font Size: <span id="size-val">18</span>px<br>
-        Zoom: <span id="percent-val">100</span>%
-    </div>
+  <main>
+    <section class="intro">
+      This page is built to test mobile pinch gestures, scrolling, orientation changes, and responsive text sizing.
+      The layout uses relative font sizes and recalculates the root font size based on the visible mobile viewport.
+      That keeps the page readable without relying on fixed page zoom.
+      <div class="pill-row">
+        <span class="pill">Pinch</span>
+        <span class="pill">Scroll</span>
+        <span class="pill">Rotate</span>
+        <span class="pill">Responsive text</span>
+      </div>
+    </section>
 
-    <div class="container">
-        <div class="card">
-            <h1>צביטה לשינוי גופן (Pinch-to-Font)</h1>
-            <div class="instruction-box">
-                <b>הוראות:</b> השתמשו בשתי אצבעות על המסך ופתחו/סגרו אותן כדי להגדיל או להקטין את הטקסט.
-            </div>
-            <p>
-                בשיטה זו, אנחנו מנטרלים את הזום המובנה של הדפדפן באמצעות <code>touch-action: none</code> ומחשבים את המרחק בין האצבעות באופן ידני.
-            </p>
-        </div>
+    <section class="card small-text">
+      <h2>Small Text</h2>
+      This block uses a smaller relative font size and a slightly tighter line height.
+      It is useful for captions, notes, metadata, and other secondary content.
+      Try zooming and rotating the phone to verify that the text remains ordered and readable.
+    </section>
 
-        <div class="card">
-            <h2>בדיקת קריאות בעברית</h2>
-            <p>
-                כאשר מגדילים את הטקסט בעברית, חשוב לוודא שהיישור לימין נשמר ושאין גלילה אופקית מיותרת. 
-                מכיוון שאנחנו משנים את ה-Font Size של אלמנט ה-HTML, כל היחידות שמוגדרות ב-REM יגדלו בהתאמה.
-            </p>
-            <p>
-                טקסט מעורב: Testing RTL stability at <span id="inner-px">18</span> pixels.
-            </p>
-        </div>
-    </div>
+    <section class="card normal-text">
+      <h2>Normal Text</h2>
+      This is the baseline reading size. The page adjusts its root font size according to the current visible viewport width,
+      so the content reflows in a controlled way when the mobile screen size changes.
+    </section>
 
-    <script>
-        const root = document.getElementById('root-element');
-        const sizeVal = document.getElementById('size-val');
-        const percentVal = document.getElementById('percent-val');
-        const innerPx = document.getElementById('inner-px');
+    <section class="card large-text">
+      <h2>Large Text</h2>
+      This section demonstrates larger text with more open spacing.
+      The goal is to keep the typography comfortable while preserving natural wrapping and avoiding layout breakage.
+    </section>
 
-        let initialFontSize = 18;
-        let currentFontSize = 18;
-        let initialDistance = 0;
+    <section class="card xlarge-text">
+      <h2>Extra Large Text</h2>
+      This content is intentionally oversized to test accessibility-style reading scenarios.
+      Even with large type, line height remains proportional, and the page continues to adapt to the device width.
+    </section>
+  </main>
 
-        // Limits for sanity
-        const MIN_FONT = 12;
-        const MAX_FONT = 50;
+  <footer>
+    Footer — responsive during mobile gestures and viewport changes
+    <div class="debug" id="footerInfo">Loading scale info…</div>
+  </footer>
 
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                // Calculate initial distance between two fingers
-                initialDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-                initialFontSize = currentFontSize;
-            }
-        }, { passive: false });
+  <script>
+    (function () {
+      const BASE_WIDTH = 375;
+      const MIN_FONT = 14;
+      const MAX_FONT = 20;
 
-        document.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault(); // Stop standard browser zoom
-
-                const currentDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-
-                // Calculate the ratio of change
-                const ratio = currentDistance / initialDistance;
-                
-                // Calculate new font size based on the pinch ratio
-                let newSize = initialFontSize * ratio;
-
-                // Apply constraints
-                if (newSize < MIN_FONT) newSize = MIN_FONT;
-                if (newSize > MAX_FONT) newSize = MAX_FONT;
-
-                currentFontSize = newSize;
-                updateUI(currentFontSize);
-            }
-        }, { passive: false });
-
-        function updateUI(size) {
-            root.style.fontSize = size + "px";
-            sizeVal.innerText = Math.round(size);
-            innerPx.innerText = Math.round(size);
-            percentVal.innerText = Math.round((size / 18) * 100);
+      function getViewportWidth() {
+        if (window.visualViewport && Number.isFinite(window.visualViewport.width)) {
+          return window.visualViewport.width;
         }
-    </script>
+
+        return window.innerWidth || document.documentElement.clientWidth || BASE_WIDTH;
+      }
+
+      function getViewportScale() {
+        if (window.visualViewport && Number.isFinite(window.visualViewport.scale)) {
+          return window.visualViewport.scale;
+        }
+
+        return 1;
+      }
+
+      function refreshLayout() {
+        const viewportWidth = getViewportWidth();
+        const scale = getViewportScale();
+        const nextFontSize = Math.min(MAX_FONT, Math.max(MIN_FONT, 16 * (viewportWidth / BASE_WIDTH)));
+
+        document.documentElement.style.fontSize = nextFontSize.toFixed(2) + 'px';
+
+        const orientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+
+        document.getElementById('headerInfo').textContent =
+          'viewport: ' + Math.round(viewportWidth) + 'px | root font: ' + nextFontSize.toFixed(2) + 'px | orientation: ' + orientation;
+
+        document.getElementById('footerInfo').textContent =
+          'visual scale: ' + scale.toFixed(2) + ' | window: ' + window.innerWidth + '×' + window.innerHeight;
+      }
+
+      refreshLayout();
+      window.addEventListener('resize', refreshLayout, { passive: true });
+      window.addEventListener('orientationchange', refreshLayout, { passive: true });
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', refreshLayout, { passive: true });
+        window.visualViewport.addEventListener('scroll', refreshLayout, { passive: true });
+      }
+    })();
+  </script>
 </body>
 </html>
