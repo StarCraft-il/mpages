@@ -410,6 +410,18 @@ ul#aliyusTableLinks {
   color: #006000;
 }
 
+@media screen and (max-width: 768px) {
+  #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
+  #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
+  #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1,
+  #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
+  .lastVerse .base-last-verse,
+  .lastVerse .last_pasuk_mikra_1,
+  .lastVerse .last_pasuk_mikra_2 {
+    letter-spacing: -1px !important;
+  }
+}
+
 /*
 @media print {
     @page {
