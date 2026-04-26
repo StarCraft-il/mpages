@@ -26,22 +26,22 @@ div.chapterText {
 
 @media (max-width: 768px) {
     :root {
-        --mobile-scale: 1.22;
-        --mobile-base-font-size: 22px;
-        --mobile-reading-font-size: 2.25rem;
-        --mobile-reading-font-size-secondary: 2rem;
-        --mobile-inline-highlight-font-size: 1.8rem;
-        --mobile-small-font-size: 1.32rem;
-        --mobile-title-font-size: 1.9rem;
-        --mobile-section-font-size: 2.15rem;
-        --mobile-meta-font-size: 1.12rem;
-        --mobile-side-padding: 10px;
+        --mobile-base-font-size: 18px;
+        --mobile-reading-font-size: 1.75rem;
+        --mobile-reading-font-size-secondary: 1.55rem;
+        --mobile-inline-highlight-font-size: 1.4rem;
+        --mobile-small-font-size: 1rem;
+        --mobile-title-font-size: 1.55rem;
+        --mobile-section-font-size: 1.8rem;
+        --mobile-meta-font-size: 1rem;
+        --mobile-side-padding: 12px;
+        --mobile-fit-width: 100%;
     }
 
     html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
-        font-size: 112.5%;
+        font-size: 100%;
         background: #ffffff;
     }
 
@@ -93,7 +93,9 @@ div.chapterText {
         padding-left: var(--mobile-side-padding) !important;
         padding-bottom: 28px !important;
         margin: 0 auto;
-        width: 100%;
+        width: var(--mobile-fit-width);
+        max-width: 100%;
+        transition: width 0.12s ease, padding 0.12s ease;
     }
 
     #parashaContentRow #parashaName {
@@ -239,6 +241,33 @@ div.chapterText {
         padding-left: 0 !important;
         margin-right: 0 !important;
         margin-left: 0 !important;
+    }
+
+    body.mobile-zoom-active #parashaContentRow {
+        padding-right: 6px !important;
+        padding-left: 6px !important;
+    }
+
+    body.mobile-zoom-active #parashaContentRow #parashaName {
+        font-size: 1.35rem !important;
+    }
+
+    body.mobile-zoom-active ul#aliyusTableLinks,
+    body.mobile-zoom-active #torahStatistcsForPortion {
+        font-size: 0.92rem !important;
+    }
+
+    body.mobile-zoom-active #parashaContentRow .aliya .a-header {
+        font-size: 1.55rem !important;
+        letter-spacing: 0.08rem !important;
+    }
+
+    body.mobile-zoom-active .base-header,
+    body.mobile-zoom-active .lastVerse .header,
+    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header,
+    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
+    body.mobile-zoom-active #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
+        font-size: 0.95rem !important;
     }
 }
         </style>
@@ -3839,6 +3868,53 @@ div.chapterText {
 
                 <hr />
         </div>
+        <script>
+            (function () {
+                function updateMobileZoomLayout() {
+                    if (!window.matchMedia("(max-width: 768px)").matches) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        document.body.classList.remove("mobile-zoom-active");
+                        return;
+                    }
+
+                    if (!window.visualViewport) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        document.body.classList.remove("mobile-zoom-active");
+                        return;
+                    }
+
+                    const scale = Number(window.visualViewport.scale || 1);
+                    const visibleWidth = Math.max(280, Math.floor(window.visualViewport.width || window.innerWidth));
+
+                    if (scale > 1.01) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", visibleWidth + "px");
+                        document.body.classList.add("mobile-zoom-active");
+                        return;
+                    }
+
+                    document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                    document.body.classList.remove("mobile-zoom-active");
+                }
+
+                let updateHandle = 0;
+
+                function scheduleMobileZoomLayoutUpdate() {
+                    window.cancelAnimationFrame(updateHandle);
+                    updateHandle = window.requestAnimationFrame(updateMobileZoomLayout);
+                }
+
+                window.addEventListener("load", scheduleMobileZoomLayoutUpdate, { passive: true });
+                window.addEventListener("resize", scheduleMobileZoomLayoutUpdate, { passive: true });
+                window.addEventListener("orientationchange", scheduleMobileZoomLayoutUpdate, { passive: true });
+
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener("resize", scheduleMobileZoomLayoutUpdate, { passive: true });
+                    window.visualViewport.addEventListener("scroll", scheduleMobileZoomLayoutUpdate, { passive: true });
+                }
+
+                scheduleMobileZoomLayoutUpdate();
+            })();
+        </script>
 </body>
 </html>
 
