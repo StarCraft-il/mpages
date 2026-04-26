@@ -1161,7 +1161,8 @@
             if (manualMode) {
                 speed = manualSpeed;
             } else if (eyeTrackingReady && smoothMetric !== null && upThreshold !== null && downThreshold !== null) {
-                const deadZone = Math.max(0.01, Math.abs(downThreshold - upThreshold) * 0.12);
+                const deadZoneFactor = isMobileLayout ? 0.06 : 0.10;
+                const deadZone = Math.max(0.008, Math.abs(downThreshold - upThreshold) * deadZoneFactor);
 
                 if (smoothMetric < upThreshold - deadZone) {
                     const strength = Math.min(1, (upThreshold - smoothMetric) / Math.max(0.01, upThreshold - metricUp));
@@ -1213,24 +1214,56 @@
             gazeCursorEl.style.left = '50%';
         }
 
+        function averageLandmarkY(landmarks, indexes) {
+            const values = indexes
+                .map(index => landmarks[index])
+                .filter(point => Boolean(point))
+                .map(point => point.y);
+
+            if (values.length === 0) {
+                return null;
+            }
+
+            return values.reduce((sum, value) => sum + value, 0) / values.length;
+        }
+
+        function getEyeVerticalRatio(landmarks, irisIndex, upperIndexes, lowerIndexes) {
+            const iris = landmarks[irisIndex];
+            const upperY = averageLandmarkY(landmarks, upperIndexes);
+            const lowerY = averageLandmarkY(landmarks, lowerIndexes);
+            if (!iris || upperY === null || lowerY === null) {
+                return null;
+            }
+
+            const eyeHeight = lowerY - upperY;
+            if (eyeHeight <= 0.003) {
+                return null;
+            }
+
+            return (iris.y - upperY) / eyeHeight;
+        }
+
         function computeMetric(landmarks) {
             const forehead = landmarks[10];
             const chin = landmarks[152];
             const nose = landmarks[1];
-            const leftIris = landmarks[468];
-            const rightIris = landmarks[473];
             if (!forehead || !chin || !nose) {
                 return null;
             }
 
             const faceHeight = Math.max(0.08, chin.y - forehead.y);
-            const eyeY = leftIris && rightIris
-                ? (leftIris.y + rightIris.y) / 2
-                : nose.y;
-            const mixY = isMobileLayout
-                ? (eyeY * 0.52) + (nose.y * 0.48)
-                : (eyeY * 0.72) + (nose.y * 0.28);
-            return (mixY - forehead.y) / faceHeight;
+            const headRatio = (nose.y - forehead.y) / faceHeight;
+            const leftEyeRatio = getEyeVerticalRatio(landmarks, 468, [158, 159, 160], [144, 145, 153]);
+            const rightEyeRatio = getEyeVerticalRatio(landmarks, 473, [385, 386, 387], [373, 374, 380]);
+            const eyeRatios = [leftEyeRatio, rightEyeRatio].filter(value => value !== null);
+            if (eyeRatios.length === 0) {
+                return headRatio;
+            }
+
+            const irisRatio = eyeRatios.reduce((sum, value) => sum + value, 0) / eyeRatios.length;
+            return isMobileLayout
+                ? (irisRatio * 0.82) + (headRatio * 0.18)
+                : (irisRatio * 0.88) + (headRatio * 0.12);
         }
 
         function onFaceResults(results) {
@@ -1361,21 +1394,21 @@
                 metricCenter = await waitForSamples(
                     centerDurationMs,
                     'שלב 1: הסתכל למרכז',
-                    'הסתכל על הנקודה שבמרכז המסך. אל תזוז יותר מדי. אנחנו מודדים את מצב הבסיס שלך.',
+                    'הסתכל על הנקודה שבמרכז המסך. נסה להחזיק את הראש די יציב. אנחנו מודדים את מצב הבסיס של העיניים.',
                     { left: 50, top: 50 }
                 );
 
                 metricUp = await waitForSamples(
                     edgeDurationMs,
                     'שלב 2: הסתכל מעט למעלה',
-                    'עכשיו הסתכל מעט למעלה או הרם מעט את הראש. לא צריך תנועה חדה — תנועה עדינה מספיקה.',
+                    'עכשיו הסתכל מעט למעלה עם העיניים, ורק אם צריך הוסף תנועה קטנה מאוד של הראש. לא צריך תנועה חדה.',
                     { left: 50, top: 24 }
                 );
 
                 metricDown = await waitForSamples(
                     edgeDurationMs,
                     'שלב 3: הסתכל מעט למטה',
-                    'עכשיו הסתכל מעט למטה או הורד מעט את הראש. החזק יציב עד סוף הטיימר.',
+                    'עכשיו הסתכל מעט למטה עם העיניים, ורק אם צריך הוסף תנועה קטנה מאוד של הראש. החזק יציב עד סוף הטיימר.',
                     { left: 50, top: 76 }
                 );
 
