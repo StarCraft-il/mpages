@@ -36,6 +36,10 @@
     --tmot-zoom-multiplier: 1;
     --tmot-overlay-bg: rgba(0, 0, 0, 0.82);
     --tmot-overlay-text: #ffffff;
+    --tmot-line-tight: calc(1.25 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
+    --tmot-line-normal: calc(1.35 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
+    --tmot-line-medium: calc(1.4 + ((var(--tmot-zoom-multiplier) - 1) * 0.12));
+    --tmot-line-reading: calc(1.45 + ((var(--tmot-zoom-multiplier) - 1) * 0.14));
 }
 
 html,
@@ -78,19 +82,19 @@ div.chapterText {
 
     #parashaContentRow #parashaName {
         font-size: calc(1.35rem * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.3;
+        line-height: var(--tmot-line-tight);
     }
 
     ul#aliyusTableLinks {
         padding-right: 20px !important;
         padding-inline-start: 20px !important;
         font-size: calc(1.25rem * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.5 !important;
+        line-height: calc(var(--tmot-line-reading) + 0.05) !important;
     }
 
     #torahStatistcsForPortion {
         font-size: calc(0.95rem * var(--tmot-zoom-multiplier));
-        line-height: 1.4;
+        line-height: var(--tmot-line-medium);
     }
 
     div.allText,
@@ -99,7 +103,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
         font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.45 !important;
+        line-height: var(--tmot-line-reading) !important;
         letter-spacing: -1px !important;
         word-spacing: 0.12em !important;
     }
@@ -112,12 +116,12 @@ div.chapterText {
     div.allText span.book,
     div.allText span.godName {
         font-size: calc(30px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.35 !important;
+        line-height: var(--tmot-line-normal) !important;
     }
 
     div.allText span.small {
         font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.4 !important;
+        line-height: var(--tmot-line-medium) !important;
     }
 
     #parashaContentRow .aliya {
@@ -134,7 +138,7 @@ div.chapterText {
         display: inline-block;
         font-size: calc(38px * var(--tmot-zoom-multiplier)) !important;
         letter-spacing: 6px !important;
-        line-height: 1.25 !important;
+        line-height: var(--tmot-line-tight) !important;
     }
 
     .base-header,
@@ -143,7 +147,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
         font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.4 !important;
+        line-height: var(--tmot-line-medium) !important;
         letter-spacing: normal !important;
         padding-top: 18px !important;
     }
@@ -159,7 +163,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
         font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.35 !important;
+        line-height: var(--tmot-line-normal) !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlDayFromDayHeader,
@@ -172,7 +176,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
         font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.35 !important;
+        line-height: var(--tmot-line-normal) !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
@@ -180,7 +184,7 @@ div.chapterText {
     .lastVerse .last_pasuk_mikra_1,
     .lastVerse .last_pasuk_mikra_2 {
         font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
-        line-height: 1.45 !important;
+        line-height: var(--tmot-line-reading) !important;
         letter-spacing: -1px !important;
         word-spacing: 0.12em !important;
     }
