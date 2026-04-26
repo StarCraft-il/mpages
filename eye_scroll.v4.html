@@ -669,9 +669,36 @@
                 display: none;
             }
         }
-    </style>
+    
+/* ── INDEX LINK ── */
+#returnToIndex {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1200;
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+    background: rgba(8,17,31,0.88);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+#returnToIndex:hover,
+#returnToIndex:focus {
+    background: rgba(25,118,210,0.92);
+    color: #ffffff;
+}
+</style>
 </head>
 <body>
+    <a id='returnToIndex' href='./index.html'>← Index</a>
     <div id="controls">
         <button id="recalibrateBtn" class="ghost-btn">כיול מחדש</button>
         <button id="manualBtn" class="secondary-btn">מגע ידני</button>
@@ -1643,3 +1670,4 @@
     </script>
 </body>
 </html>
+

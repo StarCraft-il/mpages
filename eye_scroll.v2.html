@@ -360,7 +360,34 @@
     pointer-events: none;
     z-index: 200;
     white-space: nowrap;
-  }</style></head><body><div id="start-screen"><div class="eye-icon"><svg viewbox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" opacity="0.4" /><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" stroke-dasharray="6 3" opacity="0.6"><animatetransform attributename="transform" type="rotate" from="0 40 40" to="360 40 40" dur="8s" repeatcount="indefinite" /></ellipse><circle cx="40" cy="40" r="14" stroke="#00e5ff" stroke-width="2" /><circle cx="40" cy="40" r="6" fill="#00e5ff" opacity="0.8" /><circle cx="44" cy="36" r="2.5" fill="white" opacity="0.6" /></svg></div><h1>גלילה בעיניים v2</h1><p>גרסת בדיקה v2: הזז את מבטך לחלק העליון או התחתון של המסך כדי לגלול — ללא נגיעה</p><button id="start-btn">הפעל מצלמה</button> <span class="note">גרסת בדיקה v2 · נדרשת גישה למצלמה הקדמית</span></div><div id="perm-screen"><h2>📷 נדרשת הרשאה</h2><p>כדי לזהות את תנועת העיניים, האפליקציה צריכה גישה למצלמה הקדמית שלך</p><button id="perm-btn">נסה שוב</button><p style="font-size:11px;opacity:0.5">בינתיים תוכל לגלול ע"י לחיצה ממושכת בתחתית/עליית המסך</p></div><div id="calibration"><h2>כיול</h2><p>הסתכל על הנקודה ולחץ על המסך כדי לכייל את המרכז</p><div class="cal-target"><div class="cal-dot"></div></div><div id="cal-count">3</div></div><div id="gaze-bar"></div><div id="eye-cursor" style="display:none"></div><div id="ui"><div class="zone-top"><span class="zone-label">↑ הסתכל כאן לגלילה למעלה</span> <span class="arrow">▲</span></div><div class="zone-mid"></div><div class="zone-bot"><span class="arrow">▼</span> <span class="zone-label">↓ הסתכל כאן לגלילה למטה</span></div></div><div id="status">מחכה לכיול v2...</div><div id="content-wrap"><div id="content"></div></div><div class="fallback-hint" id="fallback-hint" style="display:none">✋ v2: לחץ לחיצה ממושכת בתחתית / עליית המסך לגלול</div><script>// ── CONTENT GENERATION ──
+  }
+/* ── INDEX LINK ── */
+#returnToIndex {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1200;
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+    background: rgba(8,17,31,0.88);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+#returnToIndex:hover,
+#returnToIndex:focus {
+    background: rgba(25,118,210,0.92);
+    color: #ffffff;
+}
+</style></head><body>
+    <a id='returnToIndex' href='./index.html'>← Index</a><div id="start-screen"><div class="eye-icon"><svg viewbox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" opacity="0.4" /><ellipse cx="40" cy="40" rx="38" ry="22" stroke="#00e5ff" stroke-width="2" stroke-dasharray="6 3" opacity="0.6"><animatetransform attributename="transform" type="rotate" from="0 40 40" to="360 40 40" dur="8s" repeatcount="indefinite" /></ellipse><circle cx="40" cy="40" r="14" stroke="#00e5ff" stroke-width="2" /><circle cx="40" cy="40" r="6" fill="#00e5ff" opacity="0.8" /><circle cx="44" cy="36" r="2.5" fill="white" opacity="0.6" /></svg></div><h1>גלילה בעיניים v2</h1><p>גרסת בדיקה v2: הזז את מבטך לחלק העליון או התחתון של המסך כדי לגלול — ללא נגיעה</p><button id="start-btn">הפעל מצלמה</button> <span class="note">גרסת בדיקה v2 · נדרשת גישה למצלמה הקדמית</span></div><div id="perm-screen"><h2>📷 נדרשת הרשאה</h2><p>כדי לזהות את תנועת העיניים, האפליקציה צריכה גישה למצלמה הקדמית שלך</p><button id="perm-btn">נסה שוב</button><p style="font-size:11px;opacity:0.5">בינתיים תוכל לגלול ע"י לחיצה ממושכת בתחתית/עליית המסך</p></div><div id="calibration"><h2>כיול</h2><p>הסתכל על הנקודה ולחץ על המסך כדי לכייל את המרכז</p><div class="cal-target"><div class="cal-dot"></div></div><div id="cal-count">3</div></div><div id="gaze-bar"></div><div id="eye-cursor" style="display:none"></div><div id="ui"><div class="zone-top"><span class="zone-label">↑ הסתכל כאן לגלילה למעלה</span> <span class="arrow">▲</span></div><div class="zone-mid"></div><div class="zone-bot"><span class="arrow">▼</span> <span class="zone-label">↓ הסתכל כאן לגלילה למטה</span></div></div><div id="status">מחכה לכיול v2...</div><div id="content-wrap"><div id="content"></div></div><div class="fallback-hint" id="fallback-hint" style="display:none">✋ v2: לחץ לחיצה ממושכת בתחתית / עליית המסך לגלול</div><script>// ── CONTENT GENERATION ──
 const articles = [
   { tag: "טכנולוגיה", title: "ממשק אדם-מחשב: עתיד האינטראקציה", body: "זיהוי מבט הוא אחת הטכנולוגיות המרתקות ביותר של העשור הנוכחי. מערכות מודרניות מסוגלות לעקוב אחרי תנועות עדינות של העין בדיוק של מילישניות.", chips: ["#UI", "#Gaze", "#Camera"] },
   { tag: "מדע", title: "כיצד העין האנושית מעבדת מידע?", body: "הרשתית מכילה כ-120 מיליון קונוסים ומוטות. אזור הפובאה האחראי על ראייה חדה מכסה רק 2 מעלות מהשדה הויזואלי — אך המוח ממלא את השאר.", chips: ["#ראייה", "#מוח", "#אבולוציה"] },
@@ -709,3 +736,4 @@ document.getElementById('perm-btn').addEventListener('click', () => {
 window.addEventListener('resize', () => {
   updateMaxScroll();
 });</script></body></html>
+
