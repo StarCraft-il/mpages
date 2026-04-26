@@ -57,21 +57,6 @@ div.chapterText {
     letter-spacing: -1px !important;
 }
 
-#status-overlay {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: var(--tmot-overlay-bg);
-    color: var(--tmot-overlay-text);
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    z-index: 5000;
-    pointer-events: none;
-    direction: ltr;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
 @media (max-width: 768px) {
     body {
         margin: 0;
@@ -220,9 +205,6 @@ div.chapterText {
         </style>
 </head>
 <body dir="rtl">
-        <div id="status-overlay">
-            Main: <span id="size-val">36</span>px | Zoom: <span id="percent-val">100</span>%
-        </div>
         <div id="parashaContentRow">
             <div id="parashaName"><h1>פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
 <ul id="aliyusTableLinks">
@@ -3822,14 +3804,11 @@ div.chapterText {
         <script>
             (function () {
                 const root = document.getElementById("root-element");
-                const sizeVal = document.getElementById("size-val");
-                const percentVal = document.getElementById("percent-val");
                 let currentScale = 1;
                 let initialScale = 1;
                 let initialDistance = 0;
                 const minScale = 0.8;
                 const maxScale = 2.2;
-                const baseMainFont = 36;
 
                 function clamp(value, min, max) {
                     return Math.min(max, Math.max(min, value));
@@ -3837,8 +3816,6 @@ div.chapterText {
 
                 function applyScale() {
                     root.style.setProperty("--tmot-zoom-multiplier", currentScale.toFixed(3));
-                    sizeVal.innerText = String(Math.round(baseMainFont * currentScale));
-                    percentVal.innerText = String(Math.round(currentScale * 100));
                 }
 
                 function getDistance(touchA, touchB) {
