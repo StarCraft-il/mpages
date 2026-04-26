@@ -661,13 +661,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 18px;
         }
 
         .eyes-visual .eye-shape {
             position: relative;
-            width: 64px;
-            height: 38px;
+            width: 84px;
+            height: 46px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.82);
             background: rgba(255,255,255,0.04);
@@ -990,7 +989,6 @@
                         <div class="instruction-arrows"><span>↑</span><span>↓</span></div>
                         <div class="eye-row">
                             <div class="eye-shape"><div class="pupil"></div></div>
-                            <div class="eye-shape"><div class="pupil"></div></div>
                         </div>
                     </div>
                     <span>בזמן הכיול נסה קודם להזיז את העיניים למעלה/למטה. רק אם צריך, הוסף תנועה קטנה מאוד של הראש.</span>
@@ -1041,7 +1039,7 @@
             <h2>עוד רגע יופיע חלון הרשאת מצלמה</h2>
             <p>קח את הזמן. בעוד כמה שניות הדפדפן יבקש הרשאה. כשזה קורה, לחץ <strong>Allow / אפשר</strong>. בינתיים שב ישר, פתח עיניים רגיל, והחזק את המכשיר או המסך בגובה העיניים.</p>
             <div class="coach-panel">
-                <span class="coach-status">מה לעשות עכשיו</span>
+                <span class="coach-status" id="prepareStageLabel">שלב 1/4 · הרשאת מצלמה</span>
                 <div class="coach-visual phone-visual">
                     <div class="guide-ring"></div>
                     <div class="guide-arrow up">↑</div>
@@ -1067,11 +1065,10 @@
             <h2 id="calibrationTitle">מכין כיול…</h2>
             <p id="calibrationText">אנא הסתכל למטרה לפי ההוראה שעל המסך. בכל שלב תן לנו כמה שניות כדי למדוד.</p>
             <div class="coach-panel">
-                <span class="coach-status" id="coachStageLabel">כיול מונחה</span>
+                <span class="coach-status" id="coachStageLabel">שלב 2/4 · מבט למרכז</span>
                 <div class="coach-visual eyes-visual">
                     <div class="instruction-arrows"><span>↑</span><span>↓</span></div>
                     <div class="eye-row">
-                        <div class="eye-shape"><div class="pupil"></div></div>
                         <div class="eye-shape"><div class="pupil"></div></div>
                     </div>
                 </div>
@@ -1191,6 +1188,7 @@
         const coachStageTitleEl = document.getElementById('coachStageTitle');
         const coachStageTextEl = document.getElementById('coachStageText');
         const prepareCoachTextEl = document.getElementById('prepareCoachText');
+        const prepareStageLabelEl = document.getElementById('prepareStageLabel');
 
         const dbgSecureEl = document.getElementById('dbgSecure');
         const dbgCameraEl = document.getElementById('dbgCamera');
@@ -1251,37 +1249,43 @@
 
             switch (stage) {
                 case 'permission':
-                    coachStageLabelEl.textContent = 'הרשאת מצלמה';
+                    coachStageLabelEl.textContent = 'שלב 1/4 · הרשאת מצלמה';
                     coachStageTitleEl.textContent = 'הכן את המצלמה';
                     coachStageTextEl.textContent = 'עוד רגע יופיע חלון הרשאה. החזק את הפנים במרכז ולחץ Allow.';
+                    if (prepareStageLabelEl) {
+                        prepareStageLabelEl.textContent = 'שלב 1/4 · הרשאת מצלמה';
+                    }
                     if (prepareCoachTextEl) {
                         prepareCoachTextEl.textContent = 'מקם את הפנים במרכז, החזק את הטלפון יציב, וכאשר חלון ההרשאה מופיע לחץ Allow.';
                     }
                     break;
                 case 'center':
-                    coachStageLabelEl.textContent = 'כיול שלב 1';
+                    coachStageLabelEl.textContent = 'שלב 2/4 · מבט למרכז';
                     coachStageTitleEl.textContent = 'הסתכל למרכז';
                     coachStageTextEl.textContent = 'שמור את הראש די יציב, והסתכל לנקודה שבמרכז.';
                     break;
                 case 'up':
-                    coachStageLabelEl.textContent = 'כיול שלב 2';
+                    coachStageLabelEl.textContent = 'שלב 3/4 · מבט למעלה';
                     coachStageTitleEl.textContent = 'הסתכל מעט למעלה';
                     coachStageTextEl.textContent = 'הזז קודם את העיניים למעלה. אם צריך, הוסף תנועה קטנה מאוד של הראש.';
                     break;
                 case 'down':
-                    coachStageLabelEl.textContent = 'כיול שלב 3';
+                    coachStageLabelEl.textContent = 'שלב 4/4 · מבט למטה';
                     coachStageTitleEl.textContent = 'הסתכל מעט למטה';
                     coachStageTextEl.textContent = 'הזז קודם את העיניים למטה. אם צריך, הוסף תנועה קטנה מאוד של הראש.';
                     break;
                 case 'done':
-                    coachStageLabelEl.textContent = 'הכיול הושלם';
+                    coachStageLabelEl.textContent = 'הושלם · 4/4';
                     coachStageTitleEl.textContent = 'אפשר להתחיל לגלול';
                     coachStageTextEl.textContent = 'עכשיו הסתכל מעט למעלה או למטה, ועקוב אחרי קו המבט שעל המסך.';
                     break;
                 default:
-                    coachStageLabelEl.textContent = 'כיול מונחה';
+                    coachStageLabelEl.textContent = 'שלב 2/4 · מבט למרכז';
                     coachStageTitleEl.textContent = 'הסתכל למרכז';
                     coachStageTextEl.textContent = 'שמור את הראש די יציב, והסתכל לנקודה שבמרכז.';
+                    if (prepareStageLabelEl) {
+                        prepareStageLabelEl.textContent = 'שלב 1/4 · הרשאת מצלמה';
+                    }
                     if (prepareCoachTextEl) {
                         prepareCoachTextEl.textContent = 'מקם את הפנים במרכז, החזק את הטלפון יציב, וכאשר חלון ההרשאה מופיע לחץ Allow.';
                     }
@@ -1842,6 +1846,9 @@
             setGuideStage('permission');
             let seconds = getPrepareDelaySeconds();
             prepareCountdownEl.textContent = seconds.toString();
+            if (prepareStageLabelEl) {
+                prepareStageLabelEl.textContent = `שלב 1/4 · הרשאת מצלמה · ${seconds} שנ'`;
+            }
             if (prepareTimer) {
                 clearInterval(prepareTimer);
             }
@@ -1849,6 +1856,9 @@
             prepareTimer = window.setInterval(() => {
                 seconds -= 1;
                 prepareCountdownEl.textContent = seconds.toString();
+                if (prepareStageLabelEl) {
+                    prepareStageLabelEl.textContent = `שלב 1/4 · הרשאת מצלמה · ${seconds} שנ'`;
+                }
                 if (seconds <= 0) {
                     clearInterval(prepareTimer);
                     prepareTimer = null;
