@@ -5,10 +5,10 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <meta http-equiv="Last-Modified" content="Sat, 26 Apr 2026 12:00:00 GMT" />
-<title>Test-2M1T-Achrei Mos Kedoshim</title>
+<title>TestZoomGesture</title>
     <script>
         (function () {
-            const version = "20260426-achrei-cache1";
+            const version = "20260426-zoomgesture1";
             const currentUrl = new URL(window.location.href);
 
             if (currentUrl.searchParams.get("v") === version) {
@@ -25,10 +25,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="cleartype" content="on">
     <link href="content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link href="content/css/style_portion_razor.css" rel="stylesheet" />
-        <link href="content/css/style_flex2.css" rel="stylesheet" />
-        <script src="content/lib/jquery/3.5.1/jquery.js"></script>
-        <script src="content/js/site_flex2.js"></script>
+        <link href="content/css/style_portion_razor.css?v=20260426-zoomgesture1" rel="stylesheet" />
+        <link href="content/css/style_flex2.css?v=20260426-zoomgesture1" rel="stylesheet" />
+        <script src="content/lib/jquery/3.5.1/jquery.js?v=20260426-zoomgesture1"></script>
+        <script src="content/js/site_flex2.js?v=20260426-zoomgesture1"></script>
         <style>
 
 div.allText {
@@ -41,36 +41,116 @@ div.chapterText {
 }
 
 @media (max-width: 768px) {
-    body {
-        margin: 0;
-        padding: 0;
-        overflow-x: auto;
-        touch-action: auto;
-        overscroll-behavior: auto;
-        -webkit-overflow-scrolling: touch;
+    :root {
+        --mobile-base-font-size: 18px;
+        --mobile-reading-font-size: 1.75rem;
+        --mobile-reading-font-size-secondary: 1.55rem;
+        --mobile-inline-highlight-font-size: 1.4rem;
+        --mobile-small-font-size: 1rem;
+        --mobile-title-font-size: 1.55rem;
+        --mobile-section-font-size: 1.8rem;
+        --mobile-meta-font-size: 1rem;
+        --mobile-side-padding: 12px;
+        --mobile-fit-width: 100%;
+        --gesture-font-multiplier: 1;
     }
 
-    #parashaContentRow {
-        padding-right: 12px !important;
-        padding-left: 12px !important;
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        font-size: 100%;
+        background: #ffffff;
+    }
+
+    *,
+    *::before,
+    *::after {
         box-sizing: border-box;
     }
 
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-width: 320px;
+        overflow-x: hidden;
+        touch-action: auto;
+        overscroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: calc(var(--mobile-base-font-size) * var(--gesture-font-multiplier));
+        line-height: 1.6;
+        background: #ffffff;
+    }
+
+    img,
+    svg,
+    canvas,
+    video,
+    table {
+        max-width: 100%;
+        height: auto;
+    }
+
+    #parashaContentRow,
+    #parashaContentRow .aliya,
+    #parashaContentRow .verse,
+    #parashaContentRow .pasuk2m1t,
+    #parashaContentRow .contentHeader,
+    #parashaContentRow .lastVerse,
+    div.allText,
+    div.chapterText {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    #parashaContentRow {
+        padding-right: var(--mobile-side-padding) !important;
+        padding-left: var(--mobile-side-padding) !important;
+        padding-bottom: 28px !important;
+        margin: 0 auto;
+        width: var(--mobile-fit-width);
+        max-width: 100%;
+        transition: width 0.12s ease, padding 0.12s ease;
+    }
+
     #parashaContentRow #parashaName {
-        font-size: 1.35rem !important;
-        line-height: 1.3;
+        font-size: calc(var(--mobile-title-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.25;
+        margin-bottom: 0.8rem;
+        text-align: center;
+    }
+
+    #parashaContentRow #parashaName h1 {
+        margin: 0;
+        overflow-wrap: anywhere;
     }
 
     ul#aliyusTableLinks {
-        padding-right: 20px !important;
-        padding-inline-start: 20px !important;
-        font-size: 125% !important;
-        line-height: 1.5 !important;
+        padding-right: 1rem !important;
+        padding-inline-start: 1rem !important;
+        margin-top: 0.75rem !important;
+        margin-bottom: 1rem !important;
+        font-size: calc(var(--mobile-meta-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.7 !important;
+    }
+
+    ul#aliyusTableLinks li {
+        margin-bottom: 0.45rem;
+    }
+
+    ul#aliyusTableLinks a {
+        display: inline-block;
+        font-size: inherit !important;
+        line-height: inherit !important;
     }
 
     #torahStatistcsForPortion {
-        font-size: 0.95rem;
-        line-height: 1.4;
+        font-size: calc(var(--mobile-meta-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+        margin-bottom: 0.8rem;
     }
 
     div.allText,
@@ -78,10 +158,11 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
-        font-size: 36px !important;
-        line-height: 1.45 !important;
+        font-size: calc(var(--mobile-reading-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.62 !important;
         letter-spacing: -1px !important;
-        word-spacing: 0.12em !important;
+        word-spacing: 0.08em !important;
+        overflow-wrap: anywhere;
     }
 
     div.allText {
@@ -91,13 +172,13 @@ div.chapterText {
     div.allText span.shemot,
     div.allText span.book,
     div.allText span.godName {
-        font-size: 30px !important;
-        line-height: 1.35 !important;
+        font-size: calc(var(--mobile-inline-highlight-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.4 !important;
     }
 
     div.allText span.small {
-        font-size: 24px !important;
-        line-height: 1.4 !important;
+        font-size: calc(var(--mobile-small-font-size) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.45 !important;
     }
 
     #parashaContentRow .aliya {
@@ -106,15 +187,16 @@ div.chapterText {
 
     #parashaContentRow .aliya .toStartOfPortion {
         display: inline-block;
-        font-size: 1rem !important;
-        margin-bottom: 6px;
+        font-size: calc(1rem * var(--gesture-font-multiplier)) !important;
+        margin-bottom: 0.55rem;
     }
 
     #parashaContentRow .aliya .a-header {
         display: inline-block;
-        font-size: 38px !important;
-        letter-spacing: 6px !important;
-        line-height: 1.25 !important;
+        font-size: calc(var(--mobile-section-font-size) * var(--gesture-font-multiplier)) !important;
+        letter-spacing: 0.16rem !important;
+        line-height: 1.2 !important;
+        overflow-wrap: anywhere;
     }
 
     .base-header,
@@ -122,23 +204,26 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
-        font-size: 24px !important;
-        line-height: 1.4 !important;
+        font-size: calc(1.2rem * var(--gesture-font-multiplier)) !important;
+        line-height: 1.45 !important;
         letter-spacing: normal !important;
-        padding-top: 18px !important;
+        padding-top: 14px !important;
+        overflow-wrap: anywhere;
+        white-space: normal !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader {
-        padding: 8px 10px;
+        padding: 10px 10px;
         overflow-wrap: anywhere;
+        white-space: normal !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
-        font-size: 22px !important;
+        font-size: calc(1.12rem * var(--gesture-font-multiplier)) !important;
         line-height: 1.35 !important;
     }
 
@@ -151,25 +236,40 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
-        font-size: 24px !important;
-        line-height: 1.35 !important;
+        font-size: calc(1.2rem * var(--gesture-font-multiplier)) !important;
+        line-height: 1.4 !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
     .lastVerse .base-last-verse,
     .lastVerse .last_pasuk_mikra_1,
     .lastVerse .last_pasuk_mikra_2 {
-        font-size: 32px !important;
-        line-height: 1.45 !important;
+        font-size: calc(var(--mobile-reading-font-size-secondary) * var(--gesture-font-multiplier)) !important;
+        line-height: 1.62 !important;
         letter-spacing: -1px !important;
-        word-spacing: 0.12em !important;
+        word-spacing: 0.08em !important;
+        overflow-wrap: anywhere;
+    }
+
+    #parashaContentRow .aliya .verse,
+    #parashaContentRow .aliya .verse .pasuk2m1t,
+    #parashaContentRow .lastVerse {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    body.mobile-zoom-active #parashaContentRow {
+        padding-right: 6px !important;
+        padding-left: 6px !important;
     }
 }
         </style>
 </head>
 <body dir="rtl">
         <div id="parashaContentRow">
-            <div id="parashaName"><h1>פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
+            <div id="parashaName"><h1>זום פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
 <ul id="aliyusTableLinks">
         <li><a href="#1_one_header">&#x5E8;&#x5D0;&#x5E9;&#x5D5;&#x5DF; - (24)</a></li>
         <li><a href="#2_two_header">&#x5E9;&#x5E0;&#x5D9; - (17)</a></li>
@@ -180,7 +280,7 @@ div.chapterText {
         <li><a href="#7_seven_header">&#x5E9;&#x5D1;&#x5D9;&#x5E2;&#x5D9; - (20)</a></li>
 </ul>
     <div id="torahStatistcsForPortion">
-        <span>סה"כ: 144 פסוקים בפרשה. לפי קובץ סטטיסטי: -1 פסוקים.</span>
+        <span>זום סה"כ: 144 פסוקים בפרשה. לפי קובץ סטטיסטי: -1 פסוקים.</span>
     </div>
 
 
@@ -3763,8 +3863,62 @@ div.chapterText {
 
                 <hr />
         </div>
+                <script>
+            (function () {
+                function updateMobileZoomLayout() {
+                    if (!window.matchMedia("(max-width: 768px)").matches) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        document.documentElement.style.setProperty("--gesture-font-multiplier", "1");
+                        document.body.classList.remove("mobile-zoom-active");
+                        return;
+                    }
+
+                    if (!window.visualViewport) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                        document.documentElement.style.setProperty("--gesture-font-multiplier", "1");
+                        document.body.classList.remove("mobile-zoom-active");
+                        return;
+                    }
+
+                    const rawScale = Number(window.visualViewport.scale || 1);
+                    const gestureMultiplier = Math.min(1.7, Math.max(1, rawScale));
+                    const visibleWidth = Math.max(280, Math.floor(window.visualViewport.width || window.innerWidth));
+
+                    document.documentElement.style.setProperty("--gesture-font-multiplier", gestureMultiplier.toFixed(3));
+
+                    if (rawScale > 1.01) {
+                        document.documentElement.style.setProperty("--mobile-fit-width", visibleWidth + "px");
+                        document.body.classList.add("mobile-zoom-active");
+                        return;
+                    }
+
+                    document.documentElement.style.setProperty("--mobile-fit-width", "100%");
+                    document.body.classList.remove("mobile-zoom-active");
+                }
+
+                let updateHandle = 0;
+
+                function scheduleMobileZoomLayoutUpdate() {
+                    window.cancelAnimationFrame(updateHandle);
+                    updateHandle = window.requestAnimationFrame(updateMobileZoomLayout);
+                }
+
+                window.addEventListener("load", scheduleMobileZoomLayoutUpdate, { passive: true });
+                window.addEventListener("resize", scheduleMobileZoomLayoutUpdate, { passive: true });
+                window.addEventListener("orientationchange", scheduleMobileZoomLayoutUpdate, { passive: true });
+
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener("resize", scheduleMobileZoomLayoutUpdate, { passive: true });
+                    window.visualViewport.addEventListener("scroll", scheduleMobileZoomLayoutUpdate, { passive: true });
+                }
+
+                scheduleMobileZoomLayoutUpdate();
+            })();
+        </script>
 </body>
 </html>
+
+
 
 
 

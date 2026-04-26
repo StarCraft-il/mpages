@@ -5,12 +5,12 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <meta http-equiv="Last-Modified" content="Sat, 26 Apr 2026 12:00:00 GMT" />
-    <meta charset="UTF-8" />
+<meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mPages - Mobile First</title>
     <script>
         (function () {
-            const version = "20260426-index2";
+            const version = "20260426-index4";
             const currentUrl = new URL(window.location.href);
 
             if (currentUrl.searchParams.get("v") === version) {
@@ -21,6 +21,7 @@
             window.location.replace(currentUrl.toString());
         })();
     </script>
+
     <style>
         :root {
             --bg: #08111f;
@@ -169,23 +170,23 @@
         <section class="section">
             <h2>Eye Scroll Tests</h2>
             <div class="buttons">
-                <a class="button-link primary" href="./eye_scroll.v5.html">
+                <a class="button-link primary" href="./eye_scroll.v5.html?v=20260426-eyescroll5-cache1">
                     <span class="button-title">Open Eye Scroll Demo v5</span>
                     <span class="button-subtitle">Newest version with animated visual guidance for camera setup, eye movement, and calibration.</span>
                 </a>
-                <a class="button-link" href="./eye_scroll.v4.html">
+                <a class="button-link" href="./eye_scroll.v4.html?v=20260426-eyescroll4-cache1">
                     <span class="button-title">Open Eye Scroll Demo v4</span>
                     <span class="button-subtitle">Newest mobile-first version. Bigger zones, longer delays, simpler phone testing.</span>
                 </a>
-                <a class="button-link" href="./eye_scroll.v3.html">
+                <a class="button-link" href="./eye_scroll.v3.html?v=20260426-eyescroll3-cache1">
                     <span class="button-title">Open Eye Scroll Demo v3</span>
                     <span class="button-subtitle">Detailed guided version with diagnostics, preview, calibration, and manual fallback.</span>
                 </a>
-                <a class="button-link" href="./eye_scroll.v2.html">
+                <a class="button-link" href="./eye_scroll.v2.html?v=20260426-eyescroll2-cache1">
                     <span class="button-title">Open Eye Scroll Demo v2</span>
                     <span class="button-subtitle">Earlier test version based on the original demo.</span>
                 </a>
-                <a class="button-link" href="./eye_scroll2.html">
+                <a class="button-link" href="./eye_scroll2.html?v=20260426-eyescroll1-cache1">
                     <span class="button-title">Open Eye Scroll Demo v1</span>
                     <span class="button-subtitle">Original eye scroll prototype.</span>
                 </a>
@@ -195,17 +196,21 @@
         <section class="section">
             <h2>Other Pages</h2>
             <div class="buttons">
-                <a class="button-link green" href="./m1t2/p.f2.Achrei_Mos_Kedoshim.html">
+                <a class="button-link green" href="./m1t2/p.f2.Achrei_Mos_Kedoshim.html?v=20260426-achrei-cache1">
                     <span class="button-title">Open Test M2T1</span>
                     <span class="button-subtitle">Smartphone-adjusted Torah page test.</span>
                 </a>
-                <a class="button-link green" href="./m1t2/p.f2.Test.html?v=20260426-test2">
+                <a class="button-link green" href="./m1t2/p.f2.Test.html?v=20260426-test3">
                     <span class="button-title">Open Test M2T1 Zoom</span>
                     <span class="button-subtitle">Mobile zoom reading test with larger base font.</span>
                 </a>
-                <a class="button-link green" href="./m1t2/p.f2.Zoom.Multiply.html?v=20260426-zoommulti1">
+                <a class="button-link green" href="./m1t2/p.f2.Zoom.Multiply.html?v=20260426-zoommulti2">
                     <span class="button-title">Open Test M2T1 Zoom Multiply</span>
                     <span class="button-subtitle">Pinch-zoom test page with proportional font multiplier buttons.</span>
+                </a>
+                <a class="button-link green" href="./m1t2/p.f2.Zoom.Gesture.html?v=20260426-zoomgesture1">
+                    <span class="button-title">Open Test M2T1 Zoom Gesture</span>
+                    <span class="button-subtitle">Pinch-zoom test page without buttons, using gestures only.</span>
                 </a>
             </div>
         </section>
