@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Full Page Typography Pinch Test - Smooth</title>
+  <title>Full Page Typography Pinch Test - Smooth - Scroll Allowed</title>
   <style>
     :root {
       --page-bg: #f3f4f6;
@@ -35,8 +35,7 @@
       line-height: var(--page-line-height);
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
-      touch-action: pan-x pan-y;
-      overscroll-behavior-y: contain;
+      touch-action: auto;
     }
 
     body {
@@ -60,27 +59,10 @@
       margin: 0 auto;
     }
 
-    .title {
-      margin: 0;
-      font-size: 1.48em;
-      line-height: 1.15;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
+    .title { margin: 0; font-size: 1.48em; line-height: 1.15; font-weight: 700; }
+    .subtitle { margin-top: 0.45em; font-size: 0.95em; line-height: 1.4; color: var(--text-soft); }
 
-    .subtitle {
-      margin-top: 0.45em;
-      font-size: 0.95em;
-      line-height: 1.4;
-      color: var(--text-soft);
-    }
-
-    main {
-      flex: 1;
-      width: var(--content-width);
-      margin: 0 auto;
-      padding: 1rem;
-    }
+    main { flex: 1; width: var(--content-width); margin: 0 auto; padding: 1rem; }
 
     .panel {
       background: var(--surface);
@@ -91,62 +73,19 @@
       box-shadow: var(--shadow);
     }
 
-    .hero {
-      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
-      border-color: #bfdbfe;
-    }
-
-    .panel h2 {
-      margin: 0 0 0.65em;
-      font-size: 1.28em;
-      line-height: 1.18;
-    }
-
-    .panel h3 {
-      margin: 1.15em 0 0.5em;
-      font-size: 1.08em;
-      line-height: 1.24;
-    }
-
+    .hero { background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); border-color: #bfdbfe; }
+    .panel h2 { margin: 0 0 0.65em; font-size: 1.28em; line-height: 1.18; }
+    .panel h3 { margin: 1.15em 0 0.5em; font-size: 1.08em; line-height: 1.24; }
     .panel p { margin: 0 0 1em; }
     .small { font-size: 0.9em; }
     .large { font-size: 1.18em; }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .chip { border-radius: 999px; padding: 0.42em 0.8em; font-size: 0.85em; line-height: 1.2; background: #e5e7eb; color: #374151; }
 
-    .chip {
-      border-radius: 999px;
-      padding: 0.42em 0.8em;
-      font-size: 0.85em;
-      line-height: 1.2;
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .status {
-      color: var(--text-muted);
-      font-size: 0.95em;
-      line-height: 1.45;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
+    .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; }
+    .status { color: var(--text-muted); font-size: 0.95em; line-height: 1.45; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
     button {
       appearance: none;
@@ -160,21 +99,8 @@
       line-height: 1.2;
     }
 
-    footer {
-      background: var(--footer-bg);
-      color: #cbd5e1;
-      padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
-      margin-top: auto;
-    }
-
-    .footer-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem 1rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    footer { background: var(--footer-bg); color: #cbd5e1; padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px)); margin-top: auto; }
+    .footer-row { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     .hint-active { outline: 3px solid #2563eb; outline-offset: 0.18rem; }
   </style>
@@ -183,27 +109,24 @@
   <header>
     <div class="container">
       <h1 class="title">Smooth Full-Page Typography Pinch</h1>
-      <div class="subtitle">Two-finger pinch anywhere adjusts font size and line height for the whole page with smoothing.</div>
+      <div class="subtitle">One-finger scroll stays allowed. Two-finger pinch anywhere adjusts font size and line height for the whole page.</div>
     </div>
   </header>
 
   <main>
     <section class="panel hero">
-      <h2>What This Version Improves</h2>
-      <p>
-        This file uses requestAnimationFrame and gentle interpolation so typography changes feel smoother while pinching.
-        One-finger scrolling still works. The page layout stays responsive and the browser page itself does not zoom.
-      </p>
+      <h2>Behavior</h2>
+      <p>This version uses requestAnimationFrame and soft interpolation so typography changes feel smoother while pinching, without blocking normal one-finger page scrolling.</p>
       <div class="chips">
         <span class="chip">Whole page</span>
         <span class="chip">Smooth interpolation</span>
-        <span class="chip">Responsive</span>
+        <span class="chip">Scroll allowed</span>
         <span class="chip">No browser zoom</span>
       </div>
     </section>
 
     <section class="panel controls" id="controlPanel">
-      <div class="status" id="statusText">Ready. Use two fingers anywhere to resize page typography smoothly.</div>
+      <div class="status" id="statusText">Ready. Scroll with one finger. Pinch with two fingers anywhere to resize page typography smoothly.</div>
       <div class="button-row">
         <button type="button" id="decreaseBtn">A−</button>
         <button type="button" id="resetBtn">Reset</button>
@@ -213,33 +136,13 @@
 
     <section class="panel">
       <h2>Reading Sample</h2>
-      <p>
-        The base font size is chosen from the current screen width, then your pinch gesture applies a scale factor.
-        Line height updates with the same typography system so the entire page stays balanced while text grows or shrinks.
-      </p>
+      <p>The base font size is chosen from the current screen width, then your pinch gesture applies a scale factor. One-finger scrolling remains native.</p>
       <h3>Smaller paragraph</h3>
       <p class="small">This smaller text remains proportional to the page font size and line height.</p>
       <h3>Regular paragraph</h3>
-      <p>
-        Smooth changes are handled through animation-frame updates and a soft blend toward the target scale. This reduces jumpiness
-        when touch movement reports are noisy.
-      </p>
+      <p>Smoothing is applied only to typography updates, not to page scrolling. This keeps gestures separate and predictable.</p>
       <h3>Larger paragraph</h3>
-      <p class="large">
-        The whole page inherits the typography variables, including header, content cards, buttons, and footer values.
-      </p>
-    </section>
-
-    <section class="panel">
-      <h2>Longer Block</h2>
-      <p>
-        If you rotate the device or resize the viewport, the screen-based default is recalculated. Your current user scale is preserved,
-        so the page still feels consistent after orientation changes.
-      </p>
-      <p>
-        Press Reset to return the typography to the current screen-width baseline. That makes this file useful as a practical test page
-        for responsive reading behavior on phones and tablets.
-      </p>
+      <p class="large">Header, content cards, buttons, and footer all inherit the same typography variables.</p>
     </section>
   </main>
 
@@ -279,27 +182,15 @@
       let startScale = 1;
       let rafId = 0;
 
-      function clamp(value, min, max) {
-        return Math.min(max, Math.max(min, value));
-      }
-
-      function computeBaseFontForWidth(width) {
-        const w = clamp(width, 320, 900);
-        return clamp(15 + ((w - 320) / 580) * 2.35, 15, 17.35);
-      }
-
-      function computeLineHeight(fontPx) {
-        const ratio = (fontPx - minFont) / (maxFont - minFont || 1);
-        return clamp(1.48 + ratio * 0.32, minLine, maxLine);
-      }
+      function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+      function computeBaseFontForWidth(width) { const w = clamp(width, 320, 900); return clamp(15 + ((w - 320) / 580) * 2.35, 15, 17.35); }
+      function computeLineHeight(fontPx) { const ratio = (fontPx - minFont) / (maxFont - minFont || 1); return clamp(1.48 + ratio * 0.32, minLine, maxLine); }
 
       function render() {
         const fontPx = clamp(baseFont * appliedScale, minFont, maxFont);
         const lineHeight = computeLineHeight(fontPx);
-
         currentFont = fontPx;
         currentLine = lineHeight;
-
         root.style.setProperty('--page-font-size', fontPx.toFixed(2) + 'px');
         root.style.setProperty('--page-line-height', lineHeight.toFixed(2));
         fontSizeValue.textContent = fontPx.toFixed(2) + 'px';
@@ -322,10 +213,7 @@
       }
 
       function scheduleAnimation() {
-        if (rafId) {
-          return;
-        }
-
+        if (rafId) { return; }
         rafId = requestAnimationFrame(animate);
       }
 
@@ -335,56 +223,44 @@
         return Math.hypot(dx, dy);
       }
 
-      function minScaleForBase() {
-        return minFont / baseFont;
-      }
-
-      function maxScaleForBase() {
-        return maxFont / baseFont;
-      }
+      function minScaleForBase() { return minFont / baseFont; }
+      function maxScaleForBase() { return maxFont / baseFont; }
 
       function updateTargetScale(nextScale) {
         targetScale = clamp(nextScale, minScaleForBase(), maxScaleForBase());
         scheduleAnimation();
       }
 
-      function startGesture(event) {
-        if (event.touches.length !== 2) {
-          return;
-        }
+      function onGestureMove(event) {
+        if (!gestureActive || event.touches.length !== 2) { return; }
+        event.preventDefault();
+        const nextDistance = touchDistance(event.touches);
+        updateTargetScale(startScale * (nextDistance / startDistance));
+      }
 
+      function stopGesture() {
+        if (!gestureActive) { return; }
+        gestureActive = false;
+        document.removeEventListener('touchmove', onGestureMove, moveOptions);
+        body.classList.remove('hint-active');
+        controlPanel.classList.remove('hint-active');
+        statusText.textContent = 'Done. One-finger scroll works normally. Two-finger pinch changes whole-page typography.';
+      }
+
+      function onTouchStart(event) {
+        if (event.touches.length !== 2) { return; }
         gestureActive = true;
         startDistance = touchDistance(event.touches);
         startScale = targetScale;
+        document.addEventListener('touchmove', onGestureMove, moveOptions);
         body.classList.add('hint-active');
         controlPanel.classList.add('hint-active');
         statusText.textContent = 'Pinch detected. Smoothly updating font size and line height for the whole page.';
       }
 
-      function moveGesture(event) {
-        if (!gestureActive || event.touches.length !== 2) {
-          return;
-        }
-
-        event.preventDefault();
-        const nextDistance = touchDistance(event.touches);
-        const nextScale = startScale * (nextDistance / startDistance);
-        updateTargetScale(nextScale);
-      }
-
-      function endGesture(event) {
-        if (event.touches.length >= 2) {
-          return;
-        }
-
-        if (!gestureActive) {
-          return;
-        }
-
-        gestureActive = false;
-        body.classList.remove('hint-active');
-        controlPanel.classList.remove('hint-active');
-        statusText.textContent = 'Done. One-finger scroll works normally. Two-finger pinch changes whole-page typography.';
+      function onTouchEnd(event) {
+        if (event.touches.length >= 2) { return; }
+        stopGesture();
       }
 
       function refreshForScreen() {
@@ -394,27 +270,14 @@
         render();
       }
 
-      decreaseBtn.addEventListener('click', function () {
-        updateTargetScale((currentFont - 1) / baseFont);
-        statusText.textContent = 'Decreased whole-page typography.';
-      });
+      decreaseBtn.addEventListener('click', function () { updateTargetScale((currentFont - 1) / baseFont); statusText.textContent = 'Decreased whole-page typography.'; });
+      increaseBtn.addEventListener('click', function () { updateTargetScale((currentFont + 1) / baseFont); statusText.textContent = 'Increased whole-page typography.'; });
+      resetBtn.addEventListener('click', function () { appliedScale = 1; targetScale = 1; refreshForScreen(); statusText.textContent = 'Reset to the current screen-width baseline.'; });
 
-      increaseBtn.addEventListener('click', function () {
-        updateTargetScale((currentFont + 1) / baseFont);
-        statusText.textContent = 'Increased whole-page typography.';
-      });
-
-      resetBtn.addEventListener('click', function () {
-        appliedScale = 1;
-        targetScale = 1;
-        refreshForScreen();
-        statusText.textContent = 'Reset to the current screen-width baseline.';
-      });
-
-      document.addEventListener('touchstart', startGesture, { passive: true });
-      document.addEventListener('touchmove', moveGesture, { passive: false });
-      document.addEventListener('touchend', endGesture, { passive: true });
-      document.addEventListener('touchcancel', endGesture, { passive: true });
+      const moveOptions = { passive: false };
+      document.addEventListener('touchstart', onTouchStart, { passive: true });
+      document.addEventListener('touchend', onTouchEnd, { passive: true });
+      document.addEventListener('touchcancel', stopGesture, { passive: true });
       window.addEventListener('resize', refreshForScreen, { passive: true });
       window.addEventListener('orientationchange', refreshForScreen, { passive: true });
 

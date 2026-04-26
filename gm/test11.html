@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Full Page Font Size and Line Height Test</title>
+  <title>Full Page Font Size and Line Height Test - Scroll Allowed</title>
   <style>
     :root {
       --page-bg: #f3f4f6;
@@ -20,9 +20,7 @@
       --content-width: min(100%, 860px);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html,
     body {
@@ -37,7 +35,7 @@
       line-height: var(--page-line-height);
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
-      touch-action: pan-x pan-y;
+      touch-action: auto;
     }
 
     body {
@@ -107,17 +105,9 @@
       line-height: 1.25;
     }
 
-    .panel p {
-      margin: 0 0 1em;
-    }
-
-    .small {
-      font-size: 0.9em;
-    }
-
-    .large {
-      font-size: 1.2em;
-    }
+    .panel p { margin: 0 0 1em; }
+    .small { font-size: 0.9em; }
+    .large { font-size: 1.2em; }
 
     .chips {
       display: flex;
@@ -182,43 +172,32 @@
       justify-content: space-between;
     }
 
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-
-    .active-tip {
-      outline: 3px solid #2563eb;
-      outline-offset: 0.2rem;
-    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .active-tip { outline: 3px solid #2563eb; outline-offset: 0.2rem; }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
-      <h1 class="title">Full Page Font Size & Line Height Test</h1>
-      <div class="subtitle">
-        Two-finger pinch anywhere on the page changes typography for the whole page. The layout stays responsive to the mobile screen size.
-      </div>
+      <h1 class="title">Full Page Typography Test</h1>
+      <div class="subtitle">Two-finger pinch changes font size and line height for the whole page. One-finger scroll stays enabled.</div>
     </div>
   </header>
 
-  <main id="pageArea">
+  <main>
     <section class="panel hero">
       <h2>How to Test</h2>
-      <p>
-        Use one finger to scroll normally. Use two fingers anywhere on the page to change the font size and line height for the entire page,
-        including the header, content, and footer. The page itself does not use browser zoom.
-      </p>
+      <p>Use one finger to scroll normally. Use two fingers anywhere on the page to change the font size and line height for header, content, buttons, and footer together.</p>
       <div class="chips">
-        <span class="chip">Whole page typography</span>
+        <span class="chip">One finger = scroll</span>
+        <span class="chip">Two fingers = typography</span>
+        <span class="chip">Whole page</span>
         <span class="chip">No browser zoom</span>
-        <span class="chip">One-finger scroll</span>
-        <span class="chip">Responsive layout</span>
       </div>
     </section>
 
     <section class="panel controls" id="controlPanel">
-      <div class="status" id="statusText">Ready. Pinch anywhere with two fingers to resize text for the full page.</div>
+      <div class="status" id="statusText">Ready. Scroll with one finger. Pinch with two fingers anywhere to change whole-page typography.</div>
       <div class="button-row">
         <button type="button" id="decreaseBtn">A−</button>
         <button type="button" id="resetBtn">Reset</button>
@@ -227,43 +206,25 @@
     </section>
 
     <section class="panel">
-      <h2>Small Text Sample</h2>
-      <p class="small">
-        This paragraph is slightly smaller, but it still inherits the global page font scaling. When the base page font changes,
-        this text stays proportionally smaller while line spacing remains readable.
-      </p>
-
-      <h3>Normal Text Sample</h3>
-      <p>
-        The page uses CSS variables for the global font size and line height. That means every section can scale together in a controlled way,
-        keeping the layout ordered on different mobile widths.
-      </p>
-
-      <h3>Large Text Sample</h3>
-      <p class="large">
-        This larger paragraph shows that headings, blocks, and footer text all stay in sync with the same typography settings.
-        The page reflows naturally according to the available screen width.
-      </p>
+      <h2>Reading Sample</h2>
+      <p class="small">This smaller paragraph stays proportional to the global page typography settings.</p>
+      <h3>Normal Text</h3>
+      <p>The page uses global CSS variables for font size and line height so all visible text stays synchronized.</p>
+      <h3>Large Text</h3>
+      <p class="large">The whole layout remains responsive to the mobile width while only typography changes.</p>
     </section>
 
     <section class="panel">
-      <h2>Long Reading Block</h2>
-      <p>
-        A good mobile reading experience depends on more than font size. Line height also needs to adapt so the text does not feel too tight
-        when the letters become larger. In this file, the whole page updates typography together. That includes the header, all content cards,
-        controls, and the footer information row.
-      </p>
-      <p>
-        The page also recalculates a width-based default on load and on orientation changes. If you press Reset, the typography goes back to
-        the screen-based default instead of a hard-coded value, so the page stays tuned for the current device width.
-      </p>
+      <h2>Longer Block</h2>
+      <p>Reset returns the typography to a width-based baseline for the current device size. Rotating the phone recalculates the base size and keeps your scaling inside the allowed range.</p>
+      <p>This version is adjusted so one-finger scrolling is not blocked. PreventDefault is used only during an active two-finger gesture.</p>
     </section>
   </main>
 
   <footer>
     <div class="container footer-row">
-      <div id="footerInfo">Font size: <span class="mono" id="fontSizeValue">16px</span> | Line height: <span class="mono" id="lineHeightValue">1.60</span></div>
-      <div id="screenInfo">Screen: <span class="mono" id="screenValue">0 × 0</span></div>
+      <div>Font size: <span class="mono" id="fontSizeValue">16px</span> | Line height: <span class="mono" id="lineHeightValue">1.60</span></div>
+      <div>Screen: <span class="mono" id="screenValue">0 × 0</span></div>
     </div>
   </footer>
 
@@ -271,6 +232,7 @@
     (function () {
       const root = document.documentElement;
       const body = document.body;
+      const controlPanel = document.getElementById('controlPanel');
       const statusText = document.getElementById('statusText');
       const fontSizeValue = document.getElementById('fontSizeValue');
       const lineHeightValue = document.getElementById('lineHeightValue');
@@ -278,7 +240,6 @@
       const decreaseBtn = document.getElementById('decreaseBtn');
       const increaseBtn = document.getElementById('increaseBtn');
       const resetBtn = document.getElementById('resetBtn');
-      const controlPanel = document.getElementById('controlPanel');
 
       const minFont = 14;
       const maxFont = 30;
@@ -304,17 +265,14 @@
 
       function computeLineHeight(fontPx) {
         const ratio = (fontPx - minFont) / (maxFont - minFont || 1);
-        const line = 1.5 + ratio * 0.3;
-        return clamp(line, minLine, maxLine);
+        return clamp(1.5 + ratio * 0.3, minLine, maxLine);
       }
 
       function applyTypography() {
         currentFont = clamp(baseFont * userScale, minFont, maxFont);
         currentLine = computeLineHeight(currentFont);
-
         root.style.setProperty('--page-font-size', currentFont.toFixed(2) + 'px');
         root.style.setProperty('--page-line-height', currentLine.toFixed(2));
-
         fontSizeValue.textContent = currentFont.toFixed(2) + 'px';
         lineHeightValue.textContent = currentLine.toFixed(2);
         screenValue.textContent = window.innerWidth + ' × ' + window.innerHeight;
@@ -326,20 +284,7 @@
         return Math.hypot(dx, dy);
       }
 
-      function startGesture(event) {
-        if (event.touches.length !== 2) {
-          return;
-        }
-
-        gestureActive = true;
-        startDistance = touchDistance(event.touches);
-        startScale = userScale;
-        body.classList.add('active-tip');
-        controlPanel.classList.add('active-tip');
-        statusText.textContent = 'Pinch detected. Updating font size and line height for the whole page.';
-      }
-
-      function moveGesture(event) {
+      function onGestureMove(event) {
         if (!gestureActive || event.touches.length !== 2) {
           return;
         }
@@ -351,48 +296,68 @@
         applyTypography();
       }
 
-      function endGesture(event) {
-        if (event.touches.length >= 2) {
-          return;
-        }
-
+      function stopGesture() {
         if (!gestureActive) {
           return;
         }
 
         gestureActive = false;
+        document.removeEventListener('touchmove', onGestureMove, moveOptions);
         body.classList.remove('active-tip');
         controlPanel.classList.remove('active-tip');
-        statusText.textContent = 'Done. One-finger scroll still works. Two-finger pinch changes the whole page typography.';
+        statusText.textContent = 'Done. One-finger scroll is still enabled. Two-finger pinch changes whole-page typography.';
+      }
+
+      function onTouchStart(event) {
+        if (event.touches.length !== 2) {
+          return;
+        }
+
+        gestureActive = true;
+        startDistance = touchDistance(event.touches);
+        startScale = userScale;
+        document.addEventListener('touchmove', onGestureMove, moveOptions);
+        body.classList.add('active-tip');
+        controlPanel.classList.add('active-tip');
+        statusText.textContent = 'Pinch detected. Updating font size and line height for the whole page.';
+      }
+
+      function onTouchEnd(event) {
+        if (event.touches.length >= 2) {
+          return;
+        }
+
+        stopGesture();
       }
 
       function refreshForScreen() {
         baseFont = computeBaseFontForWidth(window.innerWidth);
+        userScale = clamp(userScale, minFont / baseFont, maxFont / baseFont);
         applyTypography();
       }
 
       decreaseBtn.addEventListener('click', function () {
         userScale = clamp((currentFont - 1) / baseFont, minFont / baseFont, maxFont / baseFont);
         applyTypography();
-        statusText.textContent = 'Decreased typography for the full page.';
+        statusText.textContent = 'Decreased whole-page typography.';
       });
 
       increaseBtn.addEventListener('click', function () {
         userScale = clamp((currentFont + 1) / baseFont, minFont / baseFont, maxFont / baseFont);
         applyTypography();
-        statusText.textContent = 'Increased typography for the full page.';
+        statusText.textContent = 'Increased whole-page typography.';
       });
 
       resetBtn.addEventListener('click', function () {
         userScale = 1;
         refreshForScreen();
-        statusText.textContent = 'Reset to the screen-based default for the current mobile width.';
+        statusText.textContent = 'Reset to the screen-based default.';
       });
 
-      document.addEventListener('touchstart', startGesture, { passive: true });
-      document.addEventListener('touchmove', moveGesture, { passive: false });
-      document.addEventListener('touchend', endGesture, { passive: true });
-      document.addEventListener('touchcancel', endGesture, { passive: true });
+      const moveOptions = { passive: false };
+      document.addEventListener('touchstart', onTouchStart, { passive: true });
+      document.addEventListener('touchend', onTouchEnd, { passive: true });
+      document.addEventListener('touchcancel', stopGesture, { passive: true });
       window.addEventListener('resize', refreshForScreen, { passive: true });
       window.addEventListener('orientationchange', refreshForScreen, { passive: true });
 

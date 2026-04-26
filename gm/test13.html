@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="format-detection" content="telephone=no">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Full Page Typography Pinch Test - Android WebView</title>
+  <title>Full Page Typography Pinch Test - Android WebView - Scroll Allowed</title>
   <style>
     :root {
       --page-bg: #f3f4f6;
@@ -41,11 +41,11 @@
       line-height: var(--page-line-height);
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
-      touch-action: pan-x pan-y;
-      overscroll-behavior: none;
-      text-rendering: optimizeLegibility;
+      touch-action: auto;
       -webkit-font-smoothing: antialiased;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
     }
 
     body {
@@ -64,31 +64,11 @@
       box-shadow: var(--shadow);
     }
 
-    .container {
-      width: var(--content-width);
-      margin: 0 auto;
-    }
+    .container { width: var(--content-width); margin: 0 auto; }
+    .title { margin: 0; font-size: 1.46em; line-height: 1.14; font-weight: 700; }
+    .subtitle { margin-top: 0.45em; font-size: 0.95em; line-height: 1.4; color: var(--text-soft); }
 
-    .title {
-      margin: 0;
-      font-size: 1.46em;
-      line-height: 1.14;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      margin-top: 0.45em;
-      font-size: 0.95em;
-      line-height: 1.4;
-      color: var(--text-soft);
-    }
-
-    main {
-      flex: 1;
-      width: var(--content-width);
-      margin: 0 auto;
-      padding: 1rem;
-    }
+    main { flex: 1; width: var(--content-width); margin: 0 auto; padding: 1rem; }
 
     .panel {
       background: var(--surface);
@@ -97,65 +77,20 @@
       padding: 1rem;
       margin-bottom: 1rem;
       box-shadow: var(--shadow);
-      will-change: contents;
+      will-change: auto;
     }
 
-    .hero {
-      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
-      border-color: #bfdbfe;
-    }
-
-    .panel h2 {
-      margin: 0 0 0.65em;
-      font-size: 1.28em;
-      line-height: 1.18;
-    }
-
-    .panel h3 {
-      margin: 1.15em 0 0.5em;
-      font-size: 1.08em;
-      line-height: 1.24;
-    }
-
+    .hero { background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); border-color: #bfdbfe; }
+    .panel h2 { margin: 0 0 0.65em; font-size: 1.28em; line-height: 1.18; }
+    .panel h3 { margin: 1.15em 0 0.5em; font-size: 1.08em; line-height: 1.24; }
     .panel p { margin: 0 0 1em; }
     .small { font-size: 0.9em; }
     .large { font-size: 1.18em; }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .chip {
-      border-radius: 999px;
-      padding: 0.42em 0.8em;
-      font-size: 0.85em;
-      line-height: 1.2;
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .status {
-      color: var(--text-muted);
-      font-size: 0.95em;
-      line-height: 1.45;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .chip { border-radius: 999px; padding: 0.42em 0.8em; font-size: 0.85em; line-height: 1.2; background: #e5e7eb; color: #374151; }
+    .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; }
+    .status { color: var(--text-muted); font-size: 0.95em; line-height: 1.45; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
     button {
       appearance: none;
@@ -169,21 +104,8 @@
       line-height: 1.2;
     }
 
-    footer {
-      background: var(--footer-bg);
-      color: #cbd5e1;
-      padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
-      margin-top: auto;
-    }
-
-    .footer-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem 1rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    footer { background: var(--footer-bg); color: #cbd5e1; padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px)); margin-top: auto; }
+    .footer-row { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     .hint-active { outline: 3px solid #2563eb; outline-offset: 0.18rem; }
   </style>
@@ -191,28 +113,25 @@
 <body>
   <header>
     <div class="container">
-      <h1 class="title">Android WebView Full-Page Typography Pinch</h1>
-      <div class="subtitle">Whole-page font size and line height resizing with smoother touch handling tuned for Android WebView.</div>
+      <h1 class="title">Android WebView Typography Pinch</h1>
+      <div class="subtitle">Whole-page font size and line height resizing with smoother touch handling, while one-finger scrolling remains enabled.</div>
     </div>
   </header>
 
   <main>
     <section class="panel hero">
       <h2>WebView-Tuned Behavior</h2>
-      <p>
-        This version keeps the same whole-page pinch typography behavior, but it is tuned for Android WebView constraints.
-        It uses touch-only gesture tracking, animation-frame rendering, and a small amount of smoothing to reduce jitter.
-      </p>
+      <p>This version keeps the same whole-page pinch typography behavior, but it only installs the blocking touchmove listener during an active two-finger gesture so one-finger scroll is not blocked.</p>
       <div class="chips">
         <span class="chip">Android WebView</span>
         <span class="chip">Whole page</span>
         <span class="chip">Smooth pinch</span>
-        <span class="chip">No browser zoom</span>
+        <span class="chip">Scroll allowed</span>
       </div>
     </section>
 
     <section class="panel controls" id="controlPanel">
-      <div class="status" id="statusText">Ready. Use two fingers anywhere to resize typography for the whole page.</div>
+      <div class="status" id="statusText">Ready. Scroll with one finger. Pinch with two fingers anywhere to resize typography for the whole page.</div>
       <div class="button-row">
         <button type="button" id="decreaseBtn">A−</button>
         <button type="button" id="resetBtn">Reset</button>
@@ -222,33 +141,13 @@
 
     <section class="panel">
       <h2>Reading Sample</h2>
-      <p>
-        On Android WebView, touch events can arrive in bursts. This page smooths updates before applying the final font size and line height,
-        helping the interface feel more stable during a pinch gesture.
-      </p>
+      <p>On Android WebView, touch events can arrive in bursts. This page smooths updates before applying the final font size and line height, while leaving ordinary scroll behavior alone.</p>
       <h3>Smaller paragraph</h3>
-      <p class="small">This smaller paragraph stays proportional because the page uses a single typography source of truth.</p>
+      <p class="small">This smaller paragraph stays proportional because the page uses one typography source of truth.</p>
       <h3>Regular paragraph</h3>
-      <p>
-        The page remains responsive to screen width and orientation. Reset returns typography to the current screen-based default,
-        then you can pinch again from that baseline.
-      </p>
+      <p>The page remains responsive to screen width and orientation. Reset returns typography to the current screen-based default.</p>
       <h3>Larger paragraph</h3>
-      <p class="large">
-        The header, content, buttons, and footer all inherit the same page-level font size and line height variables.
-      </p>
-    </section>
-
-    <section class="panel">
-      <h2>Implementation Notes</h2>
-      <p>
-        This version avoids extra APIs that are unnecessary in WebView and uses direct touch event tracking with requestAnimationFrame.
-        It also prevents browser zoom by using a locked viewport and intercepting two-finger movement.
-      </p>
-      <p>
-        If you host this inside a native Android app, make sure the WebView itself is not configured to force zoom controls or automatic text zoom,
-        otherwise the app-level settings may override the page behavior.
-      </p>
+      <p class="large">Header, content, buttons, and footer all inherit the same page-level font size and line height variables.</p>
     </section>
   </main>
 
@@ -288,19 +187,9 @@
       let gestureActive = false;
       let rafId = 0;
 
-      function clamp(value, min, max) {
-        return Math.min(max, Math.max(min, value));
-      }
-
-      function computeBaseFontForWidth(width) {
-        const w = clamp(width, 320, 900);
-        return clamp(15 + ((w - 320) / 580) * 2.2, 15, 17.2);
-      }
-
-      function computeLineHeight(fontPx) {
-        const ratio = (fontPx - minFont) / (maxFont - minFont || 1);
-        return clamp(1.48 + ratio * 0.32, minLine, maxLine);
-      }
+      function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+      function computeBaseFontForWidth(width) { const w = clamp(width, 320, 900); return clamp(15 + ((w - 320) / 580) * 2.2, 15, 17.2); }
+      function computeLineHeight(fontPx) { const ratio = (fontPx - minFont) / (maxFont - minFont || 1); return clamp(1.48 + ratio * 0.32, minLine, maxLine); }
 
       function render() {
         const fontPx = clamp(baseFont * appliedScale, minFont, maxFont);
@@ -311,7 +200,7 @@
         root.style.setProperty('--page-line-height', lineHeight.toFixed(2));
         fontSizeValue.textContent = fontPx.toFixed(2) + 'px';
         lineHeightValue.textContent = lineHeight.toFixed(2);
-        screenValue.textContent = window.innerWidth + ' × ' + window.innerHeight;
+        screenValue.textContent = (window.innerWidth || document.documentElement.clientWidth || 360) + ' × ' + (window.innerHeight || document.documentElement.clientHeight || 640);
       }
 
       function animate() {
@@ -329,10 +218,7 @@
       }
 
       function schedule() {
-        if (rafId) {
-          return;
-        }
-
+        if (rafId) { return; }
         rafId = window.requestAnimationFrame(animate);
       }
 
@@ -342,56 +228,41 @@
         return Math.sqrt(dx * dx + dy * dy);
       }
 
-      function minScaleForBase() {
-        return minFont / baseFont;
-      }
+      function minScaleForBase() { return minFont / baseFont; }
+      function maxScaleForBase() { return maxFont / baseFont; }
+      function updateTargetScale(nextScale) { targetScale = clamp(nextScale, minScaleForBase(), maxScaleForBase()); schedule(); }
 
-      function maxScaleForBase() {
-        return maxFont / baseFont;
-      }
-
-      function updateTargetScale(nextScale) {
-        targetScale = clamp(nextScale, minScaleForBase(), maxScaleForBase());
-        schedule();
-      }
-
-      function onTouchStart(event) {
-        if (event.touches.length !== 2) {
-          return;
-        }
-
-        gestureActive = true;
-        startDistance = touchDistance(event.touches);
-        startScale = targetScale;
-        body.classList.add('hint-active');
-        controlPanel.classList.add('hint-active');
-        statusText.textContent = 'Pinch detected. Smoothly updating whole-page typography for Android WebView.';
-      }
-
-      function onTouchMove(event) {
-        if (!gestureActive || event.touches.length !== 2) {
-          return;
-        }
-
+      function onGestureMove(event) {
+        if (!gestureActive || event.touches.length !== 2) { return; }
         event.preventDefault();
         const nextDistance = touchDistance(event.touches);
         const scaleFactor = nextDistance / startDistance;
         updateTargetScale(startScale * scaleFactor);
       }
 
-      function onTouchEnd(event) {
-        if (event.touches.length >= 2) {
-          return;
-        }
-
-        if (!gestureActive) {
-          return;
-        }
-
+      function stopGesture() {
+        if (!gestureActive) { return; }
         gestureActive = false;
+        document.removeEventListener('touchmove', onGestureMove, moveOptions);
         body.classList.remove('hint-active');
         controlPanel.classList.remove('hint-active');
         statusText.textContent = 'Done. One-finger scroll works normally. Two-finger pinch changes whole-page typography.';
+      }
+
+      function onTouchStart(event) {
+        if (event.touches.length !== 2) { return; }
+        gestureActive = true;
+        startDistance = touchDistance(event.touches);
+        startScale = targetScale;
+        document.addEventListener('touchmove', onGestureMove, moveOptions);
+        body.classList.add('hint-active');
+        controlPanel.classList.add('hint-active');
+        statusText.textContent = 'Pinch detected. Smoothly updating whole-page typography for Android WebView.';
+      }
+
+      function onTouchEnd(event) {
+        if (event.touches.length >= 2) { return; }
+        stopGesture();
       }
 
       function refreshForScreen() {
@@ -401,27 +272,14 @@
         render();
       }
 
-      decreaseBtn.addEventListener('click', function () {
-        updateTargetScale((currentFont - 1) / baseFont);
-        statusText.textContent = 'Decreased whole-page typography.';
-      }, false);
+      decreaseBtn.addEventListener('click', function () { updateTargetScale((currentFont - 1) / baseFont); statusText.textContent = 'Decreased whole-page typography.'; }, false);
+      increaseBtn.addEventListener('click', function () { updateTargetScale((currentFont + 1) / baseFont); statusText.textContent = 'Increased whole-page typography.'; }, false);
+      resetBtn.addEventListener('click', function () { appliedScale = 1; targetScale = 1; refreshForScreen(); statusText.textContent = 'Reset to the current screen-width baseline.'; }, false);
 
-      increaseBtn.addEventListener('click', function () {
-        updateTargetScale((currentFont + 1) / baseFont);
-        statusText.textContent = 'Increased whole-page typography.';
-      }, false);
-
-      resetBtn.addEventListener('click', function () {
-        appliedScale = 1;
-        targetScale = 1;
-        refreshForScreen();
-        statusText.textContent = 'Reset to the current screen-width baseline.';
-      }, false);
-
+      const moveOptions = { passive: false };
       document.addEventListener('touchstart', onTouchStart, { passive: true });
-      document.addEventListener('touchmove', onTouchMove, { passive: false });
       document.addEventListener('touchend', onTouchEnd, { passive: true });
-      document.addEventListener('touchcancel', onTouchEnd, { passive: true });
+      document.addEventListener('touchcancel', stopGesture, { passive: true });
       window.addEventListener('resize', refreshForScreen, false);
       window.addEventListener('orientationchange', refreshForScreen, false);
 
