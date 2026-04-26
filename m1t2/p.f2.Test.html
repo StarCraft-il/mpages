@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" /><title>Test-2M1T-Achrei Mos Kedoshim - Zoom Test</title>
+    <meta http-equiv="Expires" content="0" /><title>TestZoom</title>
     <meta charset="utf-8">
         <meta http-equiv="content-language" content="he" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,18 +26,23 @@ div.chapterText {
 
 @media (max-width: 768px) {
     :root {
-        --mobile-base-font-size: 20px;
-        --mobile-reading-font-size: 2rem;
-        --mobile-reading-font-size-secondary: 1.8rem;
-        --mobile-inline-highlight-font-size: 1.6rem;
-        --mobile-small-font-size: 1.2rem;
-        --mobile-side-padding: 14px;
+        --mobile-scale: 1.22;
+        --mobile-base-font-size: 22px;
+        --mobile-reading-font-size: 2.25rem;
+        --mobile-reading-font-size-secondary: 2rem;
+        --mobile-inline-highlight-font-size: 1.8rem;
+        --mobile-small-font-size: 1.32rem;
+        --mobile-title-font-size: 1.9rem;
+        --mobile-section-font-size: 2.15rem;
+        --mobile-meta-font-size: 1.12rem;
+        --mobile-side-padding: 10px;
     }
 
     html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
-        font-size: 100%;
+        font-size: 112.5%;
+        background: #ffffff;
     }
 
     *,
@@ -51,12 +56,13 @@ div.chapterText {
         padding: 0;
         width: 100%;
         min-width: 320px;
-        overflow-x: auto;
+        overflow-x: hidden;
         touch-action: auto;
         overscroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
         font-size: var(--mobile-base-font-size);
-        line-height: 1.55;
+        line-height: 1.6;
+        background: #ffffff;
     }
 
     img,
@@ -79,19 +85,22 @@ div.chapterText {
         width: 100%;
         max-width: 100%;
         min-width: 0;
+        overflow-wrap: anywhere;
     }
 
     #parashaContentRow {
         padding-right: var(--mobile-side-padding) !important;
         padding-left: var(--mobile-side-padding) !important;
-        padding-bottom: 24px !important;
+        padding-bottom: 28px !important;
         margin: 0 auto;
+        width: 100%;
     }
 
     #parashaContentRow #parashaName {
-        font-size: 1.55rem !important;
+        font-size: var(--mobile-title-font-size) !important;
         line-height: 1.25;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.8rem;
+        text-align: center;
     }
 
     #parashaContentRow #parashaName h1 {
@@ -100,22 +109,29 @@ div.chapterText {
     }
 
     ul#aliyusTableLinks {
-        padding-right: 1.25rem !important;
-        padding-inline-start: 1.25rem !important;
+        padding-right: 1rem !important;
+        padding-inline-start: 1rem !important;
         margin-top: 0.75rem !important;
-        margin-bottom: 0.9rem !important;
-        font-size: 1.05rem !important;
-        line-height: 1.55 !important;
+        margin-bottom: 1rem !important;
+        font-size: var(--mobile-meta-font-size) !important;
+        line-height: 1.7 !important;
     }
 
     ul#aliyusTableLinks li {
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.45rem;
+    }
+
+    ul#aliyusTableLinks a {
+        display: inline-block;
+        font-size: inherit !important;
+        line-height: inherit !important;
     }
 
     #torahStatistcsForPortion {
-        font-size: 0.95rem;
-        line-height: 1.45;
+        font-size: var(--mobile-meta-font-size) !important;
+        line-height: 1.55;
         overflow-wrap: anywhere;
+        margin-bottom: 0.8rem;
     }
 
     div.allText,
@@ -124,14 +140,14 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
     #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
         font-size: var(--mobile-reading-font-size) !important;
-        line-height: 1.58 !important;
+        line-height: 1.62 !important;
         letter-spacing: -1px !important;
         word-spacing: 0.08em !important;
         overflow-wrap: anywhere;
     }
 
     div.allText {
-        padding-top: 20px !important;
+        padding-top: 24px !important;
     }
 
     div.allText span.shemot,
@@ -147,19 +163,19 @@ div.chapterText {
     }
 
     #parashaContentRow .aliya {
-        padding-top: 24px !important;
+        padding-top: 28px !important;
     }
 
     #parashaContentRow .aliya .toStartOfPortion {
         display: inline-block;
-        font-size: 0.95rem !important;
-        margin-bottom: 0.4rem;
+        font-size: 1rem !important;
+        margin-bottom: 0.55rem;
     }
 
     #parashaContentRow .aliya .a-header {
         display: inline-block;
-        font-size: 2rem !important;
-        letter-spacing: 0.22rem !important;
+        font-size: var(--mobile-section-font-size) !important;
+        letter-spacing: 0.16rem !important;
         line-height: 1.2 !important;
         overflow-wrap: anywhere;
     }
@@ -169,24 +185,26 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
-        font-size: 1.15rem !important;
+        font-size: 1.2rem !important;
         line-height: 1.45 !important;
         letter-spacing: normal !important;
         padding-top: 14px !important;
         overflow-wrap: anywhere;
+        white-space: normal !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader {
-        padding: 8px 10px;
+        padding: 10px 10px;
         overflow-wrap: anywhere;
+        white-space: normal !important;
     }
 
     #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
-        font-size: 1.05rem !important;
+        font-size: 1.12rem !important;
         line-height: 1.35 !important;
     }
 
@@ -199,7 +217,7 @@ div.chapterText {
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
     #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
-        font-size: 1.12rem !important;
+        font-size: 1.2rem !important;
         line-height: 1.4 !important;
     }
 
@@ -208,17 +226,26 @@ div.chapterText {
     .lastVerse .last_pasuk_mikra_1,
     .lastVerse .last_pasuk_mikra_2 {
         font-size: var(--mobile-reading-font-size-secondary) !important;
-        line-height: 1.58 !important;
+        line-height: 1.62 !important;
         letter-spacing: -1px !important;
         word-spacing: 0.08em !important;
         overflow-wrap: anywhere;
+    }
+
+    #parashaContentRow .aliya .verse,
+    #parashaContentRow .aliya .verse .pasuk2m1t,
+    #parashaContentRow .lastVerse {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
     }
 }
         </style>
 </head>
 <body dir="rtl">
         <div id="parashaContentRow">
-            <div id="parashaName"><h1>פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
+            <div id="parashaName"><h1>זום פרשת &#x5D0;&#x5B7;&#x5D7;&#x5B2;&#x5E8;&#x5B5;&#x5D9; &#x5DE;&#x5D5;&#x5B9;&#x5EA; &#x5E7;&#x5B0;&#x5D3;&#x5E9;&#x5C1;&#x5B4;&#x5D9;&#x5DD;</h1></div>
 <ul id="aliyusTableLinks">
         <li><a href="#1_one_header">&#x5E8;&#x5D0;&#x5E9;&#x5D5;&#x5DF; - (24)</a></li>
         <li><a href="#2_two_header">&#x5E9;&#x5E0;&#x5D9; - (17)</a></li>
@@ -229,7 +256,7 @@ div.chapterText {
         <li><a href="#7_seven_header">&#x5E9;&#x5D1;&#x5D9;&#x5E2;&#x5D9; - (20)</a></li>
 </ul>
     <div id="torahStatistcsForPortion">
-        <span>סה"כ: 144 פסוקים בפרשה. לפי קובץ סטטיסטי: -1 פסוקים.</span>
+        <span>זום סה"כ: 144 פסוקים בפרשה. לפי קובץ סטטיסטי: -1 פסוקים.</span>
     </div>
 
 
