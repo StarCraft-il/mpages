@@ -142,8 +142,9 @@ div.allText span.shemot {
   color: black;
 }
 div.allText span.book {
-  font-family: "EFT_Frankfurt_Pdf", "EFT_Frankfurt" !important;
+  font-family: eft_stam_sfaradi_64 !important;
   font-size: 70px;
+  font-weight: lighter;
   color: black;
 }
 div.allText span.small {

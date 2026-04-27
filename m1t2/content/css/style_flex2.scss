@@ -277,8 +277,9 @@ div.allText {
         }
 
         &.book {
-            font-family: 'EFT_Frankfurt_Pdf', 'EFT_Frankfurt' !important;
+            font-family: eft_stam_sfaradi_64 !important;
             font-size: ($prayAndRequestFontSize - 6px);
+            font-weight: lighter;
             color: black;
         }
 
