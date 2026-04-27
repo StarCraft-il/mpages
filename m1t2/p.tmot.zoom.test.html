@@ -36,10 +36,10 @@
             --tmot-zoom-multiplier: 1;
             --tmot-overlay-bg: rgba(0, 0, 0, 0.82);
             --tmot-overlay-text: #ffffff;
-            --tmot-line-tight: calc(0.95 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
-            --tmot-line-normal: calc(1.24 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
-            --tmot-line-medium: calc(1.28 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
-            --tmot-line-reading: calc(1.32 + ((var(--tmot-zoom-multiplier) - 1) * 0.12));
+            --tmot-line-tight: calc(0.88 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-normal: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-medium: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
+            --tmot-line-reading: calc(1.22 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
         }
 
         html,
@@ -100,12 +100,18 @@
             div.allText,
             div.allText div.chapterText,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
-            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
-            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
                 font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
                 line-height: var(--tmot-line-reading) !important;
                 letter-spacing: -1px !important;
-                word-spacing: 0.12em !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
+                font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-medium) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
             }
 
             div.allText {
@@ -179,15 +185,21 @@
                             line-height: var(--tmot-line-normal) !important;
                         }
 
-                #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
-                .lastVerse .base-last-verse,
-                .lastVerse .last_pasuk_mikra_1,
-                .lastVerse .last_pasuk_mikra_2 {
-                    font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
+                #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
+                    font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
                     line-height: var(--tmot-line-reading) !important;
                     letter-spacing: -1px !important;
-                    word-spacing: 0.12em !important;
+                    word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
                 }
+
+            .lastVerse .base-last-verse,
+            .lastVerse .last_pasuk_mikra_1,
+            .lastVerse .last_pasuk_mikra_2 {
+                font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
         }
 
 
