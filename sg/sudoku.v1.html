@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sudoku Glow</title>
+  <style>
+    :root {
+      --bg: #f7f2ea;
+      --panel: #fffaf2;
+      --card: #fffdf8;
+      --line: #d8c9b5;
+      --line-strong: #8f7a63;
+      --text: #3e342c;
+      --muted: #8d7d6b;
+      --accent: #ffb865;
+      --accent-soft: rgba(255, 184, 101, 0.22);
+      --danger: #d84f5f;
+      --success: #49a67d;
+      --shadow: 0 10px 24px rgba(100, 74, 43, 0.12);
+      --digit-1: #d94d54;
+      --digit-2: #4d7fe8;
+      --digit-3: #45a85f;
+      --digit-4: #d69d2f;
+      --digit-5: #8e5ee0;
+      --digit-6: #2ca6a4;
+      --digit-7: #d85e91;
+      --digit-8: #7a7f89;
+      --digit-9: #8a5a3f;
+      --shake-ms: 380ms;
+      --pop-ms: 220ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #fff8ee 0%, var(--bg) 58%);
+      color: var(--text);
+      font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 800;
+    }
+
+    button,
+    select {
+      font: inherit;
+      color: inherit;
+    }
+
+    .app {
+      width: min(100%, 380px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 14px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel {
+      background: rgba(255, 253, 248, 0.92);
+      border: 1px solid rgba(143, 122, 99, 0.16);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .score {
+      text-align: right;
+    }
+
+    .score .value {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .score .label {
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid rgba(143, 122, 99, 0.12);
+    }
+
+    .stat .k {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+
+    .stat .v {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .controls .wide {
+      grid-column: 1 / -1;
+    }
+
+    .btn,
+    .picker {
+      min-height: 44px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: inset 0 0 0 1px rgba(143, 122, 99, 0.14);
+      padding: 0 12px;
+    }
+
+    .btn {
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg, #ffd39c 0%, #ffbe70 100%);
+      box-shadow: inset 0 -2px 0 rgba(143, 78, 0, 0.12);
+    }
+
+    .btn.toggle-on {
+      background: linear-gradient(180deg, #c0f1de 0%, #8de0bc 100%);
+    }
+
+    .status {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 12px;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255, 243, 223, 0.95) 0%, rgba(255, 251, 244, 0.95) 100%);
+    }
+
+    .status.lose {
+      color: var(--danger);
+    }
+
+    .status.win {
+      color: var(--success);
+    }
+
+    .board-shell {
+      padding: 10px;
+      border-radius: 24px;
+      background: rgba(255, 253, 248, 0.95);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #fffdf9;
+      border: 3px solid var(--line-strong);
+    }
+
+    .cell {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #fffdf8;
+      padding: 0;
+      min-width: 0;
+      min-height: 0;
+      cursor: pointer;
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+
+    .cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 0 0 rgba(255, 184, 101, 0.8);
+      border-radius: 8px;
+      transition: box-shadow 0.16s ease;
+      pointer-events: none;
+    }
+
+    .cell.thick-bottom {
+      border-bottom: 3px solid var(--line-strong);
+    }
+
+    .cell.thick-right {
+      border-right: 3px solid var(--line-strong);
+    }
+
+    .cell.related {
+      background: #fff5e4;
+    }
+
+    .cell.box-related {
+      background: #fff1dc;
+    }
+
+    .cell.legal {
+      background: #eef8ef;
+    }
+
+    .cell.selected {
+      background: #ffe6bf;
+    }
+
+    .cell.selected::after {
+      box-shadow: inset 0 0 0 3px rgba(255, 184, 101, 0.92);
+    }
+
+    .cell.fixed .digit {
+      opacity: 0.82;
+    }
+
+    .digit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: clamp(1rem, 4.8vw, 1.55rem);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+
+    .digit-1 { color: var(--digit-1); }
+    .digit-2 { color: var(--digit-2); }
+    .digit-3 { color: var(--digit-3); }
+    .digit-4 { color: var(--digit-4); }
+    .digit-5 { color: var(--digit-5); }
+    .digit-6 { color: var(--digit-6); }
+    .digit-7 { color: var(--digit-7); }
+    .digit-8 { color: var(--digit-8); }
+    .digit-9 { color: var(--digit-9); }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+      gap: 1px;
+    }
+
+    .note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.43rem, 1.95vw, 0.64rem);
+      font-weight: 900;
+      opacity: 0.92;
+    }
+
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .num-btn {
+      position: relative;
+      min-height: 66px;
+      border: 0;
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: inset 0 0 0 1px rgba(143, 122, 99, 0.14);
+      padding: 8px 10px 10px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .num-btn:active {
+      transform: scale(0.98);
+    }
+
+    .num-btn.selected {
+      background: linear-gradient(180deg, #fff1d4 0%, #ffe0a6 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 184, 101, 0.7);
+    }
+
+    .num-btn.disabled {
+      opacity: 0.48;
+      cursor: default;
+    }
+
+    .num-digit {
+      font-size: 1.4rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(143, 122, 99, 0.14);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text {
+      margin-top: 5px;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .shake {
+      animation: shake var(--shake-ms) ease;
+    }
+
+    .pop {
+      animation: pop var(--pop-ms) ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      18% { transform: translateX(-3px); }
+      36% { transform: translateX(3px); }
+      54% { transform: translateX(-2px); }
+      72% { transform: translateX(2px); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.92); }
+      60% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="panel topbar">
+      <div class="title">
+        <h1>Sudoku Glow</h1>
+        <div class="subtitle">Warm, offline, pocket-ready</div>
+      </div>
+      <div class="score">
+        <div class="value" id="scoreValue">0</div>
+        <div class="label">Score</div>
+      </div>
+    </section>
+
+    <section class="panel stats">
+      <div class="stat">
+        <span class="k">Difficulty</span>
+        <span class="v" id="difficultyLabel">Medium</span>
+      </div>
+      <div class="stat">
+        <span class="k">Errors</span>
+        <span class="v" id="errorsValue">0 / 3</span>
+      </div>
+      <div class="stat">
+        <span class="k">Filled</span>
+        <span class="v" id="filledValue">0 / 81</span>
+      </div>
+    </section>
+
+    <section class="panel controls">
+      <select class="picker wide" id="difficultyPicker" aria-label="Difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+      <button class="btn primary" id="newGameBtn" type="button">New Game</button>
+      <button class="btn" id="hintBtn" type="button">Hint −20</button>
+      <button class="btn" id="notesBtn" type="button">Notes Off</button>
+      <button class="btn" id="clearBtn" type="button">Clear Cell</button>
+    </section>
+
+    <section class="panel status" id="statusBar">Tap a cell, then choose a digit.</section>
+
+    <section class="panel board-shell">
+      <div class="board" id="board" aria-label="Sudoku board"></div>
+    </section>
+
+    <section class="panel">
+      <div class="numpad" id="numpad"></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      // 1. Constants
+      const COLORS = {
+        digits: {
+          1: "#d94d54",
+          2: "#4d7fe8",
+          3: "#45a85f",
+          4: "#d69d2f",
+          5: "#8e5ee0",
+          6: "#2ca6a4",
+          7: "#d85e91",
+          8: "#7a7f89",
+          9: "#8a5a3f"
+        }
+      };
+
+      const DIFFICULTY_CONFIG = {
+        easy: { name: "Easy", removeCount: 38 },
+        medium: { name: "Medium", removeCount: 46 },
+        hard: { name: "Hard", removeCount: 54 }
+      };
+
+      const SCORING = {
+        correctPlacement: 10,
+        hintPenalty: 20,
+        maxErrors: 3
+      };
+
+      const TIMINGS = {
+        shakeMs: 380,
+        popMs: 220,
+        statusMs: 1600
+      };
+
+      // 2. Game state
+      const state = {
+        difficultyKey: "medium",
+        puzzle: [],
+        solution: [],
+        board: [],
+        fixed: new Set(),
+        notes: [],
+        selectedCell: null,
+        selectedDigit: null,
+        notesMode: false,
+        score: 0,
+        errors: 0,
+        gameOver: false,
+        progress: Array(10).fill(0),
+        statusText: "Tap a cell, then choose a digit.",
+        statusTone: "normal",
+        statusTimeoutId: 0,
+        shakeKey: "",
+        popKey: ""
+      };
+
+      const elements = {
+        board: document.getElementById("board"),
+        numpad: document.getElementById("numpad"),
+        scoreValue: document.getElementById("scoreValue"),
+        difficultyLabel: document.getElementById("difficultyLabel"),
+        errorsValue: document.getElementById("errorsValue"),
+        filledValue: document.getElementById("filledValue"),
+        statusBar: document.getElementById("statusBar"),
+        difficultyPicker: document.getElementById("difficultyPicker"),
+        newGameBtn: document.getElementById("newGameBtn"),
+        hintBtn: document.getElementById("hintBtn"),
+        notesBtn: document.getElementById("notesBtn"),
+        clearBtn: document.getElementById("clearBtn")
+      };
+
+      // 3. Sudoku generator (backtracking)
+      function createEmptyBoard() {
+        return Array.from({ length: 9 }, () => Array(9).fill(0));
+      }
+
+      function cloneBoard(board) {
+        return board.map((row) => row.slice());
+      }
+
+      function createNotesGrid() {
+        return Array.from({ length: 9 }, () =>
+          Array.from({ length: 9 }, () => new Set())
+        );
+      }
+
+      function shuffle(values) {
+        const list = values.slice();
+        for (let index = list.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          const temp = list[index];
+          list[index] = list[swapIndex];
+          list[swapIndex] = temp;
+        }
+        return list;
+      }
+
+      function isSafe(board, row, col, value) {
+        for (let index = 0; index < 9; index += 1) {
+          if (board[row][index] === value) {
+            return false;
+          }
+          if (board[index][col] === value) {
+            return false;
+          }
+        }
+
+        const startRow = Math.floor(row / 3) * 3;
+        const startCol = Math.floor(col / 3) * 3;
+        for (let r = startRow; r < startRow + 3; r += 1) {
+          for (let c = startCol; c < startCol + 3; c += 1) {
+            if (board[r][c] === value) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+
+      function fillBoard(board, index = 0) {
+        if (index === 81) {
+          return true;
+        }
+
+        const row = Math.floor(index / 9);
+        const col = index % 9;
+
+        if (board[row][col] !== 0) {
+          return fillBoard(board, index + 1);
+        }
+
+        const values = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        for (const value of values) {
+          if (!isSafe(board, row, col, value)) {
+            continue;
+          }
+
+          board[row][col] = value;
+          if (fillBoard(board, index + 1)) {
+            return true;
+          }
+          board[row][col] = 0;
+        }
+
+        return false;
+      }
+
+      function createPuzzleFromSolution(solution, removeCount) {
+        const puzzle = cloneBoard(solution);
+        const cells = [];
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            cells.push({ row, col });
+          }
+        }
+
+        const shuffled = shuffle(cells);
+        for (let index = 0; index < removeCount; index += 1) {
+          const cell = shuffled[index];
+          puzzle[cell.row][cell.col] = 0;
+        }
+
+        return puzzle;
+      }
+
+      function buildFixedSet(puzzle) {
+        const fixed = new Set();
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            if (puzzle[row][col] !== 0) {
+              fixed.add(cellKey(row, col));
+            }
+          }
+        }
+        return fixed;
+      }
+
+      // 4. Input handling
+      function cellKey(row, col) {
+        return row + "-" + col;
+      }
+
+      function isEditable(row, col) {
+        return !state.fixed.has(cellKey(row, col));
+      }
+
+      function isLegalForBoard(board, row, col, value) {
+        if (value === 0) {
+          return true;
+        }
+
+        for (let index = 0; index < 9; index += 1) {
+          if (index !== col && board[row][index] === value) {
+            return false;
+          }
+          if (index !== row && board[index][col] === value) {
+            return false;
+          }
+        }
+
+        const startRow = Math.floor(row / 3) * 3;
+        const startCol = Math.floor(col / 3) * 3;
+        for (let r = startRow; r < startRow + 3; r += 1) {
+          for (let c = startCol; c < startCol + 3; c += 1) {
+            if ((r !== row || c !== col) && board[r][c] === value) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+
+      function getLegalCellsForDigit(value) {
+        if (!value || state.progress[value] >= 9) {
+          return new Set();
+        }
+
+        const legal = new Set();
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            if (!isEditable(row, col)) {
+              continue;
+            }
+            if (state.board[row][col] !== 0) {
+              continue;
+            }
+            if (isLegalForBoard(state.board, row, col, value)) {
+              legal.add(cellKey(row, col));
+            }
+          }
+        }
+        return legal;
+      }
+
+      function setSelectedCell(row, col) {
+        if (state.gameOver) {
+          return;
+        }
+        if (state.selectedCell && state.selectedCell.row === row && state.selectedCell.col === col) {
+          state.selectedCell = null;
+          render();
+          return;
+        }
+        state.selectedCell = { row, col };
+        render();
+      }
+
+      function setStatus(message, tone = "normal", sticky = false) {
+        state.statusText = message;
+        state.statusTone = tone;
+        clearTimeout(state.statusTimeoutId);
+        if (sticky) {
+          renderStatus();
+          return;
+        }
+
+        renderStatus();
+        state.statusTimeoutId = window.setTimeout(() => {
+          if (state.gameOver) {
+            return;
+          }
+          state.statusText = state.notesMode
+            ? "Notes mode is on. Tap digits to toggle notes."
+            : "Tap a cell, then choose a digit.";
+          state.statusTone = "normal";
+          renderStatus();
+        }, TIMINGS.statusMs);
+      }
+
+      function markShake(row, col) {
+        state.shakeKey = cellKey(row, col) + "-" + Date.now();
+        render();
+        window.setTimeout(() => {
+          state.shakeKey = "";
+          render();
+        }, TIMINGS.shakeMs);
+      }
+
+      function markPop(row, col) {
+        state.popKey = cellKey(row, col) + "-" + Date.now();
+        render();
+        window.setTimeout(() => {
+          state.popKey = "";
+          render();
+        }, TIMINGS.popMs);
+      }
+
+      function clearCell() {
+        if (!state.selectedCell || state.gameOver) {
+          setStatus("Select an editable cell first.");
+          return;
+        }
+
+        const row = state.selectedCell.row;
+        const col = state.selectedCell.col;
+        if (!isEditable(row, col)) {
+          setStatus("That clue is locked.");
+          return;
+        }
+
+        state.board[row][col] = 0;
+        state.notes[row][col].clear();
+        updateProgress();
+        setStatus("Cell cleared.");
+        render();
+      }
+
+      function toggleNotesMode() {
+        if (state.gameOver) {
+          return;
+        }
+        state.notesMode = !state.notesMode;
+        setStatus(state.notesMode ? "Notes mode enabled." : "Notes mode disabled.");
+        render();
+      }
+
+      function clearPeerNotes(row, col, value) {
+        for (let index = 0; index < 9; index += 1) {
+          state.notes[row][index].delete(value);
+          state.notes[index][col].delete(value);
+        }
+
+        const startRow = Math.floor(row / 3) * 3;
+        const startCol = Math.floor(col / 3) * 3;
+        for (let r = startRow; r < startRow + 3; r += 1) {
+          for (let c = startCol; c < startCol + 3; c += 1) {
+            state.notes[r][c].delete(value);
+          }
+        }
+      }
+
+      function toggleNote(value) {
+        if (!state.selectedCell) {
+          setStatus("Select a cell first.");
+          return;
+        }
+
+        const row = state.selectedCell.row;
+        const col = state.selectedCell.col;
+        if (!isEditable(row, col)) {
+          setStatus("That clue is locked.");
+          return;
+        }
+        if (state.board[row][col] !== 0) {
+          setStatus("Clear the cell before using notes.");
+          return;
+        }
+        if (!isLegalForBoard(state.board, row, col, value)) {
+          setStatus("That note conflicts with the board.", "lose");
+          markShake(row, col);
+          return;
+        }
+
+        if (state.notes[row][col].has(value)) {
+          state.notes[row][col].delete(value);
+          setStatus("Note removed.");
+        } else {
+          state.notes[row][col].add(value);
+          setStatus("Note added.");
+        }
+        render();
+      }
+
+      function placeDigit(value) {
+        if (state.gameOver) {
+          return;
+        }
+
+        if (state.progress[value] >= 9) {
+          setStatus("Digit " + value + " is already complete.");
+          return;
+        }
+
+        state.selectedDigit = state.selectedDigit === value ? null : value;
+
+        if (!state.selectedCell) {
+          setStatus(state.selectedDigit ? "Digit " + value + " selected." : "Digit selection cleared.");
+          render();
+          return;
+        }
+
+        if (state.notesMode) {
+          toggleNote(value);
+          state.selectedDigit = value;
+          render();
+          return;
+        }
+
+        const row = state.selectedCell.row;
+        const col = state.selectedCell.col;
+        if (!isEditable(row, col)) {
+          setStatus("That clue is locked.");
+          render();
+          return;
+        }
+
+        if (!isLegalForBoard(state.board, row, col, value)) {
+          state.errors += 1;
+          updateProgress();
+          setStatus("Conflict! " + (SCORING.maxErrors - state.errors) + " tries left.", "lose", state.errors >= SCORING.maxErrors);
+          markShake(row, col);
+          if (state.errors >= SCORING.maxErrors) {
+            state.gameOver = true;
+            setStatus("Game over. Too many errors.", "lose", true);
+          }
+          render();
+          return;
+        }
+
+        if (state.solution[row][col] !== value) {
+          state.errors += 1;
+          updateProgress();
+          setStatus("Wrong digit! " + (SCORING.maxErrors - state.errors) + " tries left.", "lose", state.errors >= SCORING.maxErrors);
+          markShake(row, col);
+          if (state.errors >= SCORING.maxErrors) {
+            state.gameOver = true;
+            setStatus("Game over. Too many errors.", "lose", true);
+          }
+          render();
+          return;
+        }
+
+        state.board[row][col] = value;
+        state.notes[row][col].clear();
+        clearPeerNotes(row, col, value);
+        state.score += SCORING.correctPlacement;
+        updateProgress();
+        markPop(row, col);
+        setStatus("Nice! +" + SCORING.correctPlacement + " points.", "win");
+
+        if (isSolved()) {
+          state.gameOver = true;
+          setStatus("Puzzle solved! Great job.", "win", true);
+        }
+
+        render();
+      }
+
+      function giveHint() {
+        if (state.gameOver) {
+          return;
+        }
+        if (!state.selectedCell) {
+          setStatus("Select a cell to reveal.");
+          return;
+        }
+
+        const row = state.selectedCell.row;
+        const col = state.selectedCell.col;
+        if (!isEditable(row, col)) {
+          setStatus("Hints only work on editable cells.");
+          return;
+        }
+
+        const solutionValue = state.solution[row][col];
+        if (state.board[row][col] === solutionValue) {
+          setStatus("That cell is already correct.");
+          return;
+        }
+
+        state.board[row][col] = solutionValue;
+        state.notes[row][col].clear();
+        clearPeerNotes(row, col, solutionValue);
+        state.score -= SCORING.hintPenalty;
+        updateProgress();
+        markPop(row, col);
+        setStatus("Hint used. -" + SCORING.hintPenalty + " points.");
+
+        if (isSolved()) {
+          state.gameOver = true;
+          setStatus("Puzzle solved! Great job.", "win", true);
+        }
+
+        render();
+      }
+
+      function handleBoardClick(event) {
+        const button = event.target.closest("button[data-row][data-col]");
+        if (!button) {
+          return;
+        }
+        const row = Number(button.dataset.row);
+        const col = Number(button.dataset.col);
+        setSelectedCell(row, col);
+      }
+
+      function handleNumpadClick(event) {
+        const button = event.target.closest("button[data-digit]");
+        if (!button) {
+          return;
+        }
+        const digit = Number(button.dataset.digit);
+        if (!digit || state.progress[digit] >= 9) {
+          return;
+        }
+        placeDigit(digit);
+      }
+
+      function handleKeyboard(event) {
+        if (event.key >= "1" && event.key <= "9") {
+          placeDigit(Number(event.key));
+          return;
+        }
+
+        if (event.key === "Backspace" || event.key === "Delete" || event.key === "0") {
+          clearCell();
+          return;
+        }
+
+        if (event.key.toLowerCase() === "n") {
+          toggleNotesMode();
+        }
+
+        if (!state.selectedCell) {
+          return;
+        }
+
+        const next = { row: state.selectedCell.row, col: state.selectedCell.col };
+        if (event.key === "ArrowUp") {
+          next.row = Math.max(0, next.row - 1);
+        } else if (event.key === "ArrowDown") {
+          next.row = Math.min(8, next.row + 1);
+        } else if (event.key === "ArrowLeft") {
+          next.col = Math.max(0, next.col - 1);
+        } else if (event.key === "ArrowRight") {
+          next.col = Math.min(8, next.col + 1);
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        setSelectedCell(next.row, next.col);
+      }
+
+      // 5. Rendering
+      function isSolved() {
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            if (state.board[row][col] !== state.solution[row][col]) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+
+      function updateProgress() {
+        const next = Array(10).fill(0);
+        let filled = 0;
+
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            const value = state.board[row][col];
+            if (value !== 0) {
+              filled += 1;
+            }
+            if (value !== 0 && value === state.solution[row][col]) {
+              next[value] += 1;
+            }
+          }
+        }
+
+        state.progress = next;
+        elements.filledValue.textContent = filled + " / 81";
+      }
+
+      function renderStatus() {
+        elements.statusBar.textContent = state.statusText;
+        elements.statusBar.className = "panel status";
+        if (state.statusTone === "lose") {
+          elements.statusBar.classList.add("lose");
+        }
+        if (state.statusTone === "win") {
+          elements.statusBar.classList.add("win");
+        }
+      }
+
+      function renderBoard() {
+        const selected = state.selectedCell;
+        const legalCells = getLegalCellsForDigit(state.selectedDigit);
+        const html = [];
+
+        for (let row = 0; row < 9; row += 1) {
+          for (let col = 0; col < 9; col += 1) {
+            const value = state.board[row][col];
+            const key = cellKey(row, col);
+            const classes = ["cell"];
+
+            if ((col + 1) % 3 === 0 && col !== 8) {
+              classes.push("thick-right");
+            }
+            if ((row + 1) % 3 === 0 && row !== 8) {
+              classes.push("thick-bottom");
+            }
+            if (state.fixed.has(key)) {
+              classes.push("fixed");
+            }
+
+            if (selected) {
+              const sameRow = selected.row === row;
+              const sameCol = selected.col === col;
+              const sameBox =
+                Math.floor(selected.row / 3) === Math.floor(row / 3) &&
+                Math.floor(selected.col / 3) === Math.floor(col / 3);
+
+              if (sameRow || sameCol) {
+                classes.push("related");
+              }
+              if (sameBox) {
+                classes.push("box-related");
+              }
+              if (selected.row === row && selected.col === col) {
+                classes.push("selected");
+              }
+            }
+
+            if (legalCells.has(key)) {
+              classes.push("legal");
+            }
+
+            if (state.shakeKey.startsWith(key + "-")) {
+              classes.push("shake");
+            }
+            if (state.popKey.startsWith(key + "-")) {
+              classes.push("pop");
+            }
+
+            let innerHtml = "";
+            if (value !== 0) {
+              innerHtml = "<div class=\"digit digit-" + value + "\">" + value + "</div>";
+            } else {
+              const notesHtml = [];
+              for (let noteValue = 1; noteValue <= 9; noteValue += 1) {
+                const noteText = state.notes[row][col].has(noteValue) ? String(noteValue) : "";
+                notesHtml.push(
+                  "<div class=\"note digit-" + noteValue + "\">" + noteText + "</div>"
+                );
+              }
+              innerHtml = "<div class=\"notes\">" + notesHtml.join("") + "</div>";
+            }
+
+            html.push(
+              "<button type=\"button\" class=\"" + classes.join(" ") + "\" data-row=\"" + row + "\" data-col=\"" + col + "\" aria-label=\"Row " + (row + 1) + " column " + (col + 1) + "\">" +
+              innerHtml +
+              "</button>"
+            );
+          }
+        }
+
+        elements.board.innerHTML = html.join("");
+      }
+
+      function renderNumpad() {
+        const html = [];
+        for (let value = 1; value <= 9; value += 1) {
+          const doneCount = state.progress[value];
+          const complete = doneCount >= 9;
+          const classes = ["num-btn"];
+          if (state.selectedDigit === value) {
+            classes.push("selected");
+          }
+          if (complete) {
+            classes.push("disabled");
+          }
+
+          html.push(
+            "<button type=\"button\" class=\"" + classes.join(" ") + "\" data-digit=\"" + value + "\" aria-label=\"Digit " + value + "\"" + (complete ? " disabled" : "") + ">" +
+              "<div class=\"num-digit digit-" + value + "\">" + value + "</div>" +
+              "<div class=\"progress\"><div class=\"progress-fill\" style=\"width:" + ((doneCount / 9) * 100) + "%;background:" + COLORS.digits[value] + ";\"></div></div>" +
+              "<div class=\"progress-text\">" + doneCount + " / 9</div>" +
+            "</button>"
+          );
+        }
+        elements.numpad.innerHTML = html.join("");
+      }
+
+      function renderMeta() {
+        elements.scoreValue.textContent = String(state.score);
+        elements.difficultyLabel.textContent = DIFFICULTY_CONFIG[state.difficultyKey].name;
+        elements.errorsValue.textContent = state.errors + " / " + SCORING.maxErrors;
+        elements.notesBtn.textContent = state.notesMode ? "Notes On" : "Notes Off";
+        elements.notesBtn.classList.toggle("toggle-on", state.notesMode);
+        elements.hintBtn.disabled = state.gameOver;
+        elements.clearBtn.disabled = state.gameOver;
+        elements.notesBtn.disabled = state.gameOver;
+      }
+
+      function render() {
+        renderMeta();
+        renderStatus();
+        renderBoard();
+        renderNumpad();
+      }
+
+      // 6. UX feedback
+      function startNewGame() {
+        const solution = createEmptyBoard();
+        fillBoard(solution);
+        const removeCount = DIFFICULTY_CONFIG[state.difficultyKey].removeCount;
+        const puzzle = createPuzzleFromSolution(solution, removeCount);
+
+        state.solution = solution;
+        state.puzzle = puzzle;
+        state.board = cloneBoard(puzzle);
+        state.fixed = buildFixedSet(puzzle);
+        state.notes = createNotesGrid();
+        state.selectedCell = null;
+        state.selectedDigit = null;
+        state.notesMode = false;
+        state.score = 0;
+        state.errors = 0;
+        state.gameOver = false;
+        state.shakeKey = "";
+        state.popKey = "";
+        updateProgress();
+        setStatus("New " + DIFFICULTY_CONFIG[state.difficultyKey].name.toLowerCase() + " puzzle ready.");
+        render();
+      }
+
+      elements.board.addEventListener("click", handleBoardClick);
+      elements.numpad.addEventListener("click", handleNumpadClick);
+      elements.newGameBtn.addEventListener("click", startNewGame);
+      elements.hintBtn.addEventListener("click", giveHint);
+      elements.notesBtn.addEventListener("click", toggleNotesMode);
+      elements.clearBtn.addEventListener("click", clearCell);
+      elements.difficultyPicker.addEventListener("change", (event) => {
+        state.difficultyKey = event.target.value;
+        startNewGame();
+      });
+      window.addEventListener("keydown", handleKeyboard);
+
+      startNewGame();
+    })();
+  </script>
+</body>
+</html>
