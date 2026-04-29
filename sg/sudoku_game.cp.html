@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sudoku</title>
+  <style>
+    :root{
+      --font-family: "Nunito", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --bg-app: #f7f2ea;
+      --bg-card: #fffdf9;
+      --bg-soft: rgba(255,255,255,0.72);
+      --text-main: #2b241f;
+      --text-muted: rgba(43, 36, 31, 0.62);
+      --line-soft: rgba(43, 36, 31, 0.12);
+      --line-strong: rgba(43, 36, 31, 0.34);
+      --shadow-card: 0 12px 30px rgba(72, 54, 36, 0.10);
+      --shadow-soft: 0 6px 18px rgba(72, 54, 36, 0.08);
+      --status-bg: rgba(255,255,255,0.82);
+      --status-border: rgba(43, 36, 31, 0.10);
+      --invalid-bg: rgba(220, 38, 38, 0.14);
+      --conflict-bg: rgba(220, 38, 38, 0.12);
+      --select-bg: rgba(67, 56, 202, 0.10);
+      --peer-bg: rgba(67, 56, 202, 0.06);
+      --box-bg: rgba(67, 56, 202, 0.08);
+      --same-digit-bg: rgba(147, 51, 234, 0.12);
+      --legal-bg: rgba(34, 197, 94, 0.12);
+      --given-underline: rgba(43, 36, 31, 0.30);
+      --notes-active-bg: rgba(43, 36, 31, 0.06);
+
+      --digit-1: #dc2626;
+      --digit-2: #2563eb;
+      --digit-3: #16a34a;
+      --digit-4: #d97706;
+      --digit-5: #9333ea;
+      --digit-6: #0f766e;
+      --digit-7: #e11d48;
+      --digit-8: #6b7280;
+      --digit-9: #7c4a1d;
+
+      --difficulty-easy: rgba(34, 197, 94, 0.18);
+      --difficulty-medium: rgba(37, 99, 235, 0.18);
+      --difficulty-hard: rgba(217, 119, 6, 0.18);
+      --difficulty-expert: rgba(225, 29, 72, 0.18);
+
+      --max-width: 380px;
+      --app-gap: 12px;
+      --card-padding: 14px;
+      --radius-card: 24px;
+      --radius-grid: 22px;
+      --radius-button: 16px;
+      --radius-cell: 10px;
+      --radius-pill: 999px;
+      --board-gap: 0px;
+      --cell-size: min(calc((100vw - 56px) / 9), 38px);
+      --cell-font-size: 22px;
+      --mini-font-size: 11px;
+      --title-size: 26px;
+      --meta-size: 13px;
+      --digit-pad-font-size: 22px;
+      --button-font-size: 14px;
+      --status-font-size: 13px;
+      --line-thin: 1px;
+      --line-thick: 3px;
+      --underline-thickness: 2px;
+
+      --bar-width: 4px;
+      --bar-height: 9px;
+      --bar-gap: 2px;
+
+      --tap-scale: 0.98;
+      --same-digit-scale: 1.04;
+      --correct-scale: 1.06;
+      --shake-distance: 6px;
+      --duration-fast: 160ms;
+      --duration-mid: 200ms;
+      --duration-slow: 240ms;
+      --ease-out: cubic-bezier(.2,.8,.2,1);
+
+      --opacity-muted: 0.20;
+      --opacity-dim: 0.62;
+      --opacity-ghost: 0.0;
+
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --num-columns: 9;
+      --mini-columns: 3;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg-app);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-weight: 800;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px calc(16px + var(--safe-area-bottom));
+    }
+
+    .app {
+      width: 100%;
+      max-width: var(--max-width);
+      display: flex;
+      flex-direction: column;
+      gap: var(--app-gap);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: var(--card-padding);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--app-gap);
+    }
+
+    .title {
+      font-size: var(--title-size);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: var(--meta-size);
+      color: var(--text-muted);
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .meta-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .meta-chip {
+      background: var(--bg-soft);
+      border: var(--line-thin) solid var(--line-soft);
+      border-radius: 18px;
+      padding: 10px 8px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .meta-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 800;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .meta-value {
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .difficulty-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .difficulty-btn,
+    .control-btn,
+    .digit-btn {
+      border: none;
+      background: var(--bg-soft);
+      color: var(--text-main);
+      border-radius: var(--radius-button);
+      box-shadow: var(--shadow-soft);
+      transition:
+        transform var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-mid) var(--ease-out),
+        opacity var(--duration-mid) var(--ease-out),
+        background-color var(--duration-mid) var(--ease-out);
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .difficulty-btn:active,
+    .control-btn:active,
+    .digit-btn:active,
+    .cell:active {
+      transform: scale(var(--tap-scale));
+    }
+
+    .difficulty-btn {
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      border: var(--line-thin) solid transparent;
+    }
+
+    .difficulty-btn .name {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .difficulty-btn .desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .easy { background: var(--difficulty-easy); }
+    .medium { background: var(--difficulty-medium); }
+    .hard { background: var(--difficulty-hard); }
+    .expert { background: var(--difficulty-expert); }
+
+    .game-wrap { display: none; }
+    .game-wrap.active { display: block; }
+    .menu-wrap.hidden { display: none; }
+
+    .board-card {
+      padding: 12px;
+    }
+
+    .board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(var(--num-columns), minmax(0, 1fr));
+      gap: var(--board-gap);
+      background: var(--bg-card);
+      border-radius: var(--radius-grid);
+      overflow: hidden;
+      border: var(--line-thick) solid var(--line-strong);
+      box-shadow: inset 0 0 0 var(--line-thin) var(--line-soft);
+      position: relative;
+    }
+
+    .cell {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: var(--line-thin) solid var(--line-soft);
+      border-bottom: var(--line-thin) solid var(--line-soft);
+      background: rgba(255,255,255,0.84);
+      font-size: var(--cell-font-size);
+      font-weight: 900;
+      transition:
+        transform var(--duration-fast) var(--ease-out),
+        background-color var(--duration-mid) var(--ease-out),
+        box-shadow var(--duration-mid) var(--ease-out),
+        opacity var(--duration-mid) var(--ease-out);
+      overflow: hidden;
+    }
+
+    .cell.thick-right { border-right-width: var(--line-thick); border-right-color: var(--line-strong); }
+    .cell.thick-bottom { border-bottom-width: var(--line-thick); border-bottom-color: var(--line-strong); }
+
+    .cell.peer { background: var(--peer-bg); }
+    .cell.box-peer { background: var(--box-bg); }
+    .cell.selected { background: var(--select-bg); box-shadow: inset 0 0 0 var(--line-thick) rgba(67, 56, 202, 0.28); z-index: 1; }
+    .cell.same-digit { background: var(--same-digit-bg); transform: scale(var(--same-digit-scale)); z-index: 1; }
+    .cell.legal { background: var(--legal-bg); }
+    .cell.invalid { background: var(--invalid-bg); animation: shake var(--duration-slow) var(--ease-out); }
+    .cell.conflict { background: var(--conflict-bg); }
+    .cell.correct-pop { animation: pop var(--duration-mid) var(--ease-out); }
+    .cell.given .value {
+      text-decoration: underline;
+      text-decoration-thickness: var(--underline-thickness);
+      text-decoration-color: var(--given-underline);
+      text-underline-offset: 0.18em;
+    }
+
+    .cell.locked { cursor: default; }
+    .cell.disabled { pointer-events: none; opacity: var(--opacity-dim); }
+
+    .value {
+      line-height: 1;
+      position: relative;
+      z-index: 2;
+      transition: transform var(--duration-mid) var(--ease-out), opacity var(--duration-mid) var(--ease-out);
+    }
+
+    .notes {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(var(--mini-columns), minmax(0, 1fr));
+      grid-template-rows: repeat(var(--mini-columns), minmax(0, 1fr));
+      padding: 3px;
+      gap: 1px;
+      z-index: 1;
+    }
+
+    .note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--mini-font-size);
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0.92;
+    }
+
+    .status-bar {
+      margin-top: 12px;
+      background: var(--status-bg);
+      border: var(--line-thin) solid var(--status-border);
+      border-radius: 16px;
+      padding: 12px 12px;
+      box-shadow: var(--shadow-soft);
+      font-size: var(--status-font-size);
+      color: var(--text-main);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .control-btn {
+      padding: 12px 8px;
+      font-size: var(--button-font-size);
+      min-height: 48px;
+      border: var(--line-thin) solid var(--line-soft);
+    }
+
+    .control-btn.active {
+      background: var(--notes-active-bg);
+      box-shadow: inset 0 0 0 var(--line-thick) rgba(43, 36, 31, 0.12), var(--shadow-soft);
+    }
+
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(var(--num-columns), minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .digit-btn {
+      min-height: 68px;
+      padding: 6px 4px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border: var(--line-thin) solid var(--line-soft);
+      position: relative;
+    }
+
+    .digit-btn.selected {
+      box-shadow: inset 0 0 0 var(--line-thick) rgba(67, 56, 202, 0.20), var(--shadow-soft);
+      background: var(--select-bg);
+    }
+
+    .digit-btn.complete {
+      opacity: var(--opacity-muted);
+      border-style: dashed;
+      pointer-events: none;
+      animation: settle var(--duration-slow) var(--ease-out);
+    }
+
+    .digit-top {
+      font-size: var(--digit-pad-font-size);
+      line-height: 1;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .bars {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: var(--bar-gap);
+      min-height: calc(var(--bar-height) + 2px);
+    }
+
+    .bar {
+      width: var(--bar-width);
+      height: var(--bar-height);
+      border-radius: var(--radius-pill);
+      opacity: 0.94;
+      transition:
+        opacity var(--duration-mid) var(--ease-out),
+        transform var(--duration-mid) var(--ease-out),
+        background-color var(--duration-mid) var(--ease-out);
+    }
+
+    .bar.hidden {
+      opacity: var(--opacity-ghost);
+      transform: scaleY(0.1);
+    }
+
+    .footer-hint {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      border: var(--line-thin) solid var(--line-soft);
+      border-radius: 14px;
+      padding: 8px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .hide { display: none !important; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      45% { transform: scale(var(--correct-scale)); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(calc(var(--shake-distance) * -1)); }
+      50% { transform: translateX(var(--shake-distance)); }
+      75% { transform: translateX(calc(var(--shake-distance) * -0.6)); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes settle {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card menu-wrap" id="menuWrap">
+      <div class="topbar">
+        <div>
+          <h1 class="title">Sudoku</h1>
+          <div class="subtitle">Pick a difficulty and start playing.</div>
+        </div>
+      </div>
+
+      <div class="difficulty-panel" id="difficultyPanel"></div>
+
+      <div class="legend">
+        <div class="legend-item">Tap a cell to select</div>
+        <div class="legend-item">Use Notes for pencil marks</div>
+        <div class="legend-item">Timer starts on first move</div>
+      </div>
+    </section>
+
+    <section class="card game-wrap" id="gameWrap">
+      <div class="topbar">
+        <div>
+          <h2 class="title" id="gameTitle">Sudoku</h2>
+          <div class="subtitle" id="difficultyLabel">Difficulty</div>
+        </div>
+      </div>
+
+      <div class="meta-strip">
+        <div class="meta-chip">
+          <div class="meta-label">Score</div>
+          <div class="meta-value" id="scoreValue">0</div>
+        </div>
+        <div class="meta-chip">
+          <div class="meta-label">Time</div>
+          <div class="meta-value" id="timerValue">0:00</div>
+        </div>
+        <div class="meta-chip">
+          <div class="meta-label">Hints</div>
+          <div class="meta-value" id="hintsValue">0</div>
+        </div>
+        <div class="meta-chip">
+          <div class="meta-label">Errors</div>
+          <div class="meta-value" id="errorsValue">0/0</div>
+        </div>
+      </div>
+
+      <div class="board-card">
+        <div class="board" id="board"></div>
+
+        <div class="status-bar" id="statusBar">Select a difficulty to begin.</div>
+
+        <div class="controls">
+          <button class="control-btn" id="eraseBtn" type="button">Erase</button>
+          <button class="control-btn" id="notesBtn" type="button">Notes</button>
+          <button class="control-btn" id="hintBtn" type="button">Hint</button>
+          <button class="control-btn" id="newGameBtn" type="button">New Game</button>
+        </div>
+
+        <div class="numpad" id="numpad"></div>
+
+        <div class="footer-hint">Tip: tap a digit with no cell selected to preview all legal spots.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const CONFIG = {
+      GRID_SIZE: 9,
+      BOX_SIZE: 3,
+      EMPTY: 0,
+      FIRST_INDEX: 0,
+      LAST_INDEX: 8,
+      TIMER_INTERVAL_MS: 1000,
+      UNSELECT_DELAY_MS: 0,
+      FEEDBACK_CLEAR_MS: 800,
+      CONFLICT_CLEAR_MS: 460,
+      WRONG_CLEAR_MS: 680,
+      DIGIT_COUNT: 9,
+      DIGITS: Object.freeze([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+      DIGIT_COLORS: Object.freeze({
+        1: "#dc2626",
+        2: "#2563eb",
+        3: "#16a34a",
+        4: "#d97706",
+        5: "#9333ea",
+        6: "#0f766e",
+        7: "#e11d48",
+        8: "#6b7280",
+        9: "#7c4a1d"
+      }),
+      UI_COLORS: Object.freeze({
+        APP_BG: "#f7f2ea",
+        CARD_BG: "#fffdf9",
+        TEXT_MAIN: "#2b241f",
+        TEXT_MUTED_RGBA: "rgba(43, 36, 31, 0.62)",
+        LINE_SOFT_RGBA: "rgba(43, 36, 31, 0.12)",
+        LINE_STRONG_RGBA: "rgba(43, 36, 31, 0.34)",
+        SHADOW_CARD: "0 12px 30px rgba(72, 54, 36, 0.10)",
+        SHADOW_SOFT: "0 6px 18px rgba(72, 54, 36, 0.08)",
+        STATUS_BG_RGBA: "rgba(255,255,255,0.82)",
+        STATUS_BORDER_RGBA: "rgba(43, 36, 31, 0.10)",
+        INVALID_BG_RGBA: "rgba(220, 38, 38, 0.14)",
+        CONFLICT_BG_RGBA: "rgba(220, 38, 38, 0.12)",
+        SELECT_BG_RGBA: "rgba(67, 56, 202, 0.10)",
+        PEER_BG_RGBA: "rgba(67, 56, 202, 0.06)",
+        BOX_BG_RGBA: "rgba(67, 56, 202, 0.08)",
+        SAME_DIGIT_BG_RGBA: "rgba(147, 51, 234, 0.12)",
+        LEGAL_BG_RGBA: "rgba(34, 197, 94, 0.12)",
+        GIVEN_UNDERLINE_RGBA: "rgba(43, 36, 31, 0.30)",
+        NOTES_ACTIVE_BG_RGBA: "rgba(43, 36, 31, 0.06)",
+        DIFFICULTY_EASY_RGBA: "rgba(34, 197, 94, 0.18)",
+        DIFFICULTY_MEDIUM_RGBA: "rgba(37, 99, 235, 0.18)",
+        DIFFICULTY_HARD_RGBA: "rgba(217, 119, 6, 0.18)",
+        DIFFICULTY_EXPERT_RGBA: "rgba(225, 29, 72, 0.18)"
+      }),
+      DIFFICULTIES: Object.freeze({
+        easy:   { key: "easy",   label: "Easy",   removed: 30, hints: 5, maxErrors: 5, winBonus: 100 },
+        medium: { key: "medium", label: "Medium", removed: 45, hints: 3, maxErrors: 3, winBonus: 200 },
+        hard:   { key: "hard",   label: "Hard",   removed: 55, hints: 2, maxErrors: 3, winBonus: 350 },
+        expert: { key: "expert", label: "Expert", removed: 62, hints: 1, maxErrors: 3, winBonus: 500 }
+      }),
+      SCORE: Object.freeze({
+        CORRECT_FILL: 10,
+        HINT_PENALTY: 20,
+        HINTS_LEFT_BONUS_MULTIPLIER: 25,
+        TIME_BONUS_BASE: 600,
+        TIME_BONUS_PER_SECOND: 1
+      }),
+      STATUS: Object.freeze({
+        READY: "Pick a cell and a digit to play.",
+        NOTES_ON: "Notes mode is on. Tap a digit to add or remove pencil marks.",
+        NOTES_OFF: "Notes mode is off. Tap a digit to place a value.",
+        CELL_LOCKED: "That cell is a given and cannot be changed.",
+        NEED_CELL_FOR_ACTION: "Select a non-given cell first.",
+        NEED_HINTS: "No hints left for this puzzle.",
+        GAME_OVER: "Game over. You reached the error limit.",
+        WIN: "Puzzle solved! Great job.",
+        ERASED: "Cell cleared.",
+        HINT_USED: "Hint used: correct value revealed.",
+        INVALID_MOVE_PREFIX: "Invalid move: ",
+        WRONG_NUMBER: "Wrong number for this puzzle.",
+        STARTED: "Timer started. Good luck!",
+        DIGIT_PREVIEW: "Showing every legal spot for the selected digit.",
+        DIGIT_CLEAR: "Digit preview cleared.",
+        DESELECTED: "Cell deselected.",
+        SELECTED: "Cell selected."
+      }),
+      TEXT: Object.freeze({
+        TITLE: "Sudoku",
+        PICK_DIFFICULTY: "Pick a difficulty and start playing.",
+        DIFFICULTY_DESC_SUFFIX: "cells removed"
+      })
+    };
+
+    const state = {
+      difficultyKey: null,
+      solution: [],
+      board: [],
+      givens: [],
+      notes: [],
+      selectedCell: null,
+      selectedDigit: null,
+      notesMode: false,
+      score: 0,
+      errors: 0,
+      hintsLeft: 0,
+      maxErrors: 0,
+      gameStarted: false,
+      gameOver: false,
+      won: false,
+      startTimeMs: 0,
+      elapsedSeconds: 0,
+      timerId: null,
+      statusMessage: CONFIG.STATUS.READY,
+      transientCells: {
+        invalid: new Set(),
+        conflict: new Set(),
+        correct: new Set()
+      }
+    };
+
+    const menuWrap = document.getElementById("menuWrap");
+    const gameWrap = document.getElementById("gameWrap");
+    const difficultyPanel = document.getElementById("difficultyPanel");
+    const gameTitle = document.getElementById("gameTitle");
+    const difficultyLabel = document.getElementById("difficultyLabel");
+    const scoreValue = document.getElementById("scoreValue");
+    const timerValue = document.getElementById("timerValue");
+    const hintsValue = document.getElementById("hintsValue");
+    const errorsValue = document.getElementById("errorsValue");
+    const boardEl = document.getElementById("board");
+    const statusBar = document.getElementById("statusBar");
+    const numpadEl = document.getElementById("numpad");
+    const eraseBtn = document.getElementById("eraseBtn");
+    const notesBtn = document.getElementById("notesBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const newGameBtn = document.getElementById("newGameBtn");
+
+    function createMatrix(fillValueFactory) {
+      return Array.from({ length: CONFIG.GRID_SIZE }, (_, row) =>
+        Array.from({ length: CONFIG.GRID_SIZE }, (_, col) =>
+          typeof fillValueFactory === "function" ? fillValueFactory(row, col) : fillValueFactory
+        )
+      );
+    }
+
+    function deepCopyGrid(grid) {
+      return grid.map((row) => row.slice());
+    }
+
+    function makeNotesGrid() {
+      return createMatrix(() => new Set());
+    }
+
+    function shuffle(array) {
+      const cloned = array.slice();
+      for (let index = cloned.length - 1; index > CONFIG.FIRST_INDEX; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        const temp = cloned[index];
+        cloned[index] = cloned[randomIndex];
+        cloned[randomIndex] = temp;
+      }
+      return cloned;
+    }
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const paddedSeconds = String(seconds).padStart(2, "0");
+      return `${minutes}:${paddedSeconds}`;
+    }
+
+    function cellKey(row, col) {
+      return `${row}-${col}`;
+    }
+
+    function parseCellKey(key) {
+      const parts = key.split("-").map(Number);
+      return { row: parts[0], col: parts[1] };
+    }
+
+    function clampMin(value, min) {
+      return value < min ? min : value;
+    }
+
+    function startTimerIfNeeded() {
+      if (state.gameStarted || state.gameOver || state.won) {
+        return;
+      }
+      state.gameStarted = true;
+      state.startTimeMs = Date.now();
+      setStatus(CONFIG.STATUS.STARTED);
+      state.timerId = window.setInterval(() => {
+        state.elapsedSeconds = Math.floor((Date.now() - state.startTimeMs) / CONFIG.TIMER_INTERVAL_MS);
+        updateMeta();
+      }, CONFIG.TIMER_INTERVAL_MS);
+      updateMeta();
+    }
+
+    function stopTimer() {
+      if (state.timerId !== null) {
+        window.clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function resetTransientFeedback() {
+      state.transientCells.invalid.clear();
+      state.transientCells.conflict.clear();
+      state.transientCells.correct.clear();
+    }
+
+    function scheduleTransientClear(targetSet, timeoutMs) {
+      window.setTimeout(() => {
+        targetSet.clear();
+        renderBoard();
+      }, timeoutMs);
+    }
+
+    function setStatus(message) {
+      state.statusMessage = message;
+      renderStatus();
+    }
+
+    function difficultyByKey(key) {
+      return CONFIG.DIFFICULTIES[key];
+    }
+
+    function digitColor(digit) {
+      return CONFIG.DIGIT_COLORS[digit];
+    }
+
+    function isInsideBox(sourceRow, sourceCol, targetRow, targetCol) {
+      const sourceBoxRow = Math.floor(sourceRow / CONFIG.BOX_SIZE);
+      const sourceBoxCol = Math.floor(sourceCol / CONFIG.BOX_SIZE);
+      const targetBoxRow = Math.floor(targetRow / CONFIG.BOX_SIZE);
+      const targetBoxCol = Math.floor(targetCol / CONFIG.BOX_SIZE);
+      return sourceBoxRow === targetBoxRow && sourceBoxCol === targetBoxCol;
+    }
+
+    function isCellSelected(row, col) {
+      return state.selectedCell !== null &&
+        state.selectedCell.row === row &&
+        state.selectedCell.col === col;
+    }
+
+    function isGiven(row, col) {
+      return state.givens[row][col];
+    }
+
+    function boardValue(row, col) {
+      return state.board[row][col];
+    }
+
+    function solutionValue(row, col) {
+      return state.solution[row][col];
+    }
+
+    function isCorrectPlacement(row, col) {
+      const value = boardValue(row, col);
+      return value !== CONFIG.EMPTY && value === solutionValue(row, col);
+    }
+
+    function countCorrectPlacementsForDigit(digit) {
+      let count = CONFIG.EMPTY;
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          if (boardValue(row, col) === digit && solutionValue(row, col) === digit) {
+            count += 1;
+          }
+        }
+      }
+      return count;
+    }
+
+    function canPlaceByCurrentBoard(grid, row, col, digit, ignoreCurrentCell) {
+      for (let index = CONFIG.FIRST_INDEX; index < CONFIG.GRID_SIZE; index += 1) {
+        if (index !== col && grid[row][index] === digit) {
+          return false;
+        }
+        if (index !== row && grid[index][col] === digit) {
+          return false;
+        }
+      }
+
+      const startRow = Math.floor(row / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+      const startCol = Math.floor(col / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+
+      for (let boxRow = startRow; boxRow < startRow + CONFIG.BOX_SIZE; boxRow += 1) {
+        for (let boxCol = startCol; boxCol < startCol + CONFIG.BOX_SIZE; boxCol += 1) {
+          const sameCell = boxRow === row && boxCol === col;
+          if (ignoreCurrentCell && sameCell) {
+            continue;
+          }
+          if (grid[boxRow][boxCol] === digit && !sameCell) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function getConflictDetails(grid, row, col, digit) {
+      for (let index = CONFIG.FIRST_INDEX; index < CONFIG.GRID_SIZE; index += 1) {
+        if (index !== col && grid[row][index] === digit) {
+          return { type: "row", cells: collectRowCells(row), message: `row already contains ${digit}.` };
+        }
+      }
+      for (let index = CONFIG.FIRST_INDEX; index < CONFIG.GRID_SIZE; index += 1) {
+        if (index !== row && grid[index][col] === digit) {
+          return { type: "column", cells: collectColCells(col), message: `column already contains ${digit}.` };
+        }
+      }
+      const startRow = Math.floor(row / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+      const startCol = Math.floor(col / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+      const boxCells = [];
+      for (let boxRow = startRow; boxRow < startRow + CONFIG.BOX_SIZE; boxRow += 1) {
+        for (let boxCol = startCol; boxCol < startCol + CONFIG.BOX_SIZE; boxCol += 1) {
+          boxCells.push(cellKey(boxRow, boxCol));
+          if (!(boxRow === row && boxCol === col) && grid[boxRow][boxCol] === digit) {
+            return { type: "box", cells: boxCells, message: `3×3 box already contains ${digit}.` };
+          }
+        }
+      }
+      return null;
+    }
+
+    function collectRowCells(row) {
+      return Array.from({ length: CONFIG.GRID_SIZE }, (_, col) => cellKey(row, col));
+    }
+
+    function collectColCells(col) {
+      return Array.from({ length: CONFIG.GRID_SIZE }, (_, row) => cellKey(row, col));
+    }
+
+    function collectBoxCells(row, col) {
+      const startRow = Math.floor(row / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+      const startCol = Math.floor(col / CONFIG.BOX_SIZE) * CONFIG.BOX_SIZE;
+      const keys = [];
+      for (let boxRow = startRow; boxRow < startRow + CONFIG.BOX_SIZE; boxRow += 1) {
+        for (let boxCol = startCol; boxCol < startCol + CONFIG.BOX_SIZE; boxCol += 1) {
+          keys.push(cellKey(boxRow, boxCol));
+        }
+      }
+      return keys;
+    }
+
+    function collectPeers(row, col) {
+      const peers = new Set();
+      collectRowCells(row).forEach((key) => peers.add(key));
+      collectColCells(col).forEach((key) => peers.add(key));
+      collectBoxCells(row, col).forEach((key) => peers.add(key));
+      peers.delete(cellKey(row, col));
+      return peers;
+    }
+
+    function legalCellsForDigit(digit) {
+      const legal = new Set();
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          if (boardValue(row, col) !== CONFIG.EMPTY) {
+            continue;
+          }
+          if (canPlaceByCurrentBoard(state.board, row, col, digit, true)) {
+            legal.add(cellKey(row, col));
+          }
+        }
+      }
+      return legal;
+    }
+
+    function solveCheckFullBoard() {
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          if (boardValue(row, col) !== solutionValue(row, col)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function isSafeForSolution(grid, row, col, digit) {
+      return canPlaceByCurrentBoard(grid, row, col, digit, true);
+    }
+
+    function fillBoardBacktracking(grid) {
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          if (grid[row][col] !== CONFIG.EMPTY) {
+            continue;
+          }
+          const digits = shuffle(CONFIG.DIGITS);
+          for (const digit of digits) {
+            if (!isSafeForSolution(grid, row, col, digit)) {
+              continue;
+            }
+            grid[row][col] = digit;
+            if (fillBoardBacktracking(grid)) {
+              return true;
+            }
+            grid[row][col] = CONFIG.EMPTY;
+          }
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function generateSolvedGrid() {
+      const grid = createMatrix(CONFIG.EMPTY);
+      fillBoardBacktracking(grid);
+      return grid;
+    }
+
+    function removeCellsFromSolution(solutionGrid, cellsToRemove) {
+      const puzzle = deepCopyGrid(solutionGrid);
+      const positions = [];
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          positions.push({ row, col });
+        }
+      }
+      const shuffled = shuffle(positions);
+      for (let index = CONFIG.FIRST_INDEX; index < cellsToRemove; index += 1) {
+        const pos = shuffled[index];
+        puzzle[pos.row][pos.col] = CONFIG.EMPTY;
+      }
+      return puzzle;
+    }
+
+    function generatePuzzleForDifficulty(difficultyKey) {
+      const difficulty = difficultyByKey(difficultyKey);
+      const solution = generateSolvedGrid();
+      const puzzle = removeCellsFromSolution(solution, difficulty.removed);
+      const givens = puzzle.map((row) => row.map((value) => value !== CONFIG.EMPTY));
+      return { solution, puzzle, givens };
+    }
+
+    function cleanupNotesForCell(row, col) {
+      if (boardValue(row, col) !== CONFIG.EMPTY) {
+        state.notes[row][col].clear();
+        return;
+      }
+      const nextSet = new Set();
+      for (const digit of state.notes[row][col]) {
+        if (canPlaceByCurrentBoard(state.board, row, col, digit, true)) {
+          nextSet.add(digit);
+        }
+      }
+      state.notes[row][col] = nextSet;
+    }
+
+    function cleanupAllNotes() {
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          cleanupNotesForCell(row, col);
+        }
+      }
+    }
+
+    function removeDigitFromPeerNotes(row, col, digit) {
+      for (const key of collectPeers(row, col)) {
+        const coords = parseCellKey(key);
+        if (state.notes[coords.row][coords.col].has(digit)) {
+          state.notes[coords.row][coords.col].delete(digit);
+        }
+      }
+    }
+
+    function resetGameState() {
+      stopTimer();
+      state.difficultyKey = null;
+      state.solution = [];
+      state.board = [];
+      state.givens = [];
+      state.notes = makeNotesGrid();
+      state.selectedCell = null;
+      state.selectedDigit = null;
+      state.notesMode = false;
+      state.score = 0;
+      state.errors = 0;
+      state.hintsLeft = 0;
+      state.maxErrors = 0;
+      state.gameStarted = false;
+      state.gameOver = false;
+      state.won = false;
+      state.startTimeMs = 0;
+      state.elapsedSeconds = 0;
+      state.statusMessage = CONFIG.STATUS.READY;
+      resetTransientFeedback();
+    }
+
+    function startNewGame(difficultyKey) {
+      resetGameState();
+      const generated = generatePuzzleForDifficulty(difficultyKey);
+      const difficulty = difficultyByKey(difficultyKey);
+
+      state.difficultyKey = difficultyKey;
+      state.solution = generated.solution;
+      state.board = generated.puzzle;
+      state.givens = generated.givens;
+      state.notes = makeNotesGrid();
+      state.hintsLeft = difficulty.hints;
+      state.maxErrors = difficulty.maxErrors;
+      state.statusMessage = CONFIG.STATUS.READY;
+
+      menuWrap.classList.add("hidden");
+      gameWrap.classList.add("active");
+
+      renderAll();
+    }
+
+    function returnToMenu() {
+      resetGameState();
+      menuWrap.classList.remove("hidden");
+      gameWrap.classList.remove("active");
+      renderAll();
+    }
+
+    function handleWinIfNeeded() {
+      if (!solveCheckFullBoard()) {
+        return;
+      }
+
+      state.won = true;
+      state.gameOver = true;
+      stopTimer();
+
+      const difficulty = difficultyByKey(state.difficultyKey);
+      const hintsBonus = state.hintsLeft * CONFIG.SCORE.HINTS_LEFT_BONUS_MULTIPLIER;
+      const timeBonus = clampMin(CONFIG.SCORE.TIME_BONUS_BASE - (state.elapsedSeconds * CONFIG.SCORE.TIME_BONUS_PER_SECOND), CONFIG.EMPTY);
+      const difficultyBonus = difficulty.winBonus;
+      state.score += hintsBonus + timeBonus + difficultyBonus;
+
+      setStatus(`${CONFIG.STATUS.WIN} Final score: ${state.score}.`);
+      renderAll();
+    }
+
+    function handleGameOverIfNeeded() {
+      if (state.errors < state.maxErrors) {
+        return;
+      }
+      state.gameOver = true;
+      stopTimer();
+      setStatus(CONFIG.STATUS.GAME_OVER);
+      renderAll();
+    }
+
+    function clearSelectedCellValue() {
+      if (state.selectedCell === null) {
+        setStatus(CONFIG.STATUS.NEED_CELL_FOR_ACTION);
+        renderStatus();
+        return;
+      }
+      const { row, col } = state.selectedCell;
+      if (isGiven(row, col)) {
+        setStatus(CONFIG.STATUS.CELL_LOCKED);
+        renderStatus();
+        return;
+      }
+      startTimerIfNeeded();
+      state.board[row][col] = CONFIG.EMPTY;
+      state.notes[row][col].clear();
+      cleanupAllNotes();
+      setStatus(CONFIG.STATUS.ERASED);
+      renderAll();
+    }
+
+    function revealHint() {
+      if (state.gameOver || state.won) {
+        return;
+      }
+      if (state.selectedCell === null) {
+        setStatus(CONFIG.STATUS.NEED_CELL_FOR_ACTION);
+        renderStatus();
+        return;
+      }
+      if (state.hintsLeft <= CONFIG.EMPTY) {
+        setStatus(CONFIG.STATUS.NEED_HINTS);
+        renderStatus();
+        return;
+      }
+
+      const { row, col } = state.selectedCell;
+      if (isGiven(row, col)) {
+        setStatus(CONFIG.STATUS.CELL_LOCKED);
+        renderStatus();
+        return;
+      }
+
+      startTimerIfNeeded();
+
+      const alreadyCorrect = boardValue(row, col) === solutionValue(row, col);
+      if (alreadyCorrect) {
+        setStatus("That cell is already correct.");
+        renderStatus();
+        return;
+      }
+
+      state.hintsLeft -= 1;
+      state.score -= CONFIG.SCORE.HINT_PENALTY;
+      state.board[row][col] = solutionValue(row, col);
+      state.notes[row][col].clear();
+      removeDigitFromPeerNotes(row, col, solutionValue(row, col));
+      cleanupAllNotes();
+      state.transientCells.correct.add(cellKey(row, col));
+      scheduleTransientClear(state.transientCells.correct, CONFIG.FEEDBACK_CLEAR_MS);
+
+      setStatus(CONFIG.STATUS.HINT_USED);
+      renderAll();
+      handleWinIfNeeded();
+    }
+
+    function flashConflict(cells, message) {
+      cells.forEach((key) => state.transientCells.conflict.add(key));
+      setStatus(`${CONFIG.STATUS.INVALID_MOVE_PREFIX}${message}`);
+      renderBoard();
+      renderStatus();
+      scheduleTransientClear(state.transientCells.conflict, CONFIG.CONFLICT_CLEAR_MS);
+    }
+
+    function markWrongEntry(row, col) {
+      state.transientCells.invalid.add(cellKey(row, col));
+      state.errors += 1;
+      setStatus(CONFIG.STATUS.WRONG_NUMBER);
+      renderAll();
+      scheduleTransientClear(state.transientCells.invalid, CONFIG.WRONG_CLEAR_MS);
+      handleGameOverIfNeeded();
+    }
+
+    function placeCorrectValue(row, col, digit, scoreIt) {
+      const previousValue = boardValue(row, col);
+      const wasCorrectAlready = previousValue === solutionValue(row, col);
+
+      state.board[row][col] = digit;
+      state.notes[row][col].clear();
+      removeDigitFromPeerNotes(row, col, digit);
+      cleanupAllNotes();
+
+      if (!wasCorrectAlready && scoreIt) {
+        state.score += CONFIG.SCORE.CORRECT_FILL;
+      }
+
+      state.transientCells.correct.add(cellKey(row, col));
+      scheduleTransientClear(state.transientCells.correct, CONFIG.FEEDBACK_CLEAR_MS);
+
+      renderAll();
+      handleWinIfNeeded();
+    }
+
+    function toggleNoteDigit(row, col, digit) {
+      if (boardValue(row, col) !== CONFIG.EMPTY) {
+        state.board[row][col] = CONFIG.EMPTY;
+      }
+
+      if (!canPlaceByCurrentBoard(state.board, row, col, digit, true)) {
+        const conflict = getConflictDetails(state.board, row, col, digit);
+        if (conflict !== null) {
+          flashConflict(conflict.cells, conflict.message);
+        }
+        return;
+      }
+
+      const noteSet = state.notes[row][col];
+      if (noteSet.has(digit)) {
+        noteSet.delete(digit);
+      } else {
+        noteSet.add(digit);
+      }
+      cleanupNotesForCell(row, col);
+      setStatus(CONFIG.STATUS.NOTES_ON);
+      renderBoard();
+      renderStatus();
+    }
+
+    function placeDigitOnSelectedCell(digit) {
+      if (state.gameOver || state.won) {
+        return;
+      }
+      if (state.selectedCell === null) {
+        if (state.selectedDigit === digit) {
+          state.selectedDigit = null;
+          setStatus(CONFIG.STATUS.DIGIT_CLEAR);
+        } else {
+          startTimerIfNeeded();
+          state.selectedDigit = digit;
+          setStatus(CONFIG.STATUS.DIGIT_PREVIEW);
+        }
+        renderAll();
+        return;
+      }
+
+      const { row, col } = state.selectedCell;
+
+      if (isGiven(row, col)) {
+        setStatus(CONFIG.STATUS.CELL_LOCKED);
+        renderStatus();
+        return;
+      }
+
+      startTimerIfNeeded();
+
+      if (state.notesMode) {
+        toggleNoteDigit(row, col, digit);
+        state.selectedDigit = digit;
+        renderAll();
+        return;
+      }
+
+      const conflict = getConflictDetails(state.board, row, col, digit);
+      if (conflict !== null) {
+        flashConflict(conflict.cells, conflict.message);
+        return;
+      }
+
+      state.selectedDigit = digit;
+      if (digit !== solutionValue(row, col)) {
+        state.board[row][col] = digit;
+        state.notes[row][col].clear();
+        cleanupAllNotes();
+        markWrongEntry(row, col);
+        return;
+      }
+
+      placeCorrectValue(row, col, digit, true);
+      setStatus("Correct placement.");
+    }
+
+    function toggleCellSelection(row, col) {
+      if (state.gameOver || state.won) {
+        return;
+      }
+      startTimerIfNeeded();
+
+      if (isCellSelected(row, col)) {
+        state.selectedCell = null;
+        setStatus(CONFIG.STATUS.DESELECTED);
+        renderAll();
+        return;
+      }
+
+      state.selectedCell = { row, col };
+      if (boardValue(row, col) !== CONFIG.EMPTY) {
+        state.selectedDigit = boardValue(row, col);
+      }
+      setStatus(CONFIG.STATUS.SELECTED);
+      renderAll();
+    }
+
+    function toggleNotesMode() {
+      if (state.gameOver || state.won) {
+        return;
+      }
+      startTimerIfNeeded();
+      state.notesMode = !state.notesMode;
+      setStatus(state.notesMode ? CONFIG.STATUS.NOTES_ON : CONFIG.STATUS.NOTES_OFF);
+      renderControls();
+      renderStatus();
+      renderBoard();
+    }
+
+    function applyThemeVariables() {
+      const root = document.documentElement.style;
+      root.setProperty("--bg-app", CONFIG.UI_COLORS.APP_BG);
+      root.setProperty("--bg-card", CONFIG.UI_COLORS.CARD_BG);
+      root.setProperty("--text-main", CONFIG.UI_COLORS.TEXT_MAIN);
+      root.setProperty("--text-muted", CONFIG.UI_COLORS.TEXT_MUTED_RGBA);
+      root.setProperty("--line-soft", CONFIG.UI_COLORS.LINE_SOFT_RGBA);
+      root.setProperty("--line-strong", CONFIG.UI_COLORS.LINE_STRONG_RGBA);
+      root.setProperty("--shadow-card", CONFIG.UI_COLORS.SHADOW_CARD);
+      root.setProperty("--shadow-soft", CONFIG.UI_COLORS.SHADOW_SOFT);
+      root.setProperty("--status-bg", CONFIG.UI_COLORS.STATUS_BG_RGBA);
+      root.setProperty("--status-border", CONFIG.UI_COLORS.STATUS_BORDER_RGBA);
+      root.setProperty("--invalid-bg", CONFIG.UI_COLORS.INVALID_BG_RGBA);
+      root.setProperty("--conflict-bg", CONFIG.UI_COLORS.CONFLICT_BG_RGBA);
+      root.setProperty("--select-bg", CONFIG.UI_COLORS.SELECT_BG_RGBA);
+      root.setProperty("--peer-bg", CONFIG.UI_COLORS.PEER_BG_RGBA);
+      root.setProperty("--box-bg", CONFIG.UI_COLORS.BOX_BG_RGBA);
+      root.setProperty("--same-digit-bg", CONFIG.UI_COLORS.SAME_DIGIT_BG_RGBA);
+      root.setProperty("--legal-bg", CONFIG.UI_COLORS.LEGAL_BG_RGBA);
+      root.setProperty("--given-underline", CONFIG.UI_COLORS.GIVEN_UNDERLINE_RGBA);
+      root.setProperty("--notes-active-bg", CONFIG.UI_COLORS.NOTES_ACTIVE_BG_RGBA);
+      root.setProperty("--difficulty-easy", CONFIG.UI_COLORS.DIFFICULTY_EASY_RGBA);
+      root.setProperty("--difficulty-medium", CONFIG.UI_COLORS.DIFFICULTY_MEDIUM_RGBA);
+      root.setProperty("--difficulty-hard", CONFIG.UI_COLORS.DIFFICULTY_HARD_RGBA);
+      root.setProperty("--difficulty-expert", CONFIG.UI_COLORS.DIFFICULTY_EXPERT_RGBA);
+      root.setProperty("--num-columns", String(CONFIG.GRID_SIZE));
+      root.setProperty("--mini-columns", String(CONFIG.BOX_SIZE));
+    }
+
+    function renderDifficultyButtons() {
+      difficultyPanel.innerHTML = "";
+      Object.values(CONFIG.DIFFICULTIES).forEach((difficulty) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `difficulty-btn ${difficulty.key}`;
+        btn.innerHTML = `
+          <div class="name">${difficulty.label}</div>
+          <div class="desc">${difficulty.removed} ${CONFIG.TEXT.DIFFICULTY_DESC_SUFFIX} • ${difficulty.hints} hints • ${difficulty.maxErrors} errors</div>
+        `;
+        btn.addEventListener("click", () => startNewGame(difficulty.key));
+        difficultyPanel.appendChild(btn);
+      });
+    }
+
+    function renderMeta() {
+      if (state.difficultyKey === null) {
+        gameTitle.textContent = CONFIG.TEXT.TITLE;
+        difficultyLabel.textContent = CONFIG.TEXT.PICK_DIFFICULTY;
+        scoreValue.textContent = String(CONFIG.EMPTY);
+        timerValue.textContent = formatTime(CONFIG.EMPTY);
+        hintsValue.textContent = String(CONFIG.EMPTY);
+        errorsValue.textContent = `${CONFIG.EMPTY}/${CONFIG.EMPTY}`;
+        return;
+      }
+
+      const difficulty = difficultyByKey(state.difficultyKey);
+      gameTitle.textContent = CONFIG.TEXT.TITLE;
+      difficultyLabel.textContent = difficulty.label;
+      scoreValue.textContent = String(state.score);
+      timerValue.textContent = formatTime(state.elapsedSeconds);
+      hintsValue.textContent = String(state.hintsLeft);
+      errorsValue.textContent = `${state.errors}/${state.maxErrors}`;
+    }
+
+    function updateMeta() {
+      renderMeta();
+    }
+
+    function renderStatus() {
+      statusBar.textContent = state.statusMessage;
+    }
+
+    function renderControls() {
+      notesBtn.classList.toggle("active", state.notesMode);
+      const disabled = state.gameOver || state.won || state.difficultyKey === null;
+      eraseBtn.disabled = disabled;
+      notesBtn.disabled = disabled;
+      hintBtn.disabled = disabled;
+      eraseBtn.style.opacity = disabled ? String(0.6) : String(1);
+      notesBtn.style.opacity = disabled ? String(0.6) : String(1);
+      hintBtn.style.opacity = disabled ? String(0.6) : String(1);
+      newGameBtn.disabled = false;
+      hintBtn.textContent = `Hint`;
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      if (state.difficultyKey === null) {
+        return;
+      }
+
+      const selectedDigit = state.selectedDigit;
+      const legalSet = selectedDigit !== null ? legalCellsForDigit(selectedDigit) : new Set();
+      const selectedCellPeers = state.selectedCell !== null ? collectPeers(state.selectedCell.row, state.selectedCell.col) : new Set();
+
+      for (let row = CONFIG.FIRST_INDEX; row < CONFIG.GRID_SIZE; row += 1) {
+        for (let col = CONFIG.FIRST_INDEX; col < CONFIG.GRID_SIZE; col += 1) {
+          const value = boardValue(row, col);
+          const key = cellKey(row, col);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "cell";
+          button.dataset.row = String(row);
+          button.dataset.col = String(col);
+
+          if ((col + 1) % CONFIG.BOX_SIZE === CONFIG.EMPTY && col !== CONFIG.LAST_INDEX) {
+            button.classList.add("thick-right");
+          }
+          if ((row + 1) % CONFIG.BOX_SIZE === CONFIG.EMPTY && row !== CONFIG.LAST_INDEX) {
+            button.classList.add("thick-bottom");
+          }
+
+          if (isGiven(row, col)) {
+            button.classList.add("given", "locked");
+          }
+          if (state.gameOver || state.won) {
+            button.classList.add("disabled");
+          }
+
+          const selected = isCellSelected(row, col);
+          if (selected) {
+            button.classList.add("selected");
+          }
+
+          if (state.selectedCell !== null && selectedCellPeers.has(key)) {
+            const inSameBox = isInsideBox(state.selectedCell.row, state.selectedCell.col, row, col);
+            button.classList.add(inSameBox ? "box-peer" : "peer");
+          }
+
+          if (selectedDigit !== null && legalSet.has(key)) {
+            button.classList.add("legal");
+          }
+
+          const sameDigitMatch = selectedDigit !== null &&
+            value === selectedDigit &&
+            isCorrectPlacement(row, col);
+
+          if (sameDigitMatch) {
+            button.classList.add("same-digit");
+          }
+
+          if (state.transientCells.invalid.has(key)) {
+            button.classList.add("invalid");
+          }
+          if (state.transientCells.conflict.has(key)) {
+            button.classList.add("conflict");
+          }
+          if (state.transientCells.correct.has(key)) {
+            button.classList.add("correct-pop");
+          }
+
+          const valueNode = document.createElement("span");
+          valueNode.className = "value";
+          valueNode.textContent = value === CONFIG.EMPTY ? "" : String(value);
+          if (value !== CONFIG.EMPTY) {
+            valueNode.style.color = digitColor(value);
+          }
+
+          button.appendChild(valueNode);
+
+          if (value === CONFIG.EMPTY && state.notes[row][col].size > CONFIG.EMPTY) {
+            const notesWrap = document.createElement("div");
+            notesWrap.className = "notes";
+            CONFIG.DIGITS.forEach((digit) => {
+              const note = document.createElement("div");
+              note.className = "note";
+              note.textContent = state.notes[row][col].has(digit) ? String(digit) : "";
+              note.style.color = digitColor(digit);
+              notesWrap.appendChild(note);
+            });
+            button.appendChild(notesWrap);
+          }
+
+          button.addEventListener("click", () => toggleCellSelection(row, col));
+          boardEl.appendChild(button);
+        }
+      }
+    }
+
+    function renderNumpad() {
+      numpadEl.innerHTML = "";
+      if (state.difficultyKey === null) {
+        return;
+      }
+
+      for (const digit of CONFIG.DIGITS) {
+        const correctCount = countCorrectPlacementsForDigit(digit);
+        const remaining = CONFIG.DIGIT_COUNT - correctCount;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "digit-btn";
+        if (state.selectedDigit === digit) {
+          button.classList.add("selected");
+        }
+        if (remaining === CONFIG.EMPTY) {
+          button.classList.add("complete");
+        }
+        if (state.gameOver || state.won) {
+          button.disabled = true;
+        }
+
+        const top = document.createElement("div");
+        top.className = "digit-top";
+        top.textContent = String(digit);
+        top.style.color = digitColor(digit);
+
+        const bars = document.createElement("div");
+        bars.className = "bars";
+        for (let index = CONFIG.FIRST_INDEX; index < CONFIG.DIGIT_COUNT; index += 1) {
+          const bar = document.createElement("div");
+          bar.className = "bar";
+          if (index < correctCount) {
+            bar.classList.add("hidden");
+          }
+          bar.style.backgroundColor = digitColor(digit);
+          bars.appendChild(bar);
+        }
+
+        button.appendChild(top);
+        button.appendChild(bars);
+        button.addEventListener("click", () => placeDigitOnSelectedCell(digit));
+        numpadEl.appendChild(button);
+      }
+    }
+
+    function renderAll() {
+      renderMeta();
+      renderStatus();
+      renderControls();
+      renderBoard();
+      renderNumpad();
+    }
+
+    eraseBtn.addEventListener("click", clearSelectedCellValue);
+    notesBtn.addEventListener("click", toggleNotesMode);
+    hintBtn.addEventListener("click", revealHint);
+    newGameBtn.addEventListener("click", returnToMenu);
+
+    document.addEventListener("keydown", (event) => {
+      if (state.difficultyKey === null || state.gameOver || state.won) {
+        return;
+      }
+
+      const key = event.key;
+      if (CONFIG.DIGITS.map(String).includes(key)) {
+        placeDigitOnSelectedCell(Number(key));
+        return;
+      }
+
+      if (key === "Backspace" || key === "Delete" || key === "0") {
+        clearSelectedCellValue();
+        return;
+      }
+
+      if (key.toLowerCase() === "n") {
+        toggleNotesMode();
+        return;
+      }
+
+      if (key.toLowerCase() === "h") {
+        revealHint();
+      }
+    });
+
+    applyThemeVariables();
+    renderDifficultyButtons();
+    renderAll();
+  </script>
+</body>
+</html>

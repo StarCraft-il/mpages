@@ -1,0 +1,1432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sudoku</title>
+  <style>
+    :root {
+      --bg: #fbf4e8;
+      --card: #fffaf1;
+      --card-strong: #fff5df;
+      --ink: #3b2d24;
+      --muted: #947f6c;
+      --line: #e8d6bd;
+      --line-strong: #b99f81;
+      --shadow: 0 18px 42px rgba(89, 59, 29, .14);
+      --shadow-soft: 0 8px 22px rgba(89, 59, 29, .10);
+      --radius-card: 28px;
+      --radius-soft: 18px;
+      --radius-tiny: 10px;
+      --max-width: 380px;
+      --gap: 10px;
+      --board-gap: 2px;
+      --cell-size: min(calc((100vw - 58px) / 9), 35.5px);
+      --tap-size: 42px;
+      --font: Nunito, ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --focus: #ffffff;
+      --select: #fff0bd;
+      --peer: #f4ead9;
+      --legal: #edf8ef;
+      --same: #ffe4dd;
+      --bad: #ffdad8;
+      --good: #e1f7df;
+      --digit-1: #d94a43;
+      --digit-2: #3276d4;
+      --digit-3: #3c9a54;
+      --digit-4: #d08a18;
+      --digit-5: #8b57c7;
+      --digit-6: #229d9c;
+      --digit-7: #d34b79;
+      --digit-8: #68727d;
+      --digit-9: #835332;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --fast: 140ms;
+      --normal: 220ms;
+      --slow: 520ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at top left, rgba(255, 226, 172, .42), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(239, 172, 130, .22), transparent 32%),
+        var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px 12px 22px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: var(--max-width);
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--card), var(--card-strong));
+      border: 1px solid rgba(255, 255, 255, .72);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--gap);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 31px;
+      line-height: 1;
+      letter-spacing: -.06em;
+      font-weight: 900;
+    }
+
+    .pill {
+      border: 0;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow-soft);
+      font: inherit;
+      min-height: 34px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform var(--fast) var(--ease), opacity var(--fast) var(--ease), background var(--fast) var(--ease);
+    }
+
+    .pill:active,
+    .tool:active,
+    .digit-btn:active,
+    .cell:active {
+      transform: scale(.96);
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, .62);
+      border-radius: var(--radius-soft);
+      padding: 8px 7px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .72);
+      text-align: center;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 2px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .status {
+      min-height: 34px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-soft);
+      background: rgba(255, 255, 255, .62);
+      color: var(--muted);
+      padding: 9px 12px;
+      font-size: 13px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: background var(--normal) var(--ease), color var(--normal) var(--ease), transform var(--normal) var(--ease);
+    }
+
+    .status.good {
+      color: #347a3f;
+      background: var(--good);
+      animation: pop var(--slow) var(--ease);
+    }
+
+    .status.bad {
+      color: #a8403b;
+      background: var(--bad);
+      animation: shake var(--slow) var(--ease);
+    }
+
+    .board-wrap {
+      position: relative;
+      background: var(--line-strong);
+      border: 4px solid var(--line-strong);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: var(--board-gap);
+      background: var(--line-strong);
+    }
+
+    .cell {
+      width: 100%;
+      aspect-ratio: 1;
+      border: 0;
+      background: var(--focus);
+      color: var(--ink);
+      font: 900 20px/1 var(--font);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+      transition:
+        background var(--normal) var(--ease),
+        transform var(--fast) var(--ease),
+        filter var(--normal) var(--ease);
+    }
+
+    .cell:nth-child(3n):not(:nth-child(9n)) {
+      box-shadow: inset -2px 0 0 var(--line-strong);
+    }
+
+    .cell:nth-child(n+19):nth-child(-n+27),
+    .cell:nth-child(n+46):nth-child(-n+54) {
+      box-shadow: inset 0 -2px 0 var(--line-strong);
+    }
+
+    .cell:nth-child(3n):not(:nth-child(9n)):nth-child(n+19):nth-child(-n+27),
+    .cell:nth-child(3n):not(:nth-child(9n)):nth-child(n+46):nth-child(-n+54) {
+      box-shadow: inset -2px 0 0 var(--line-strong), inset 0 -2px 0 var(--line-strong);
+    }
+
+    .cell.given {
+      background: #fff8eb;
+      cursor: default;
+    }
+
+    .cell.selected {
+      background: var(--select);
+      z-index: 1;
+      transform: scale(1.035);
+    }
+
+    .cell.peer {
+      background: var(--peer);
+    }
+
+    .cell.legal {
+      background: var(--legal);
+    }
+
+    .cell.same {
+      background: var(--same);
+    }
+
+    .cell.invalid {
+      background: var(--bad);
+      animation: shake var(--slow) var(--ease);
+    }
+
+    .cell.correct {
+      animation: pop var(--slow) var(--ease);
+    }
+
+    .cell .value {
+      display: inline-block;
+      animation: fadeIn var(--normal) var(--ease);
+    }
+
+    .cell .notes {
+      width: 88%;
+      height: 88%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      align-items: center;
+      justify-items: center;
+      font-size: 8px;
+      line-height: 1;
+      font-weight: 900;
+      opacity: .82;
+    }
+
+    .cell .note {
+      min-width: 8px;
+      text-align: center;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tool {
+      border: 0;
+      min-height: var(--tap-size);
+      border-radius: var(--radius-soft);
+      background: #fff;
+      color: var(--ink);
+      font: 900 14px/1 var(--font);
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: transform var(--fast) var(--ease), background var(--normal) var(--ease), color var(--normal) var(--ease), opacity var(--normal) var(--ease);
+    }
+
+    .tool.active {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 6px;
+    }
+
+    .digit-btn {
+      position: relative;
+      border: 0;
+      min-height: 58px;
+      border-radius: 15px;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      cursor: pointer;
+      color: var(--ink);
+      font: 900 21px/1 var(--font);
+      transition: transform var(--fast) var(--ease), opacity var(--normal) var(--ease), filter var(--normal) var(--ease);
+    }
+
+    .digit-btn .bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--progress, 100%);
+      opacity: .24;
+      transition: height var(--slow) var(--ease);
+    }
+
+    .digit-btn .digit {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .digit-btn .count {
+      position: relative;
+      z-index: 1;
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .digit-btn.complete {
+      opacity: .42;
+      filter: saturate(.7);
+      pointer-events: none;
+    }
+
+    .digit-btn.celebrate {
+      animation: celebrate var(--slow) var(--ease);
+    }
+
+    .difficulty {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin: 12px 0;
+    }
+
+    .difficulty .pill {
+      min-height: 36px;
+      box-shadow: none;
+      background: rgba(255, 255, 255, .66);
+      font-size: 12px;
+    }
+
+    .difficulty .pill.active {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .win {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 250, 241, .92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 22px;
+      z-index: 5;
+      animation: fadeIn var(--normal) var(--ease);
+    }
+
+    .win.show {
+      display: flex;
+    }
+
+    .win-box {
+      background: #fff;
+      border-radius: var(--radius-card);
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      animation: pop var(--slow) var(--ease);
+    }
+
+    .win h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -.04em;
+    }
+
+    .win p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(.92); opacity: .7; }
+      60% { transform: scale(1.06); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.86); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes celebrate {
+      0%, 100% { transform: scale(1); }
+      35% { transform: scale(1.14) rotate(-2deg); }
+      70% { transform: scale(1.05) rotate(2deg); }
+    }
+
+    @media (max-width: 350px) {
+      .card { padding: 12px; }
+      .cell { font-size: 18px; }
+      .digit-btn { min-height: 52px; border-radius: 13px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card" aria-label="Sudoku game">
+      <header>
+        <h1>Sudoku</h1>
+        <button class="pill" id="newGameButton" type="button">New</button>
+      </header>
+
+      <div class="hud" aria-live="polite">
+        <div class="stat"><span>Time</span><strong id="timeText">00:00</strong></div>
+        <div class="stat"><span>Score</span><strong id="scoreText">0</strong></div>
+        <div class="stat"><span>Misses</span><strong id="mistakeText">0/3</strong></div>
+      </div>
+
+      <div class="difficulty" id="difficultyGroup" aria-label="Difficulty"></div>
+      <div class="status" id="statusText">Choose a cell, then tap a digit.</div>
+
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Sudoku board"></div>
+        <div class="win" id="winOverlay">
+          <div class="win-box">
+            <h2>Finished!</h2>
+            <p id="winText">Perfect grid.</p>
+            <button class="pill" id="playAgainButton" type="button">Play again</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="tool" id="notesButton" type="button">Notes: Off</button>
+        <button class="tool" id="eraseButton" type="button">Erase</button>
+      </div>
+
+      <div class="numpad" id="numpad" aria-label="Number pad"></div>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    /* ============================================================
+       CONFIGURATION FIRST
+       All tunable values live here.
+    ============================================================ */
+
+    const CONFIG = Object.freeze({
+      board: Object.freeze({
+        size: 9,
+        box: 3,
+        empty: 0,
+        minDigit: 1,
+        maxDigit: 9,
+        cells: 81,
+        digitTarget: 9
+      }),
+
+      colors: Object.freeze({
+        background: "#fbf4e8",
+        card: "#fffaf1",
+        cardStrong: "#fff5df",
+        ink: "#3b2d24",
+        muted: "#947f6c",
+        line: "#e8d6bd",
+        lineStrong: "#b99f81",
+        focus: "#ffffff",
+        selected: "#fff0bd",
+        peer: "#f4ead9",
+        legal: "#edf8ef",
+        same: "#ffe4dd",
+        bad: "#ffdad8",
+        good: "#e1f7df",
+        digits: Object.freeze({
+          1: "#d94a43",
+          2: "#3276d4",
+          3: "#3c9a54",
+          4: "#d08a18",
+          5: "#8b57c7",
+          6: "#229d9c",
+          7: "#d34b79",
+          8: "#68727d",
+          9: "#835332"
+        })
+      }),
+
+      layout: Object.freeze({
+        maxWidth: "380px",
+        appPadding: "16px 12px 22px",
+        cardPadding: "16px",
+        cardRadius: "28px",
+        softRadius: "18px",
+        tinyRadius: "10px",
+        gap: "10px",
+        boardGap: "2px",
+        boardBorder: "4px",
+        boardRadius: "22px",
+        tapSize: "42px",
+        digitButtonHeight: "58px"
+      }),
+
+      typography: Object.freeze({
+        fontFamily: "Nunito, ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        titleSize: "31px",
+        cellSize: "20px",
+        noteSize: "8px",
+        digitSize: "21px",
+        statLabelSize: "10px",
+        statValueSize: "16px",
+        statusSize: "13px",
+        buttonSize: "14px"
+      }),
+
+      difficultyRules: Object.freeze({
+        easy: Object.freeze({
+          label: "Easy",
+          removals: 38,
+          mistakeLimit: 4,
+          scoreMultiplier: 1
+        }),
+        medium: Object.freeze({
+          label: "Medium",
+          removals: 46,
+          mistakeLimit: 3,
+          scoreMultiplier: 1.4
+        }),
+        hard: Object.freeze({
+          label: "Hard",
+          removals: 54,
+          mistakeLimit: 3,
+          scoreMultiplier: 1.8
+        })
+      }),
+
+      scoring: Object.freeze({
+        correctPlacement: 10,
+        streakBonus: 3,
+        notePlacement: 1,
+        mistakePenalty: 5,
+        completionBonus: 120,
+        minimumScore: 0
+      }),
+
+      timers: Object.freeze({
+        tickMs: 1000,
+        statusClearMs: 1600,
+        invalidClassMs: 520,
+        celebrateClassMs: 620
+      }),
+
+      animation: Object.freeze({
+        fastMs: 140,
+        normalMs: 220,
+        slowMs: 520,
+        easing: "cubic-bezier(.22, 1, .36, 1)"
+      }),
+
+      messages: Object.freeze({
+        ready: "Choose a cell, then tap a digit.",
+        fixed: "That clue is fixed.",
+        noCell: "Select a cell first.",
+        invalid: "Not quite. Check the row, column, and box.",
+        correct: "Nice placement.",
+        noteAdded: "Note updated.",
+        noteCleaned: "Related notes cleaned up.",
+        erased: "Cell cleared.",
+        completedDigit: "Digit complete!",
+        gameOver: "Too many mistakes. Start a fresh puzzle.",
+        solved: "Clean solve. Excellent work.",
+        legalDigit: "Legal cells for this digit are highlighted."
+      }),
+
+      cssVariableMap: Object.freeze({
+        "--bg": "colors.background",
+        "--card": "colors.card",
+        "--card-strong": "colors.cardStrong",
+        "--ink": "colors.ink",
+        "--muted": "colors.muted",
+        "--line": "colors.line",
+        "--line-strong": "colors.lineStrong",
+        "--focus": "colors.focus",
+        "--select": "colors.selected",
+        "--peer": "colors.peer",
+        "--legal": "colors.legal",
+        "--same": "colors.same",
+        "--bad": "colors.bad",
+        "--good": "colors.good",
+        "--max-width": "layout.maxWidth",
+        "--gap": "layout.gap",
+        "--board-gap": "layout.boardGap",
+        "--radius-card": "layout.cardRadius",
+        "--radius-soft": "layout.softRadius",
+        "--radius-tiny": "layout.tinyRadius",
+        "--tap-size": "layout.tapSize",
+        "--font": "typography.fontFamily",
+        "--fast": "animation.fastMs",
+        "--normal": "animation.normalMs",
+        "--slow": "animation.slowMs",
+        "--ease": "animation.easing"
+      })
+    });
+
+    /* ============================================================
+       STATE
+    ============================================================ */
+
+    const state = {
+      difficultyKey: "medium",
+      solution: [],
+      puzzle: [],
+      entries: [],
+      notes: [],
+      givens: [],
+      selectedIndex: null,
+      selectedDigit: null,
+      notesMode: false,
+      mistakes: 0,
+      score: 0,
+      streak: 0,
+      elapsedSeconds: 0,
+      timerId: null,
+      completedDigits: new Set(),
+      locked: false
+    };
+
+    const elements = {};
+
+    /* ============================================================
+       BOOTSTRAP
+    ============================================================ */
+
+    document.addEventListener("DOMContentLoaded", initialize);
+
+    function initialize() {
+      cacheElements();
+      applyConfiguration();
+      buildDifficultyControls();
+      buildBoard();
+      buildNumpad();
+      bindEvents();
+      startNewGame();
+    }
+
+    function cacheElements() {
+      elements.board = document.getElementById("board");
+      elements.numpad = document.getElementById("numpad");
+      elements.statusText = document.getElementById("statusText");
+      elements.timeText = document.getElementById("timeText");
+      elements.scoreText = document.getElementById("scoreText");
+      elements.mistakeText = document.getElementById("mistakeText");
+      elements.notesButton = document.getElementById("notesButton");
+      elements.eraseButton = document.getElementById("eraseButton");
+      elements.newGameButton = document.getElementById("newGameButton");
+      elements.playAgainButton = document.getElementById("playAgainButton");
+      elements.difficultyGroup = document.getElementById("difficultyGroup");
+      elements.winOverlay = document.getElementById("winOverlay");
+      elements.winText = document.getElementById("winText");
+    }
+
+    function applyConfiguration() {
+      const root = document.documentElement;
+
+      for (const [variableName, configPath] of Object.entries(CONFIG.cssVariableMap)) {
+        const value = readPath(CONFIG, configPath);
+        const normalizedValue = typeof value === "number" ? `${value}ms` : value;
+        root.style.setProperty(variableName, normalizedValue);
+      }
+
+      for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+        root.style.setProperty(`--digit-${digit}`, CONFIG.colors.digits[digit]);
+      }
+    }
+
+    function readPath(source, path) {
+      return path.split(".").reduce((current, key) => current[key], source);
+    }
+
+    function bindEvents() {
+      elements.newGameButton.addEventListener("click", startNewGame);
+      elements.playAgainButton.addEventListener("click", startNewGame);
+      elements.notesButton.addEventListener("click", toggleNotesMode);
+      elements.eraseButton.addEventListener("click", eraseSelectedCell);
+    }
+
+    /* ============================================================
+       UI BUILDERS
+    ============================================================ */
+
+    function buildDifficultyControls() {
+      elements.difficultyGroup.innerHTML = "";
+
+      for (const [key, rule] of Object.entries(CONFIG.difficultyRules)) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "pill";
+        button.textContent = rule.label;
+        button.dataset.difficulty = key;
+        button.addEventListener("click", () => {
+          state.difficultyKey = key;
+          startNewGame();
+        });
+        elements.difficultyGroup.appendChild(button);
+      }
+    }
+
+    function buildBoard() {
+      elements.board.innerHTML = "";
+
+      for (let index = 0; index < CONFIG.board.cells; index++) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "cell";
+        cell.dataset.index = String(index);
+        cell.setAttribute("role", "gridcell");
+        cell.setAttribute("aria-label", `Cell ${index + 1}`);
+        cell.addEventListener("click", () => selectCell(index));
+        elements.board.appendChild(cell);
+      }
+    }
+
+    function buildNumpad() {
+      elements.numpad.innerHTML = "";
+
+      for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "digit-btn";
+        button.dataset.digit = String(digit);
+        button.style.color = CONFIG.colors.digits[digit];
+
+        const bar = document.createElement("span");
+        bar.className = "bar";
+        bar.style.backgroundColor = CONFIG.colors.digits[digit];
+
+        const digitText = document.createElement("span");
+        digitText.className = "digit";
+        digitText.textContent = String(digit);
+
+        const countText = document.createElement("span");
+        countText.className = "count";
+        countText.textContent = `0/${CONFIG.board.digitTarget}`;
+
+        button.append(bar, digitText, countText);
+        button.addEventListener("click", () => handleDigitTap(digit));
+        elements.numpad.appendChild(button);
+      }
+    }
+
+    /* ============================================================
+       GAME FLOW
+    ============================================================ */
+
+    function startNewGame() {
+      stopTimer();
+
+      const difficulty = CONFIG.difficultyRules[state.difficultyKey];
+      state.solution = generateSolvedBoard();
+      state.puzzle = removeCells(state.solution, difficulty.removals);
+      state.entries = state.puzzle.slice();
+      state.givens = state.puzzle.map(value => value !== CONFIG.board.empty);
+      state.notes = Array.from({ length: CONFIG.board.cells }, () => new Set());
+      state.selectedIndex = null;
+      state.selectedDigit = null;
+      state.notesMode = false;
+      state.mistakes = 0;
+      state.score = 0;
+      state.streak = 0;
+      state.elapsedSeconds = 0;
+      state.completedDigits = new Set();
+      state.locked = false;
+
+      elements.winOverlay.classList.remove("show");
+      updateDifficultyButtons();
+      updateNotesButton();
+      updateHud();
+      renderBoard();
+      renderNumpad();
+      setStatus(CONFIG.messages.ready);
+      startTimer();
+    }
+
+    function finishGame() {
+      state.locked = true;
+      stopTimer();
+
+      const bonus = CONFIG.scoring.completionBonus * CONFIG.difficultyRules[state.difficultyKey].scoreMultiplier;
+      state.score += Math.round(bonus);
+      updateHud();
+
+      elements.winText.textContent = `${CONFIG.messages.solved} Score ${state.score} · ${formatTime(state.elapsedSeconds)}`;
+      elements.winOverlay.classList.add("show");
+      setStatus(CONFIG.messages.solved, "good");
+    }
+
+    function triggerGameOver() {
+      state.locked = true;
+      stopTimer();
+      setStatus(CONFIG.messages.gameOver, "bad");
+    }
+
+    /* ============================================================
+       INTERACTION
+    ============================================================ */
+
+    function selectCell(index) {
+      if (state.locked) {
+        return;
+      }
+
+      if (state.selectedIndex === index) {
+        state.selectedIndex = null;
+        renderBoard();
+        return;
+      }
+
+      state.selectedIndex = index;
+      state.selectedDigit = null;
+      renderBoard();
+
+      if (state.givens[index]) {
+        setStatus(CONFIG.messages.fixed);
+        return;
+      }
+
+      setStatus(CONFIG.messages.ready);
+    }
+
+    function handleDigitTap(digit) {
+      if (state.locked || state.completedDigits.has(digit)) {
+        return;
+      }
+
+      state.selectedDigit = digit;
+
+      if (state.selectedIndex === null) {
+        renderBoard();
+        setStatus(CONFIG.messages.legalDigit);
+        return;
+      }
+
+      const index = state.selectedIndex;
+
+      if (state.givens[index]) {
+        renderBoard();
+        setStatus(CONFIG.messages.fixed);
+        return;
+      }
+
+      if (state.notesMode) {
+        toggleNote(index, digit);
+        renderBoard();
+        setStatus(CONFIG.messages.noteAdded);
+        return;
+      }
+
+      placeDigit(index, digit);
+    }
+
+    function placeDigit(index, digit) {
+      if (!isMoveLegalForCurrentGrid(index, digit) || state.solution[index] !== digit) {
+        registerMistake(index);
+        return;
+      }
+
+      state.entries[index] = digit;
+      state.notes[index].clear();
+      state.streak += 1;
+      state.score += scoreForCorrectMove();
+      cleanupNotes(index, digit);
+      setStatus(CONFIG.messages.correct, "good");
+
+      const cell = getCellElement(index);
+      cell.classList.add("correct");
+      window.setTimeout(() => cell.classList.remove("correct"), CONFIG.timers.celebrateClassMs);
+
+      updateCompletions(digit);
+      updateHud();
+      renderBoard();
+      renderNumpad();
+
+      if (isSolved()) {
+        finishGame();
+      }
+    }
+
+    function toggleNote(index, digit) {
+      if (state.entries[index] !== CONFIG.board.empty || state.givens[index]) {
+        return;
+      }
+
+      if (state.notes[index].has(digit)) {
+        state.notes[index].delete(digit);
+        return;
+      }
+
+      state.notes[index].add(digit);
+      state.score += CONFIG.scoring.notePlacement;
+      updateHud();
+    }
+
+    function eraseSelectedCell() {
+      if (state.locked || state.selectedIndex === null) {
+        setStatus(CONFIG.messages.noCell);
+        return;
+      }
+
+      const index = state.selectedIndex;
+
+      if (state.givens[index]) {
+        setStatus(CONFIG.messages.fixed);
+        return;
+      }
+
+      state.entries[index] = CONFIG.board.empty;
+      state.notes[index].clear();
+      setStatus(CONFIG.messages.erased);
+      renderBoard();
+      renderNumpad();
+    }
+
+    function toggleNotesMode() {
+      if (state.locked) {
+        return;
+      }
+
+      state.notesMode = !state.notesMode;
+      updateNotesButton();
+    }
+
+    function registerMistake(index) {
+      state.mistakes += 1;
+      state.streak = 0;
+      state.score = Math.max(CONFIG.scoring.minimumScore, state.score - CONFIG.scoring.mistakePenalty);
+
+      const cell = getCellElement(index);
+      cell.classList.add("invalid");
+      window.setTimeout(() => cell.classList.remove("invalid"), CONFIG.timers.invalidClassMs);
+
+      updateHud();
+      setStatus(CONFIG.messages.invalid, "bad");
+
+      const limit = CONFIG.difficultyRules[state.difficultyKey].mistakeLimit;
+      if (state.mistakes >= limit) {
+        triggerGameOver();
+      }
+    }
+
+    /* ============================================================
+       RENDERING
+    ============================================================ */
+
+    function renderBoard() {
+      const cells = elements.board.children;
+
+      for (let index = 0; index < CONFIG.board.cells; index++) {
+        const cell = cells[index];
+        const value = state.entries[index];
+
+        cell.className = getCellClassName(index);
+        cell.style.color = value ? CONFIG.colors.digits[value] : CONFIG.colors.ink;
+        cell.innerHTML = "";
+
+        if (value !== CONFIG.board.empty) {
+          const span = document.createElement("span");
+          span.className = "value";
+          span.textContent = String(value);
+          cell.appendChild(span);
+          continue;
+        }
+
+        if (state.notes[index].size > 0) {
+          cell.appendChild(createNotesGrid(index));
+        }
+      }
+    }
+
+    function getCellClassName(index) {
+      const classes = ["cell"];
+
+      if (state.givens[index]) {
+        classes.push("given");
+      }
+
+      if (state.selectedIndex === index) {
+        classes.push("selected");
+      }
+
+      if (state.selectedIndex !== null && isPeer(index, state.selectedIndex) && state.selectedIndex !== index) {
+        classes.push("peer");
+      }
+
+      if (state.selectedDigit !== null && state.entries[index] === CONFIG.board.empty && isMoveLegalForCurrentGrid(index, state.selectedDigit)) {
+        classes.push("legal");
+      }
+
+      const selectedValue = getSelectedValue();
+      if (selectedValue !== CONFIG.board.empty && state.entries[index] === selectedValue && state.solution[index] === selectedValue) {
+        classes.push("same");
+      }
+
+      return classes.join(" ");
+    }
+
+    function createNotesGrid(index) {
+      const grid = document.createElement("span");
+      grid.className = "notes";
+
+      for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+        const note = document.createElement("span");
+        note.className = "note";
+        note.textContent = state.notes[index].has(digit) ? String(digit) : "";
+        note.style.color = CONFIG.colors.digits[digit];
+        grid.appendChild(note);
+      }
+
+      return grid;
+    }
+
+    function renderNumpad() {
+      for (const button of elements.numpad.children) {
+        const digit = Number(button.dataset.digit);
+        const count = countCorrectPlacements(digit);
+        const remaining = CONFIG.board.digitTarget - count;
+        const progress = Math.round((remaining / CONFIG.board.digitTarget) * 100);
+
+        button.style.setProperty("--progress", `${progress}%`);
+        button.querySelector(".count").textContent = `${count}/${CONFIG.board.digitTarget}`;
+        button.classList.toggle("complete", state.completedDigits.has(digit));
+      }
+    }
+
+    function updateHud() {
+      elements.timeText.textContent = formatTime(state.elapsedSeconds);
+      elements.scoreText.textContent = String(state.score);
+      elements.mistakeText.textContent = `${state.mistakes}/${CONFIG.difficultyRules[state.difficultyKey].mistakeLimit}`;
+    }
+
+    function updateNotesButton() {
+      elements.notesButton.classList.toggle("active", state.notesMode);
+      elements.notesButton.textContent = state.notesMode ? "Notes: On" : "Notes: Off";
+    }
+
+    function updateDifficultyButtons() {
+      for (const button of elements.difficultyGroup.children) {
+        button.classList.toggle("active", button.dataset.difficulty === state.difficultyKey);
+      }
+    }
+
+    function setStatus(message, tone = "") {
+      elements.statusText.className = "status";
+      elements.statusText.textContent = message;
+
+      if (tone) {
+        requestAnimationFrame(() => elements.statusText.classList.add(tone));
+      }
+    }
+
+    /* ============================================================
+       PROGRESS
+    ============================================================ */
+
+    function updateCompletions(digit) {
+      if (countCorrectPlacements(digit) < CONFIG.board.digitTarget || state.completedDigits.has(digit)) {
+        return;
+      }
+
+      state.completedDigits.add(digit);
+      setStatus(CONFIG.messages.completedDigit, "good");
+
+      const button = [...elements.numpad.children].find(item => Number(item.dataset.digit) === digit);
+      button.classList.add("celebrate");
+      window.setTimeout(() => button.classList.remove("celebrate"), CONFIG.timers.celebrateClassMs);
+    }
+
+    function countCorrectPlacements(digit) {
+      let count = 0;
+
+      for (let index = 0; index < CONFIG.board.cells; index++) {
+        if (state.entries[index] === digit && state.solution[index] === digit) {
+          count += 1;
+        }
+      }
+
+      return count;
+    }
+
+    function isSolved() {
+      for (let index = 0; index < CONFIG.board.cells; index++) {
+        if (state.entries[index] !== state.solution[index]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function scoreForCorrectMove() {
+      const base = CONFIG.scoring.correctPlacement * CONFIG.difficultyRules[state.difficultyKey].scoreMultiplier;
+      const streak = state.streak * CONFIG.scoring.streakBonus;
+      return Math.round(base + streak);
+    }
+
+    /* ============================================================
+       NOTES CLEANUP
+    ============================================================ */
+
+    function cleanupNotes(index, digit) {
+      const peers = getPeers(index);
+      let cleaned = false;
+
+      for (const peerIndex of peers) {
+        if (state.notes[peerIndex].delete(digit)) {
+          cleaned = true;
+        }
+      }
+
+      if (cleaned) {
+        window.setTimeout(() => setStatus(CONFIG.messages.noteCleaned, "good"), CONFIG.animation.normalMs);
+      }
+    }
+
+    /* ============================================================
+       TIMER
+    ============================================================ */
+
+    function startTimer() {
+      state.timerId = window.setInterval(() => {
+        state.elapsedSeconds += 1;
+        updateHud();
+      }, CONFIG.timers.tickMs);
+    }
+
+    function stopTimer() {
+      if (state.timerId !== null) {
+        window.clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    /* ============================================================
+       SUDOKU ENGINE
+    ============================================================ */
+
+    function generateSolvedBoard() {
+      const board = Array(CONFIG.board.cells).fill(CONFIG.board.empty);
+      fillBoard(board);
+      return board;
+    }
+
+    function fillBoard(board) {
+      const emptyIndex = board.indexOf(CONFIG.board.empty);
+
+      if (emptyIndex === -1) {
+        return true;
+      }
+
+      const digits = shuffledDigits();
+
+      for (const digit of digits) {
+        if (!isLegalOnBoard(board, emptyIndex, digit)) {
+          continue;
+        }
+
+        board[emptyIndex] = digit;
+
+        if (fillBoard(board)) {
+          return true;
+        }
+
+        board[emptyIndex] = CONFIG.board.empty;
+      }
+
+      return false;
+    }
+
+    function removeCells(solution, removals) {
+      const puzzle = solution.slice();
+      const indices = shuffle([...Array(CONFIG.board.cells).keys()]);
+      let removed = 0;
+
+      for (const index of indices) {
+        if (removed >= removals) {
+          break;
+        }
+
+        const backup = puzzle[index];
+        puzzle[index] = CONFIG.board.empty;
+
+        if (hasUniqueSolution(puzzle)) {
+          removed += 1;
+          continue;
+        }
+
+        puzzle[index] = backup;
+      }
+
+      return puzzle;
+    }
+
+    function hasUniqueSolution(puzzle) {
+      const board = puzzle.slice();
+      let solutions = 0;
+
+      function search() {
+        if (solutions > 1) {
+          return;
+        }
+
+        const index = findBestEmptyCell(board);
+
+        if (index === -1) {
+          solutions += 1;
+          return;
+        }
+
+        for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+          if (!isLegalOnBoard(board, index, digit)) {
+            continue;
+          }
+
+          board[index] = digit;
+          search();
+          board[index] = CONFIG.board.empty;
+        }
+      }
+
+      search();
+      return solutions === 1;
+    }
+
+    function findBestEmptyCell(board) {
+      let bestIndex = -1;
+      let bestCount = CONFIG.board.maxDigit + 1;
+
+      for (let index = 0; index < CONFIG.board.cells; index++) {
+        if (board[index] !== CONFIG.board.empty) {
+          continue;
+        }
+
+        let count = 0;
+        for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+          if (isLegalOnBoard(board, index, digit)) {
+            count += 1;
+          }
+        }
+
+        if (count < bestCount) {
+          bestIndex = index;
+          bestCount = count;
+        }
+      }
+
+      return bestIndex;
+    }
+
+    function isMoveLegalForCurrentGrid(index, digit) {
+      const board = state.entries.slice();
+      board[index] = CONFIG.board.empty;
+      return isLegalOnBoard(board, index, digit);
+    }
+
+    function isLegalOnBoard(board, index, digit) {
+      const row = getRow(index);
+      const column = getColumn(index);
+      const boxStartRow = Math.floor(row / CONFIG.board.box) * CONFIG.board.box;
+      const boxStartColumn = Math.floor(column / CONFIG.board.box) * CONFIG.board.box;
+
+      for (let currentColumn = 0; currentColumn < CONFIG.board.size; currentColumn++) {
+        if (board[row * CONFIG.board.size + currentColumn] === digit) {
+          return false;
+        }
+      }
+
+      for (let currentRow = 0; currentRow < CONFIG.board.size; currentRow++) {
+        if (board[currentRow * CONFIG.board.size + column] === digit) {
+          return false;
+        }
+      }
+
+      for (let rowOffset = 0; rowOffset < CONFIG.board.box; rowOffset++) {
+        for (let columnOffset = 0; columnOffset < CONFIG.board.box; columnOffset++) {
+          const boxIndex = (boxStartRow + rowOffset) * CONFIG.board.size + boxStartColumn + columnOffset;
+          if (board[boxIndex] === digit) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    /* ============================================================
+       BOARD GEOMETRY
+    ============================================================ */
+
+    function getRow(index) {
+      return Math.floor(index / CONFIG.board.size);
+    }
+
+    function getColumn(index) {
+      return index % CONFIG.board.size;
+    }
+
+    function getBox(index) {
+      const row = getRow(index);
+      const column = getColumn(index);
+      return Math.floor(row / CONFIG.board.box) * CONFIG.board.box + Math.floor(column / CONFIG.board.box);
+    }
+
+    function isPeer(firstIndex, secondIndex) {
+      return (
+        getRow(firstIndex) === getRow(secondIndex) ||
+        getColumn(firstIndex) === getColumn(secondIndex) ||
+        getBox(firstIndex) === getBox(secondIndex)
+      );
+    }
+
+    function getPeers(index) {
+      const peers = new Set();
+
+      for (let candidate = 0; candidate < CONFIG.board.cells; candidate++) {
+        if (candidate !== index && isPeer(candidate, index)) {
+          peers.add(candidate);
+        }
+      }
+
+      return peers;
+    }
+
+    function getSelectedValue() {
+      if (state.selectedIndex !== null && state.entries[state.selectedIndex] !== CONFIG.board.empty) {
+        return state.entries[state.selectedIndex];
+      }
+
+      if (state.selectedDigit !== null) {
+        return state.selectedDigit;
+      }
+
+      return CONFIG.board.empty;
+    }
+
+    function getCellElement(index) {
+      return elements.board.children[index];
+    }
+
+    /* ============================================================
+       RANDOMIZATION
+    ============================================================ */
+
+    function shuffledDigits() {
+      const digits = [];
+
+      for (let digit = CONFIG.board.minDigit; digit <= CONFIG.board.maxDigit; digit++) {
+        digits.push(digit);
+      }
+
+      return shuffle(digits);
+    }
+
+    function shuffle(items) {
+      const result = items.slice();
+
+      for (let index = result.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+      }
+
+      return result;
+    }
+  </script>
+</body>
+</html>
