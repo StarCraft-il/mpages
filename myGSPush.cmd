@@ -30,57 +30,142 @@ function Ensure-Repo() {
 $BannerTitle      = 'Git Commit Message'
 $InstructionsText = 'Use ↑/↓ to move, Enter to select, Esc to cancel.'
 $ArgMenuAutoApproveSeconds = 7
+$GitStatusApprovalAutoApproveSeconds = 10
 
 # ===== Selection UI with your formatting =====
 function Select-CommitMessage($items, [int]$defaultIndex = 0, [int]$autoSelectSeconds = 0) {
     if (-not $Host.UI.RawUI) { return $null }
 
     $index = [Math]::Min([Math]::Max(0, $defaultIndex), [Math]::Max(0, $items.Count - 1))
-    $lastShownSeconds = -1
+    $lastShownSeconds = if ($autoSelectSeconds -gt 0) { $autoSelectSeconds } else { -1 }
+    $defaultForegroundColor = [Console]::ForegroundColor
+    $defaultBackgroundColor = [Console]::BackgroundColor
+    $menuTop = 0
+    $menuLineCount = $items.Count + 8
+    if ($autoSelectSeconds -gt 0) {
+        $menuLineCount++
+    }
 
-    function Draw {
-        [Console]::Clear()
-        try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false) } catch {}
-
-        # Title banner (Cyan)
-        Write-Host '===============================' -ForegroundColor Cyan
-        Write-Host ('  ' + $BannerTitle)             -ForegroundColor Cyan
-        Write-Host '===============================' -ForegroundColor Cyan
-
-        # Instructions (DarkGray) + spacing
-        Write-Host ''
-        Write-Host $InstructionsText                  -ForegroundColor DarkGray
-        Write-Host ''
-
-        # List items: selected = DarkGreen/Yellow + ▶, unselected = Gray
-        for ($i = 0; $i -lt $items.Count; $i++) {
-            $prefix = ('{0,2}. ' -f ($i + 1))
-            if ($i -eq $index) {
-                $selMarker = [char]0x25B6 + ' '    # ▶
-                Write-Host ($selMarker + $prefix + $items[$i]) `
-                    -BackgroundColor DarkGreen -ForegroundColor Yellow
-            } else {
-                Write-Host ('  ' + $prefix + $items[$i]) -ForegroundColor Gray
-            }
+    function Get-PaddedMenuText([string]$text) {
+        $bufferWidth = [Math]::Max(20, [Console]::BufferWidth - 1)
+        $lineText = if ($null -eq $text) { '' } else { $text }
+        if ($lineText.Length -gt $bufferWidth) {
+            $lineText = $lineText.Substring(0, $bufferWidth)
         }
 
-        # Footer (DarkGray) + spacing
-        Write-Host ''
-        Write-Host ("[Total items: {0}]" -f $items.Count) -ForegroundColor DarkGray
-        if ($autoSelectSeconds -gt 0 -and $lastShownSeconds -ge 0) {
-            Write-Host ("[Auto select current option in: {0}s]" -f $lastShownSeconds) -ForegroundColor Red
+        return $lineText.PadRight($bufferWidth)
+    }
+
+    function Set-MenuCursorPosition([int]$top) {
+        $safeTop = [Math]::Max(0, [Math]::Min($top, [Console]::BufferHeight - 1))
+        [Console]::SetCursorPosition(0, $safeTop)
+    }
+
+    function New-MenuLine([string]$text, [string]$foregroundColor, [string]$backgroundColor = $null) {
+        return [pscustomobject]@{
+            Text = $text
+            ForegroundColor = $foregroundColor
+            BackgroundColor = $backgroundColor
         }
     }
 
-    Draw
+    function Get-MenuLines([int]$secondsToShow) {
+        $lines = [System.Collections.Generic.List[object]]::new()
+
+        [void]$lines.Add((New-MenuLine '===============================' 'Cyan'))
+        [void]$lines.Add((New-MenuLine ('  ' + $BannerTitle) 'Cyan'))
+        [void]$lines.Add((New-MenuLine '===============================' 'Cyan'))
+        [void]$lines.Add((New-MenuLine '' $defaultForegroundColor))
+        [void]$lines.Add((New-MenuLine $InstructionsText 'DarkGray'))
+        [void]$lines.Add((New-MenuLine '' $defaultForegroundColor))
+
+        for ($i = 0; $i -lt $items.Count; $i++) {
+            $prefix = ('{0,2}. ' -f ($i + 1))
+            if ($i -eq $index) {
+                $text = ([char]0x25B6 + ' ' + $prefix + $items[$i])
+                [void]$lines.Add((New-MenuLine $text 'Yellow' 'DarkGreen'))
+                continue
+            }
+
+            $text = '  ' + $prefix + $items[$i]
+            [void]$lines.Add((New-MenuLine $text 'Gray'))
+        }
+
+        [void]$lines.Add((New-MenuLine '' $defaultForegroundColor))
+        [void]$lines.Add((New-MenuLine ("[Total items: {0}]" -f $items.Count) 'DarkGray'))
+
+        if ($autoSelectSeconds -gt 0) {
+            $timerText = ''
+            if ($secondsToShow -ge 0) {
+                $timerText = ("[Auto select current option in: {0}s]" -f $secondsToShow)
+            }
+
+            [void]$lines.Add((New-MenuLine $timerText 'Red'))
+        }
+
+        return $lines
+    }
+
+    function Write-MenuLineAt([int]$top, $lineInfo) {
+        Set-MenuCursorPosition $top
+        [Console]::ForegroundColor = $lineInfo.ForegroundColor
+        if ($null -ne $lineInfo.BackgroundColor -and -not [string]::IsNullOrWhiteSpace([string]$lineInfo.BackgroundColor)) {
+            [Console]::BackgroundColor = $lineInfo.BackgroundColor
+        } else {
+            [Console]::BackgroundColor = $defaultBackgroundColor
+        }
+
+        [Console]::Write((Get-PaddedMenuText $lineInfo.Text))
+        [Console]::ForegroundColor = $defaultForegroundColor
+        [Console]::BackgroundColor = $defaultBackgroundColor
+    }
+
+    function Draw-MenuInitially([int]$secondsToShow) {
+        try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false) } catch {}
+
+        $lines = Get-MenuLines $secondsToShow
+        foreach ($lineInfo in $lines) {
+            if ($null -ne $lineInfo.BackgroundColor -and -not [string]::IsNullOrWhiteSpace([string]$lineInfo.BackgroundColor)) {
+                Write-Host $lineInfo.Text -ForegroundColor $lineInfo.ForegroundColor -BackgroundColor $lineInfo.BackgroundColor
+                continue
+            }
+
+            Write-Host $lineInfo.Text -ForegroundColor $lineInfo.ForegroundColor
+        }
+
+        $script:SelectCommitMessageMenuTop = [Math]::Max(0, [Console]::CursorTop - $lines.Count)
+    }
+
+    function Redraw-Menu([int]$secondsToShow) {
+        $lines = Get-MenuLines $secondsToShow
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            Write-MenuLineAt ($menuTop + $i) $lines[$i]
+        }
+
+        Set-MenuCursorPosition ($menuTop + $lines.Count)
+    }
+
+    function Complete-Menu() {
+        [Console]::ForegroundColor = $defaultForegroundColor
+        [Console]::BackgroundColor = $defaultBackgroundColor
+        Set-MenuCursorPosition ($menuTop + $menuLineCount)
+        Write-Host ''
+    }
+
+    Draw-MenuInitially $lastShownSeconds
+    $menuTop = $script:SelectCommitMessageMenuTop
     $endTime = if ($autoSelectSeconds -gt 0) { [DateTime]::Now.AddSeconds($autoSelectSeconds) } else { $null }
     while ($true) {
         if ($autoSelectSeconds -gt 0) {
             $remainingSeconds = [Math]::Ceiling(([TimeSpan]($endTime - [DateTime]::Now)).TotalSeconds)
-            if ($remainingSeconds -le 0) { return $items[$index] }
+            if ($remainingSeconds -le 0) {
+                Complete-Menu
+                return $items[$index]
+            }
+
             if ($remainingSeconds -ne $lastShownSeconds) {
                 $lastShownSeconds = $remainingSeconds
-                Draw
+                Redraw-Menu $lastShownSeconds
             }
 
             if (-not [Console]::KeyAvailable) {
@@ -91,15 +176,33 @@ function Select-CommitMessage($items, [int]$defaultIndex = 0, [int]$autoSelectSe
 
         $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
         switch ($key.VirtualKeyCode) {
-            38 { if ($index -gt 0) { $index-- } else { $index = $items.Count - 1 }; Draw; continue } # Up
-            40 { if ($index -lt $items.Count - 1) { $index++ } else { $index = 0 }; Draw; continue } # Down
-            13 { return $items[$index] }   # Enter
-            27 { Write-Host 'Aborted.' -ForegroundColor DarkGray; return $null } # Esc
+            38 {
+                if ($index -gt 0) { $index-- } else { $index = $items.Count - 1 }
+                Redraw-Menu $lastShownSeconds
+                continue
+            } # Up
+            40 {
+                if ($index -lt $items.Count - 1) { $index++ } else { $index = 0 }
+                Redraw-Menu $lastShownSeconds
+                continue
+            } # Down
+            13 {
+                Complete-Menu
+                return $items[$index]
+            }   # Enter
+            27 {
+                Complete-Menu
+                Write-Host 'Aborted.' -ForegroundColor DarkGray
+                return $null
+            } # Esc
             default {
                 $ch = $key.Character
                 if ($ch -match '^[1-9]$') {
                     $n = [int]$ch
-                    if ($n -ge 1 -and $n -le $items.Count) { return $items[$n - 1] }
+                    if ($n -ge 1 -and $n -le $items.Count) {
+                        Complete-Menu
+                        return $items[$n - 1]
+                    }
                 }
             }
         }
@@ -166,109 +269,87 @@ function Normalize-StatusPath([string]$path) {
     return $clean
 }
 
-function Get-ChangeTargetLabel([string[]]$paths) {
-    $names = [System.Collections.Generic.List[string]]::new()
+function Get-StatusEntries([string[]]$statusLines) {
+    $entries = [System.Collections.Generic.List[object]]::new()
 
-    foreach ($path in $paths) {
-        if ([string]::IsNullOrWhiteSpace($path)) { continue }
+    foreach ($line in $statusLines) {
+        $status = if ($line.Length -ge 2) { $line.Substring(0, 2) } else { '' }
+        $path = if ($line.Length -gt 3) { $line.Substring(3).Trim() } else { '' }
+        $cleanPath = Normalize-StatusPath $path
+        if ([string]::IsNullOrWhiteSpace($cleanPath)) { continue }
 
-        $clean = Normalize-StatusPath $path
-        if ([string]::IsNullOrWhiteSpace($clean)) { continue }
+        $folderPath = Split-Path -Path $cleanPath -Parent
+        if ($folderPath -eq '.') { $folderPath = '' }
 
-        $parts = @($clean -split '\\')
-        $name = $null
-
-        if ($parts.Count -ge 2 -and -not [string]::IsNullOrWhiteSpace($parts[0])) {
-            $name = $parts[0].Trim()
-        } else {
-            $name = [System.IO.Path]::GetFileNameWithoutExtension($clean)
-            if ([string]::IsNullOrWhiteSpace($name)) {
-                $name = [System.IO.Path]::GetFileName($clean)
-            }
-        }
-
-        if ([string]::IsNullOrWhiteSpace($name)) { continue }
-        if ($names.Contains($name)) { continue }
-
-        [void]$names.Add($name)
-        if ($names.Count -ge 3) { break }
+        $entries.Add([pscustomobject]@{
+            Status = $status
+            Path = $cleanPath
+            FolderPath = $folderPath
+        })
     }
 
-    switch ($names.Count) {
-        0 { return 'repository changes' }
-        1 { return $names[0] }
-        2 { return ('{0} and {1}' -f $names[0], $names[1]) }
-        default { return ('{0}, {1} and {2}' -f $names[0], $names[1], $names[2]) }
-    }
+    return $entries
+}
+
+function Join-QuotedValues([string[]]$values) {
+    if (-not $values -or $values.Count -eq 0) { return '' }
+    $quotedValues = @($values | ForEach-Object { "'$_'" })
+    return [string]::Join(', ', $quotedValues)
+}
+
+function Get-FolderDisplayName([string]$folderPath) {
+    if ([string]::IsNullOrWhiteSpace($folderPath)) { return 'repository root' }
+    return $folderPath
 }
 
 function Get-CommitActionWord([bool]$hasAddedFiles, [bool]$hasUpdatedFiles, [int]$pathCount) {
-    if ($hasAddedFiles -and -not $hasUpdatedFiles -and $pathCount -le 3) { return 'Add' }
+    if ($hasAddedFiles -and -not $hasUpdatedFiles) { return 'Add' }
     return 'Update'
-}
-
-function Get-BusinessLogicUpdateMessage([string[]]$fileNames) {
-    if (-not $fileNames -or $fileNames.Count -eq 0) { return $null }
-
-    $quotedNames = @($fileNames | ForEach-Object { "'$_'" })
-    return ('Business Logic updated in: {0}' -f ([string]::Join(', ', $quotedNames)))
 }
 
 function Get-FallbackCommitMessage() {
     $statusLines = Get-RepoStatusLines
     if ($statusLines.Count -eq 0) { return $null }
 
-    $paths = [System.Collections.Generic.List[string]]::new()
-    $updatedServiceFiles = [System.Collections.Generic.List[string]]::new()
-    $hasDocs = $false
-    $hasTests = $false
-    $hasSettings = $false
-    $hasDevOps = $false
+    $entries = Get-StatusEntries $statusLines
+    if ($entries.Count -eq 0) { return $null }
+
     $hasAddedFiles = $false
     $hasUpdatedFiles = $false
+    $uniquePaths = [System.Collections.Generic.List[string]]::new()
 
-    foreach ($line in $statusLines) {
-        $status = if ($line.Length -ge 2) { $line.Substring(0, 2) } else { '' }
-        if ($status -match '\?\?' -or $status.Contains('A')) { $hasAddedFiles = $true }
-        if ($status -match '[MDRCUT]') { $hasUpdatedFiles = $true }
+    foreach ($entry in $entries) {
+        if ($entry.Status -match '\?\?' -or $entry.Status.Contains('A')) { $hasAddedFiles = $true }
+        if ($entry.Status -match '[MDRCUT]') { $hasUpdatedFiles = $true }
 
-        $path = if ($line.Length -gt 3) { $line.Substring(3).Trim() } else { '' }
-        if ([string]::IsNullOrWhiteSpace($path)) { continue }
-
-        $cleanPath = Normalize-StatusPath $path
-        if ([string]::IsNullOrWhiteSpace($cleanPath)) { continue }
-
-        [void]$paths.Add($cleanPath)
-
-        if ($cleanPath -match '(^|[\\/])(docs?|README)([\\/]|$)|\.md$') { $hasDocs = $true }
-        if ($cleanPath -match '(^|[\\/])(test|tests)([\\/]|$)') { $hasTests = $true }
-        if ($cleanPath -match 'appsettings|\.json$|\.config$') { $hasSettings = $true }
-        if ($cleanPath -match '(^|[\\/])(.github|devops)([\\/]|$)|\.ya?ml$') { $hasDevOps = $true }
-
-        if ($status -match '[MDRCUT]') {
-            $parts = @($cleanPath -split '\\')
-            if ($parts.Count -ge 2 -and ($parts[0] -ieq 'Service' -or $parts[0] -ieq 'Services')) {
-                $fileName = [System.IO.Path]::GetFileName($cleanPath)
-                if (-not [string]::IsNullOrWhiteSpace($fileName) -and -not $updatedServiceFiles.Contains($fileName)) {
-                    [void]$updatedServiceFiles.Add($fileName)
-                }
-            }
+        if (-not $uniquePaths.Contains($entry.Path)) {
+            [void]$uniquePaths.Add($entry.Path)
         }
     }
 
-    if ($hasDocs -and $paths.Count -le 3) { return 'Update documentation' }
-    if ($hasTests -and $paths.Count -le 3) {
-        if ($hasAddedFiles -and -not $hasUpdatedFiles) { return 'Add tests' }
-        return 'Update tests'
-    }
-    $businessLogicMessage = Get-BusinessLogicUpdateMessage $updatedServiceFiles.ToArray()
-    if (-not [string]::IsNullOrWhiteSpace($businessLogicMessage)) { return $businessLogicMessage }
-    if ($hasSettings) { return 'Update configuration files' }
-    if ($hasDevOps) { return 'Update DevOps files' }
+    $actionWord = Get-CommitActionWord -hasAddedFiles $hasAddedFiles -hasUpdatedFiles $hasUpdatedFiles -pathCount $uniquePaths.Count
 
-    $target = Get-ChangeTargetLabel $paths.ToArray()
-    $actionWord = Get-CommitActionWord -hasAddedFiles $hasAddedFiles -hasUpdatedFiles $hasUpdatedFiles -pathCount $paths.Count
-    return "$actionWord $target"
+    if ($uniquePaths.Count -eq 1) {
+        return "$actionWord '$($uniquePaths[0])'"
+    }
+
+    $folderPaths = [System.Collections.Generic.List[string]]::new()
+    foreach ($entry in $entries) {
+        $folderDisplayName = Get-FolderDisplayName $entry.FolderPath
+        if ($folderPaths.Contains($folderDisplayName)) { continue }
+        [void]$folderPaths.Add($folderDisplayName)
+    }
+
+    if ($folderPaths.Count -eq 1) {
+        if ($folderPaths[0] -eq 'repository root') {
+            return "$actionWord files in repository root"
+        }
+
+        return "$actionWord files in: '$($folderPaths[0])' folder"
+    }
+
+    $quotedFolders = Join-QuotedValues $folderPaths.ToArray()
+    return "$actionWord files in folders: $quotedFolders"
 }
 
 function Show-EditableCommitMessageApproval([string]$windowTitle, [string]$commitMessage, [int]$autoApproveSeconds = 0) {
@@ -298,7 +379,18 @@ function Show-EditableCommitMessageApproval([string]$windowTitle, [string]$commi
 
     $buttonsPanel = New-Object System.Windows.Forms.Panel
     $buttonsPanel.Dock = 'Bottom'
-    $buttonsPanel.Height = 82
+    $buttonsPanel.Height = 116
+
+    $countdownLabel = New-Object System.Windows.Forms.Label
+    $countdownLabel.Dock = 'Top'
+    $countdownLabel.Height = 34
+    $countdownLabel.TextAlign = [System.Drawing.ContentAlignment]::MiddleCenter
+    $countdownLabel.ForeColor = [System.Drawing.Color]::DarkRed
+    $countdownLabel.Font = New-Object System.Drawing.Font('Segoe UI', 12, [System.Drawing.FontStyle]::Bold)
+    $countdownLabel.Text = ''
+
+    $buttonsRowPanel = New-Object System.Windows.Forms.Panel
+    $buttonsRowPanel.Dock = 'Fill'
 
     $approve = New-Object System.Windows.Forms.Button
     $approve.Text = 'Approve'
@@ -326,30 +418,46 @@ function Show-EditableCommitMessageApproval([string]$windowTitle, [string]$commi
         $form.Close()
     })
 
+    $countdownState = @{
+        SecondsLeft = $autoApproveSeconds
+    }
+
+    function Update-ApprovalCountdownUi() {
+        if ($countdownState.SecondsLeft -gt 0) {
+            $approve.Text = ('Approve ({0})' -f $countdownState.SecondsLeft)
+            $countdownLabel.Text = ('Auto approve in {0} seconds' -f $countdownState.SecondsLeft)
+            return
+        }
+
+        $approve.Text = 'Approve'
+        $countdownLabel.Text = ''
+    }
+
     $timer = $null
     if ($autoApproveSeconds -gt 0) {
-        $secondsLeft = $autoApproveSeconds
-        $approve.Text = ('Approve ({0})' -f $secondsLeft)
+        Update-ApprovalCountdownUi
 
         $timer = New-Object System.Windows.Forms.Timer
         $timer.Interval = 1000
         $timer.Add_Tick({
-            $secondsLeft--
-            if ($secondsLeft -le 0) {
+            $countdownState.SecondsLeft--
+            if ($countdownState.SecondsLeft -le 0) {
                 $timer.Stop()
                 $form.Tag = 'Approve'
                 $form.Close()
                 return
             }
 
-            $approve.Text = ('Approve ({0})' -f $secondsLeft)
+            Update-ApprovalCountdownUi
         })
     }
 
     $form.AcceptButton = $approve
     $form.CancelButton = $close
-    $buttonsPanel.Controls.Add($approve)
-    $buttonsPanel.Controls.Add($close)
+    $buttonsRowPanel.Controls.Add($approve)
+    $buttonsRowPanel.Controls.Add($close)
+    $buttonsPanel.Controls.Add($buttonsRowPanel)
+    $buttonsPanel.Controls.Add($countdownLabel)
     $form.Controls.Add($tb)
     $form.Controls.Add($buttonsPanel)
     $form.Add_Shown({
@@ -369,8 +477,8 @@ function Show-EditableCommitMessageApproval([string]$windowTitle, [string]$commi
     return $tb.Text
 }
 
-function Show-GitStatusCommitMessageApproval([string]$commitMessage) {
-    return (Show-EditableCommitMessageApproval -windowTitle 'Approve git status commit message' -commitMessage $commitMessage)
+function Show-GitStatusCommitMessageApproval([string]$commitMessage, [int]$autoApproveSeconds = 0) {
+    return (Show-EditableCommitMessageApproval -windowTitle 'Approve git status commit message' -commitMessage $commitMessage -autoApproveSeconds $autoApproveSeconds)
 }
 
 function git-status-commit-message() {
@@ -446,7 +554,7 @@ if (-not $Host.UI.RawUI) {
         } elseif ($picked -eq $gitStatusLabel) {
             $c = git-status-commit-message
             if ([string]::IsNullOrWhiteSpace($c)) { continue }
-            $approvedMessage = Show-GitStatusCommitMessageApproval -commitMessage $c
+            $approvedMessage = Show-GitStatusCommitMessageApproval -commitMessage $c -autoApproveSeconds $GitStatusApprovalAutoApproveSeconds
             if ([string]::IsNullOrWhiteSpace($approvedMessage)) { continue }
             $CommitMessage = $approvedMessage
             break

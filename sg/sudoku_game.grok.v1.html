@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>סודוקו - משחק</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        h1 {
+            text-align: center;
+            margin: 10px 0 15px;
+            font-size: 28px;
+        }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 1px;
+            background: #444;
+            padding: 1px;
+            border: 3px solid #666;
+            margin: 15px auto;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1 / 1;
+        }
+        .cell {
+            background: #fff;
+            color: #000;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0.5px solid #ccc;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .cell.fixed {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .cell.selected {
+            background: #a0d8ff !important;
+        }
+        .cell.error {
+            background: #ffcccc;
+            color: #cc0000;
+        }
+        .thick-right { border-right: 3px solid #444 !important; }
+        .thick-bottom { border-bottom: 3px solid #444 !important; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        button {
+            padding: 15px;
+            font-size: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #555;
+            transform: scale(0.95);
+        }
+        .number-btn {
+            background: #0066cc;
+        }
+        .number-btn:active {
+            background: #0055aa;
+        }
+        .erase-btn {
+            background: #cc3300;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        .difficulty {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>סודוקו</h1>
+        
+        <div class="difficulty">
+            <select id="difficulty" onchange="newGame()">
+                <option value="easy">קל</option>
+                <option value="medium" selected>בינוני</option>
+                <option value="hard">קשה</option>
+                <option value="expert">מומחה</option>
+            </select>
+        </div>
+
+        <div class="info">
+            <div>זמן: <span id="timer">00:00</span></div>
+            <div>שגיאות: <span id="errors">0</span>/3</div>
+        </div>
+
+        <div id="board" class="board"></div>
+
+        <div class="controls">
+            <button class="number-btn" onclick="selectNumber(1)">1</button>
+            <button class="number-btn" onclick="selectNumber(2)">2</button>
+            <button class="number-btn" onclick="selectNumber(3)">3</button>
+            <button class="number-btn" onclick="selectNumber(4)">4</button>
+            <button class="number-btn" onclick="selectNumber(5)">5</button>
+            
+            <button class="number-btn" onclick="selectNumber(6)">6</button>
+            <button class="number-btn" onclick="selectNumber(7)">7</button>
+            <button class="number-btn" onclick="selectNumber(8)">8</button>
+            <button class="number-btn" onclick="selectNumber(9)">9</button>
+            <button class="erase-btn" onclick="eraseCell()">מחק</button>
+        </div>
+
+        <div style="text-align:center; margin-top:20px;">
+            <button onclick="newGame()" style="padding:12px 24px; font-size:18px;">
+                משחק חדש
+            </button>
+            <button onclick="checkSolution()" style="padding:12px 24px; font-size:18px; margin-right:10px;">
+                בדוק פתרון
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let board = [];
+        let solution = [];
+        let selectedCell = null;
+        let selectedNumber = null;
+        let timerInterval;
+        let seconds = 0;
+        let errors = 0;
+        let isSolved = false;
+
+        const difficulties = {
+            easy: 40,
+            medium: 50,
+            hard: 58,
+            expert: 65
+        };
+
+        function generateSudoku() {
+            // יצירת לוח ריק
+            board = Array(9).fill().map(() => Array(9).fill(0));
+            solution = Array(9).fill().map(() => Array(9).fill(0));
+
+            // מילוי לוח תקין (פתרון)
+            fillSudoku(solution);
+
+            // העתקה ללוח המשחק
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    board[i][j] = solution[i][j];
+                }
+            }
+
+            // הסרת תאים לפי רמת קושי
+            const cellsToRemove = difficulties[document.getElementById('difficulty').value];
+            removeCells(board, cellsToRemove);
+        }
+
+        function fillSudoku(grid) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (grid[row][col] === 0) {
+                        const nums = shuffle([1,2,3,4,5,6,7,8,9]);
+                        for (let num of nums) {
+                            if (isValid(grid, row, col, num)) {
+                                grid[row][col] = num;
+                                if (fillSudoku(grid)) return true;
+                                grid[row][col] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function isValid(grid, row, col, num) {
+            // בדיקת שורה
+            for (let x = 0; x < 9; x++) if (grid[row][x] === num) return false;
+            // בדיקת עמודה
+            for (let x = 0; x < 9; x++) if (grid[x][col] === num) return false;
+            // בדיקת תא 3x3
+            const startRow = row - row % 3;
+            const startCol = col - col % 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (grid[i + startRow][j + startCol] === num) return false;
+                }
+            }
+            return true;
+        }
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function removeCells(grid, count) {
+            let removed = 0;
+            while (removed < count) {
+                const row = Math.floor(Math.random() * 9);
+                const col = Math.floor(Math.random() * 9);
+                if (grid[row][col] !== 0) {
+                    grid[row][col] = 0;
+                    removed++;
+                }
+            }
+        }
+
+        function createBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    
+                    // קווים עבים יותר בין תאים 3x3
+                    if (j % 3 === 2) cell.classList.add('thick-right');
+                    if (i % 3 === 2) cell.classList.add('thick-bottom');
+
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+
+                    if (board[i][j] !== 0) {
+                        cell.textContent = board[i][j];
+                        cell.classList.add('fixed');
+                    }
+
+                    cell.addEventListener('click', () => selectCell(i, j, cell));
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+
+        function selectCell(row, col, cellElement) {
+            if (isSolved) return;
+            
+            // הסרת בחירה קודמת
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('selected'));
+            
+            selectedCell = { row, col };
+            cellElement.classList.add('selected');
+        }
+
+        function selectNumber(num) {
+            if (!selectedCell || isSolved) return;
+
+            const { row, col } = selectedCell;
+            const cellEl = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+            // לא ניתן לשנות תא קבוע
+            if (board[row][col] !== 0 && cellEl.classList.contains('fixed')) return;
+
+            // בדיקת תקינות
+            if (!isValidMove(row, col, num)) {
+                errors++;
+                document.getElementById('errors').textContent = errors;
+                cellEl.classList.add('error');
+                setTimeout(() => cellEl.classList.remove('error'), 600);
+
+                if (errors >= 3) {
+                    alert("הפסדת! נגמרו 3 השגיאות.");
+                    showSolution();
+                }
+                return;
+            }
+
+            // מילוי תא
+            board[row][col] = num;
+            cellEl.textContent = num;
+
+            // בדיקה האם המשחק הסתיים
+            if (isBoardComplete()) {
+                isSolved = true;
+                setTimeout(() => {
+                    alert(`🎉 כל הכבוד! סיימת את הסודוקו בזמן ${document.getElementById('timer').textContent}`);
+                }, 100);
+            }
+        }
+
+        function isValidMove(row, col, num) {
+            // בדיקה מול הפתרון
+            return solution[row][col] === num;
+        }
+
+        function eraseCell() {
+            if (!selectedCell || isSolved) return;
+            const { row, col } = selectedCell;
+            const cellEl = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+            if (!cellEl.classList.contains('fixed')) {
+                board[row][col] = 0;
+                cellEl.textContent = '';
+            }
+        }
+
+        function isBoardComplete() {
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (board[i][j] === 0) return false;
+                }
+            }
+            return true;
+        }
+
+        function showSolution() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                const r = parseInt(cell.dataset.row);
+                const c = parseInt(cell.dataset.col);
+                cell.textContent = solution[r][c];
+                cell.style.color = '#0066cc';
+            });
+        }
+
+        function checkSolution() {
+            let correct = true;
+            document.querySelectorAll('.cell').forEach(cell => {
+                const r = parseInt(cell.dataset.row);
+                const c = parseInt(cell.dataset.col);
+                if (board[r][c] !== 0 && board[r][c] !== solution[r][c]) {
+                    cell.classList.add('error');
+                    correct = false;
+                }
+            });
+            if (correct) {
+                alert("כל התאים הנכונים עד כה! 👍");
+            } else {
+                setTimeout(() => {
+                    document.querySelectorAll('.error').forEach(c => c.classList.remove('error'));
+                }, 1000);
+            }
+        }
+
+        function startTimer() {
+            seconds = 0;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const sec = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').textContent = `${min}:${sec}`;
+            }, 1000);
+        }
+
+        function newGame() {
+            isSolved = false;
+            errors = 0;
+            document.getElementById('errors').textContent = '0';
+            generateSudoku();
+            createBoard();
+            startTimer();
+        }
+
+        // התחלת המשחק
+        window.onload = () => {
+            newGame();
+        };
+    </script>
+</body>
+</html>
