@@ -147,6 +147,10 @@
                     <span class="button-title">Tests</span>
                     <span class="button-subtitle">Opens with a fresh timestamp query string.</span>
                 </a>
+                <a id="linkCheckPages" class="button-link" href="./check.pages.html">
+                    <span class="button-title">Check Pages</span>
+                    <span class="button-subtitle">Shows all files from the selected root folder and its subfolders at runtime.</span>
+                </a>
             </div>
         </section>
     </main>
@@ -156,7 +160,9 @@
             const reloadEverySeconds = 15;
             const $dtDisplay = $("#dtDisplay");
             const $linkTestPages = $("#linkTestPages");
+            const $linkCheckPages = $("#linkCheckPages");
             const baseLinkTestPagesHref = "./test_pages.html";
+            const baseLinkCheckPagesHref = "./check.pages.html";
 
             function formatDateTime(now) {
                 const year = now.getFullYear();
@@ -173,9 +179,11 @@
                 const timestamp = now.getTime();
                 const formattedDateTime = formatDateTime(now);
                 const freshHref = baseLinkTestPagesHref + "?v=" + timestamp;
+                const freshCheckPagesHref = baseLinkCheckPagesHref + "?v=" + timestamp;
 
                 $dtDisplay.text(formattedDateTime);
                 $linkTestPages.attr("href", freshHref);
+                $linkCheckPages.attr("href", freshCheckPagesHref);
             }
 
             updateDateTimeAndLinks();
@@ -188,3 +196,4 @@
     </script>
 </body>
 </html>
+

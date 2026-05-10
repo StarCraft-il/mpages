@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mPages - Check Pages</title>
+    <style>
+        :root {
+            --bg: #08111f;
+            --surface: #121c2d;
+            --line: rgba(255, 255, 255, 0.08);
+            --text: #edf4ff;
+            --muted: #9eb0ca;
+            --accent: #38bdf8;
+            --danger: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #09111f 0%, #0d1728 55%, #09101b 100%);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page {
+            width: min(100%, 1120px);
+            margin: 0 auto;
+            padding: 18px 14px 28px;
+        }
+
+        .hero,
+        .panel {
+            padding: 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.12), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+        }
+
+        .panel {
+            margin-top: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--line);
+            box-shadow: none;
+        }
+
+        .hero h1,
+        .panel h2 {
+            margin: 0 0 10px;
+            line-height: 1.2;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+        }
+
+        .hero p,
+        .panel p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.14);
+            color: #d8f4ff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .toolbar {
+            display: grid;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .toolbar-row {
+            display: grid;
+            gap: 12px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .button-link,
+        .button-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(180deg, rgba(24, 38, 61, 0.96), rgba(18, 28, 45, 0.96));
+            color: inherit;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button-action {
+            appearance: none;
+        }
+
+        .button-action.blue {
+            border-color: rgba(56, 189, 248, 0.34);
+        }
+
+        .search-box {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(8, 17, 31, 0.9);
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .stat-card {
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-card strong {
+            color: var(--text);
+        }
+
+        .status {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .status.error {
+            border-color: rgba(248, 113, 113, 0.28);
+            color: #ffd3d3;
+            background: rgba(248, 113, 113, 0.08);
+        }
+
+        .folder-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .folder-card {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(18, 28, 45, 0.6);
+        }
+
+        .folder-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .folder-title {
+            font-size: 17px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .folder-count {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .file-links {
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+        }
+
+        .file-link {
+            display: block;
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            background: rgba(8, 17, 31, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .file-name {
+            display: block;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .file-path {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .empty-message {
+            padding: 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.16);
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        @media (min-width: 760px) {
+            .page {
+                padding: 26px 20px 40px;
+            }
+
+            .toolbar-row {
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <span class="badge">Runtime local file list</span>
+            <h1>Check Pages</h1>
+            <p>Choose the root folder of this site, then this page will build links for all files in that folder and all subfolders.</p>
+
+            <div class="stats">
+                <div class="stat-card">Selected root: <strong id="selectedRootName">-</strong></div>
+                <div class="stat-card">Folders shown: <strong id="folderCount">0</strong></div>
+                <div class="stat-card">Files shown: <strong id="fileCount">0</strong></div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Controls</h2>
+            <div class="toolbar">
+                <div class="toolbar-row">
+                    <input id="txtFilter" class="search-box" type="text" placeholder="Filter by file name or path..." />
+                    <div class="toolbar-actions">
+                        <button id="btnChooseFolder" class="button-action blue" type="button">Choose root folder</button>
+                        <button id="btnRefresh" class="button-action" type="button">Refresh</button>
+                        <a class="button-link" href="./index.html">Back to index</a>
+                    </div>
+                </div>
+            </div>
+
+            <input id="folderInputFallback" class="hidden-input" type="file" webkitdirectory directory multiple />
+            <div id="statusBox" class="status">Choose the site root folder to build the live file links.</div>
+        </section>
+
+        <section class="panel">
+            <h2>Files</h2>
+            <div id="filesContainer" class="folder-list"></div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            const statusBox = document.getElementById("statusBox");
+            const filesContainer = document.getElementById("filesContainer");
+            const txtFilter = document.getElementById("txtFilter");
+            const btnChooseFolder = document.getElementById("btnChooseFolder");
+            const btnRefresh = document.getElementById("btnRefresh");
+            const folderInputFallback = document.getElementById("folderInputFallback");
+            const selectedRootNameElement = document.getElementById("selectedRootName");
+            const folderCountElement = document.getElementById("folderCount");
+            const fileCountElement = document.getElementById("fileCount");
+
+            let allFiles = [];
+            let selectedRootName = "-";
+            let selectedDirectoryHandle = null;
+            let lastInputFiles = [];
+
+            function setStatus(message, isError) {
+                statusBox.textContent = message;
+                statusBox.className = isError ? "status error" : "status";
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            function encodePath(path) {
+                return path.split("/").map(function (segment) {
+                    return encodeURIComponent(segment);
+                }).join("/");
+            }
+
+            function buildFileHref(path) {
+                const separator = path.indexOf("?") >= 0 ? "&" : "?";
+                return "./" + encodePath(path) + separator + "v=" + Date.now();
+            }
+
+            function getFolderPath(path) {
+                const lastSlashIndex = path.lastIndexOf("/");
+
+                if (lastSlashIndex < 0) {
+                    return ".";
+                }
+
+                return path.substring(0, lastSlashIndex);
+            }
+
+            function getFileName(path) {
+                const lastSlashIndex = path.lastIndexOf("/");
+
+                if (lastSlashIndex < 0) {
+                    return path;
+                }
+
+                return path.substring(lastSlashIndex + 1);
+            }
+
+            function sortPaths(paths) {
+                return paths.slice().sort(function (left, right) {
+                    return left.localeCompare(right, undefined, { sensitivity: "base" });
+                });
+            }
+
+            function groupFiles(files) {
+                const groups = new Map();
+
+                files.forEach(function (filePath) {
+                    const folderPath = getFolderPath(filePath);
+
+                    if (!groups.has(folderPath)) {
+                        groups.set(folderPath, []);
+                    }
+
+                    groups.get(folderPath).push(filePath);
+                });
+
+                const groupedResult = Array.from(groups.entries()).map(function (entry) {
+                    return {
+                        folderPath: entry[0],
+                        files: sortPaths(entry[1])
+                    };
+                });
+
+                groupedResult.sort(function (left, right) {
+                    if (left.folderPath === ".") {
+                        return -1;
+                    }
+
+                    if (right.folderPath === ".") {
+                        return 1;
+                    }
+
+                    return left.folderPath.localeCompare(right.folderPath, undefined, { sensitivity: "base" });
+                });
+
+                return groupedResult;
+            }
+
+            function renderFiles() {
+                const rawFilter = txtFilter.value.trim().toLowerCase();
+                const filteredFiles = allFiles.filter(function (filePath) {
+                    if (rawFilter.length === 0) {
+                        return true;
+                    }
+
+                    return filePath.toLowerCase().includes(rawFilter);
+                });
+                const groupedFiles = groupFiles(filteredFiles);
+
+                selectedRootNameElement.textContent = selectedRootName;
+                fileCountElement.textContent = String(filteredFiles.length);
+                folderCountElement.textContent = String(groupedFiles.length);
+
+                if (filteredFiles.length === 0) {
+                    filesContainer.innerHTML = "<div class=\"empty-message\">No files matched the current filter or no folder has been selected yet.</div>";
+                    return;
+                }
+
+                const html = groupedFiles.map(function (group) {
+                    const fileLinksHtml = group.files.map(function (filePath) {
+                        return [
+                            "<a class=\"file-link\" href=\"",
+                            buildFileHref(filePath),
+                            "\">",
+                            "<span class=\"file-name\">",
+                            escapeHtml(getFileName(filePath)),
+                            "</span>",
+                            "<span class=\"file-path\">",
+                            escapeHtml(filePath),
+                            "</span>",
+                            "</a>"
+                        ].join("");
+                    }).join("");
+
+                    return [
+                        "<section class=\"folder-card\">",
+                        "<div class=\"folder-header\">",
+                        "<div class=\"folder-title\">",
+                        escapeHtml(group.folderPath),
+                        "</div>",
+                        "<div class=\"folder-count\">",
+                        String(group.files.length),
+                        " file(s)</div>",
+                        "</div>",
+                        "<div class=\"file-links\">",
+                        fileLinksHtml,
+                        "</div>",
+                        "</section>"
+                    ].join("");
+                }).join("");
+
+                filesContainer.innerHTML = html;
+            }
+
+            async function walkDirectory(directoryHandle, parentPath) {
+                let results = [];
+                let entries = [];
+
+                for await (const entry of directoryHandle.values()) {
+                    entries.push(entry);
+                }
+
+                entries.sort(function (left, right) {
+                    return left.name.localeCompare(right.name, undefined, { sensitivity: "base" });
+                });
+
+                for (const entry of entries) {
+                    const relativePath = parentPath.length === 0 ? entry.name : parentPath + "/" + entry.name;
+
+                    if (entry.kind === "file") {
+                        results.push(relativePath);
+                        continue;
+                    }
+
+                    if (entry.kind === "directory") {
+                        const nestedResults = await walkDirectory(entry, relativePath);
+                        results = results.concat(nestedResults);
+                    }
+                }
+
+                return results;
+            }
+
+            async function loadFromDirectoryHandle(directoryHandle) {
+                selectedDirectoryHandle = directoryHandle;
+                selectedRootName = directoryHandle.name || "selected-folder";
+                setStatus("Scanning selected folder and all subfolders...", false);
+                btnRefresh.disabled = true;
+
+                try {
+                    const files = await walkDirectory(directoryHandle, "");
+                    allFiles = sortPaths(files);
+                    renderFiles();
+                    setStatus("Loaded " + allFiles.length + " file(s) from the selected local folder.", false);
+                } catch (error) {
+                    allFiles = [];
+                    renderFiles();
+                    setStatus("Could not scan the selected folder. " + error.message, true);
+                } finally {
+                    btnRefresh.disabled = false;
+                }
+            }
+
+            function loadFromFallbackFileList(fileList) {
+                lastInputFiles = Array.from(fileList || []);
+
+                if (lastInputFiles.length === 0) {
+                    allFiles = [];
+                    selectedRootName = "-";
+                    renderFiles();
+                    setStatus("No folder was selected.", true);
+                    return;
+                }
+
+                const firstRelativePath = String(lastInputFiles[0].webkitRelativePath || "");
+                const firstRootName = firstRelativePath.split("/")[0] || "selected-folder";
+                const rootPrefix = firstRootName + "/";
+                const paths = lastInputFiles.map(function (file) {
+                    const fullRelativePath = String(file.webkitRelativePath || file.name || "");
+
+                    if (fullRelativePath.indexOf(rootPrefix) === 0) {
+                        return fullRelativePath.substring(rootPrefix.length);
+                    }
+
+                    return fullRelativePath;
+                }).filter(function (path) {
+                    return path.length > 0;
+                });
+
+                selectedDirectoryHandle = null;
+                selectedRootName = firstRootName;
+                allFiles = sortPaths(paths);
+                renderFiles();
+                setStatus("Loaded " + allFiles.length + " file(s) from the selected local folder.", false);
+            }
+
+            async function chooseFolder() {
+                if (window.showDirectoryPicker) {
+                    try {
+                        const directoryHandle = await window.showDirectoryPicker();
+                        await loadFromDirectoryHandle(directoryHandle);
+                        return;
+                    } catch (error) {
+                        if (error && error.name === "AbortError") {
+                            setStatus("Folder selection was canceled.", true);
+                            return;
+                        }
+                    }
+                }
+
+                folderInputFallback.click();
+            }
+
+            async function refreshCurrentSelection() {
+                if (selectedDirectoryHandle) {
+                    await loadFromDirectoryHandle(selectedDirectoryHandle);
+                    return;
+                }
+
+                if (lastInputFiles.length > 0) {
+                    loadFromFallbackFileList(lastInputFiles);
+                    return;
+                }
+
+                setStatus("Choose the site root folder first.", true);
+            }
+
+            txtFilter.addEventListener("input", function () {
+                renderFiles();
+            });
+
+            btnChooseFolder.addEventListener("click", function () {
+                chooseFolder();
+            });
+
+            btnRefresh.addEventListener("click", function () {
+                refreshCurrentSelection();
+            });
+
+            folderInputFallback.addEventListener("change", function () {
+                loadFromFallbackFileList(folderInputFallback.files);
+            });
+
+            renderFiles();
+        })();
+    </script>
+</body>
+</html>
+
