@@ -15,7 +15,6 @@
             --text: #edf4ff;
             --muted: #9eb0ca;
             --accent: #38bdf8;
-            --danger: #f87171;
         }
 
         * {
@@ -66,8 +65,7 @@
             font-size: 28px;
         }
 
-        .hero p,
-        .panel p {
+        .hero p {
             margin: 0;
             color: var(--muted);
             font-size: 15px;
@@ -119,10 +117,6 @@
             cursor: pointer;
         }
 
-        .button-action {
-            appearance: none;
-        }
-
         .button-action.blue {
             border-color: rgba(56, 189, 248, 0.34);
         }
@@ -156,23 +150,6 @@
 
         .stat-card strong {
             color: var(--text);
-        }
-
-        .status {
-            margin-top: 12px;
-            padding: 12px 14px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--line);
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-        .status.error {
-            border-color: rgba(248, 113, 113, 0.28);
-            color: #ffd3d3;
-            background: rgba(248, 113, 113, 0.08);
         }
 
         .folder-list {
@@ -251,10 +228,6 @@
             text-align: center;
         }
 
-        .hidden-input {
-            display: none;
-        }
-
         @media (min-width: 760px) {
             .page {
                 padding: 26px 20px 40px;
@@ -274,14 +247,13 @@
 <body>
     <main class="page">
         <section class="hero">
-            <span class="badge">Runtime local file list</span>
+            <span class="badge">Static generated html page list</span>
             <h1>Check Pages</h1>
-            <p>Choose the root folder of this site, then this page will build links for all files in that folder and all subfolders.</p>
-
+            <p>This page contains only current html page links generated from the root folder and all subfolders when the file was created.</p>
             <div class="stats">
-                <div class="stat-card">Selected root: <strong id="selectedRootName">-</strong></div>
-                <div class="stat-card">Folders shown: <strong id="folderCount">0</strong></div>
-                <div class="stat-card">Files shown: <strong id="fileCount">0</strong></div>
+                <div class="stat-card">Generated on: <strong>2026-05-10 16:47:14</strong></div>
+                <div class="stat-card">Html files: <strong id="fileCount">55</strong></div>
+                <div class="stat-card">Folders: <strong id="folderCount">0</strong></div>
             </div>
         </section>
 
@@ -289,46 +261,85 @@
             <h2>Controls</h2>
             <div class="toolbar">
                 <div class="toolbar-row">
-                    <input id="txtFilter" class="search-box" type="text" placeholder="Filter by file name or path..." />
+                    <input id="txtFilter" class="search-box" type="text" placeholder="Filter html pages by file name or path..." />
                     <div class="toolbar-actions">
-                        <button id="btnChooseFolder" class="button-action blue" type="button">Choose root folder</button>
-                        <button id="btnRefresh" class="button-action" type="button">Refresh</button>
+                        <button id="btnReloadPage" class="button-action blue" type="button">Reload page</button>
                         <a class="button-link" href="./index.html">Back to index</a>
                     </div>
                 </div>
             </div>
-
-            <input id="folderInputFallback" class="hidden-input" type="file" webkitdirectory directory multiple />
-            <div id="statusBox" class="status">Choose the site root folder to build the live file links.</div>
         </section>
 
         <section class="panel">
-            <h2>Files</h2>
+            <h2>Html Pages</h2>
             <div id="filesContainer" class="folder-list"></div>
         </section>
     </main>
 
     <script>
         (function () {
-            const statusBox = document.getElementById("statusBox");
-            const filesContainer = document.getElementById("filesContainer");
+            const allFiles = [
+  "check.pages.html",
+  "eye_scroll.v2.html",
+  "eye_scroll.v3.html",
+  "eye_scroll.v4.html",
+  "eye_scroll.v5.html",
+  "eye_scroll2.html",
+  "gm/test1.html",
+  "gm/test10.html",
+  "gm/test11.html",
+  "gm/test12.html",
+  "gm/test13.html",
+  "gm/test14.html",
+  "gm/test15.html",
+  "gm/test16.html",
+  "gm/test17.html",
+  "gm/test18.html",
+  "gm/test2.html",
+  "gm/test3.html",
+  "gm/test4.html",
+  "gm/test5.html",
+  "gm/test6.html",
+  "gm/test7.html",
+  "gm/test8.html",
+  "gm/test9.html",
+  "index.html",
+  "m1t2/content/css/fonts/DavidLibre/DESCRIPTION.en_us.html",
+  "m1t2/content/css/fonts/FrankRuhlLibre/DESCRIPTION.en_us.html",
+  "m1t2/content/lib/jquery-ui-1.13.1.custom/index.html",
+  "m1t2/p.f2.Achrei_Mos_Kedoshim.html",
+  "m1t2/p.f2.Bamidbar.20260510.163241.html",
+  "m1t2/p.f2.Emor.TestZoom.html",
+  "m1t2/p.f2.Emor.TestZoom.v2.html",
+  "m1t2/p.f2.Test.html",
+  "m1t2/p.f2.tmot.new.zoom.html",
+  "m1t2/p.f2.Zoom.Gesture.html",
+  "m1t2/p.f2.Zoom.Multiply.html",
+  "m1t2/p.tmot.zoom.out.test.html",
+  "m1t2/p.tmot.zoom.test.html",
+  "sg/sudoku_game.cp.html",
+  "sg/sudoku_game.gp.html",
+  "sg/sudoku_game.gp.v1.html",
+  "sg/sudoku_game.grok.v1.html",
+  "sg/sudoku.codex.v1.html",
+  "sg/sudoku.gemini.v1.html",
+  "sg/sudoku.v1.html",
+  "sg/sudoku.v10.html",
+  "sg/sudoku.v2.html",
+  "sg/sudoku.v3.html",
+  "sg/sudoku.v4.html",
+  "sg/sudoku.v5.html",
+  "sg/sudoku.v6.html",
+  "sg/sudoku.v7.html",
+  "sg/sudoku.v8.html",
+  "sg/sudoku.v9.html",
+  "test_pages.html"
+];
             const txtFilter = document.getElementById("txtFilter");
-            const btnChooseFolder = document.getElementById("btnChooseFolder");
-            const btnRefresh = document.getElementById("btnRefresh");
-            const folderInputFallback = document.getElementById("folderInputFallback");
-            const selectedRootNameElement = document.getElementById("selectedRootName");
-            const folderCountElement = document.getElementById("folderCount");
+            const btnReloadPage = document.getElementById("btnReloadPage");
+            const filesContainer = document.getElementById("filesContainer");
             const fileCountElement = document.getElementById("fileCount");
-
-            let allFiles = [];
-            let selectedRootName = "-";
-            let selectedDirectoryHandle = null;
-            let lastInputFiles = [];
-
-            function setStatus(message, isError) {
-                statusBox.textContent = message;
-                statusBox.className = isError ? "status error" : "status";
-            }
+            const folderCountElement = document.getElementById("folderCount");
 
             function escapeHtml(value) {
                 return String(value)
@@ -337,17 +348,6 @@
                     .replace(/>/g, "&gt;")
                     .replace(/\"/g, "&quot;")
                     .replace(/'/g, "&#39;");
-            }
-
-            function encodePath(path) {
-                return path.split("/").map(function (segment) {
-                    return encodeURIComponent(segment);
-                }).join("/");
-            }
-
-            function buildFileHref(path) {
-                const separator = path.indexOf("?") >= 0 ? "&" : "?";
-                return "./" + encodePath(path) + separator + "v=" + Date.now();
             }
 
             function getFolderPath(path) {
@@ -370,10 +370,12 @@
                 return path.substring(lastSlashIndex + 1);
             }
 
-            function sortPaths(paths) {
-                return paths.slice().sort(function (left, right) {
-                    return left.localeCompare(right, undefined, { sensitivity: "base" });
-                });
+            function buildFileHref(path) {
+                const encodedPath = path.split("/").map(function (segment) {
+                    return encodeURIComponent(segment);
+                }).join("/");
+
+                return "./" + encodedPath;
             }
 
             function groupFiles(files) {
@@ -392,7 +394,9 @@
                 const groupedResult = Array.from(groups.entries()).map(function (entry) {
                     return {
                         folderPath: entry[0],
-                        files: sortPaths(entry[1])
+                        files: entry[1].slice().sort(function (left, right) {
+                            return left.localeCompare(right, undefined, { sensitivity: "base" });
+                        })
                     };
                 });
 
@@ -422,178 +426,56 @@
                 });
                 const groupedFiles = groupFiles(filteredFiles);
 
-                selectedRootNameElement.textContent = selectedRootName;
                 fileCountElement.textContent = String(filteredFiles.length);
                 folderCountElement.textContent = String(groupedFiles.length);
 
                 if (filteredFiles.length === 0) {
-                    filesContainer.innerHTML = "<div class=\"empty-message\">No files matched the current filter or no folder has been selected yet.</div>";
+                    filesContainer.innerHTML = '<div class="empty-message">No html pages matched the current filter.</div>';
                     return;
                 }
 
                 const html = groupedFiles.map(function (group) {
                     const fileLinksHtml = group.files.map(function (filePath) {
                         return [
-                            "<a class=\"file-link\" href=\"",
+                            '<a class="file-link" href="',
                             buildFileHref(filePath),
-                            "\">",
-                            "<span class=\"file-name\">",
+                            '">',
+                            '<span class="file-name">',
                             escapeHtml(getFileName(filePath)),
-                            "</span>",
-                            "<span class=\"file-path\">",
+                            '</span>',
+                            '<span class="file-path">',
                             escapeHtml(filePath),
-                            "</span>",
-                            "</a>"
-                        ].join("");
-                    }).join("");
+                            '</span>',
+                            '</a>'
+                        ].join('');
+                    }).join('');
 
                     return [
-                        "<section class=\"folder-card\">",
-                        "<div class=\"folder-header\">",
-                        "<div class=\"folder-title\">",
+                        '<section class="folder-card">',
+                        '<div class="folder-header">',
+                        '<div class="folder-title">',
                         escapeHtml(group.folderPath),
-                        "</div>",
-                        "<div class=\"folder-count\">",
+                        '</div>',
+                        '<div class="folder-count">',
                         String(group.files.length),
-                        " file(s)</div>",
-                        "</div>",
-                        "<div class=\"file-links\">",
+                        ' html page(s)</div>',
+                        '</div>',
+                        '<div class="file-links">',
                         fileLinksHtml,
-                        "</div>",
-                        "</section>"
-                    ].join("");
-                }).join("");
+                        '</div>',
+                        '</section>'
+                    ].join('');
+                }).join('');
 
                 filesContainer.innerHTML = html;
             }
 
-            async function walkDirectory(directoryHandle, parentPath) {
-                let results = [];
-                let entries = [];
-
-                for await (const entry of directoryHandle.values()) {
-                    entries.push(entry);
-                }
-
-                entries.sort(function (left, right) {
-                    return left.name.localeCompare(right.name, undefined, { sensitivity: "base" });
-                });
-
-                for (const entry of entries) {
-                    const relativePath = parentPath.length === 0 ? entry.name : parentPath + "/" + entry.name;
-
-                    if (entry.kind === "file") {
-                        results.push(relativePath);
-                        continue;
-                    }
-
-                    if (entry.kind === "directory") {
-                        const nestedResults = await walkDirectory(entry, relativePath);
-                        results = results.concat(nestedResults);
-                    }
-                }
-
-                return results;
-            }
-
-            async function loadFromDirectoryHandle(directoryHandle) {
-                selectedDirectoryHandle = directoryHandle;
-                selectedRootName = directoryHandle.name || "selected-folder";
-                setStatus("Scanning selected folder and all subfolders...", false);
-                btnRefresh.disabled = true;
-
-                try {
-                    const files = await walkDirectory(directoryHandle, "");
-                    allFiles = sortPaths(files);
-                    renderFiles();
-                    setStatus("Loaded " + allFiles.length + " file(s) from the selected local folder.", false);
-                } catch (error) {
-                    allFiles = [];
-                    renderFiles();
-                    setStatus("Could not scan the selected folder. " + error.message, true);
-                } finally {
-                    btnRefresh.disabled = false;
-                }
-            }
-
-            function loadFromFallbackFileList(fileList) {
-                lastInputFiles = Array.from(fileList || []);
-
-                if (lastInputFiles.length === 0) {
-                    allFiles = [];
-                    selectedRootName = "-";
-                    renderFiles();
-                    setStatus("No folder was selected.", true);
-                    return;
-                }
-
-                const firstRelativePath = String(lastInputFiles[0].webkitRelativePath || "");
-                const firstRootName = firstRelativePath.split("/")[0] || "selected-folder";
-                const rootPrefix = firstRootName + "/";
-                const paths = lastInputFiles.map(function (file) {
-                    const fullRelativePath = String(file.webkitRelativePath || file.name || "");
-
-                    if (fullRelativePath.indexOf(rootPrefix) === 0) {
-                        return fullRelativePath.substring(rootPrefix.length);
-                    }
-
-                    return fullRelativePath;
-                }).filter(function (path) {
-                    return path.length > 0;
-                });
-
-                selectedDirectoryHandle = null;
-                selectedRootName = firstRootName;
-                allFiles = sortPaths(paths);
-                renderFiles();
-                setStatus("Loaded " + allFiles.length + " file(s) from the selected local folder.", false);
-            }
-
-            async function chooseFolder() {
-                if (window.showDirectoryPicker) {
-                    try {
-                        const directoryHandle = await window.showDirectoryPicker();
-                        await loadFromDirectoryHandle(directoryHandle);
-                        return;
-                    } catch (error) {
-                        if (error && error.name === "AbortError") {
-                            setStatus("Folder selection was canceled.", true);
-                            return;
-                        }
-                    }
-                }
-
-                folderInputFallback.click();
-            }
-
-            async function refreshCurrentSelection() {
-                if (selectedDirectoryHandle) {
-                    await loadFromDirectoryHandle(selectedDirectoryHandle);
-                    return;
-                }
-
-                if (lastInputFiles.length > 0) {
-                    loadFromFallbackFileList(lastInputFiles);
-                    return;
-                }
-
-                setStatus("Choose the site root folder first.", true);
-            }
-
-            txtFilter.addEventListener("input", function () {
+            txtFilter.addEventListener('input', function () {
                 renderFiles();
             });
 
-            btnChooseFolder.addEventListener("click", function () {
-                chooseFolder();
-            });
-
-            btnRefresh.addEventListener("click", function () {
-                refreshCurrentSelection();
-            });
-
-            folderInputFallback.addEventListener("change", function () {
-                loadFromFallbackFileList(folderInputFallback.files);
+            btnReloadPage.addEventListener('click', function () {
+                window.location.reload();
             });
 
             renderFiles();
@@ -601,4 +483,3 @@
     </script>
 </body>
 </html>
-
