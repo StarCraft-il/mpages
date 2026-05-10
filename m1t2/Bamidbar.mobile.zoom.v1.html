@@ -1,31 +1,210 @@
 ﻿<!DOCTYPE html>
 <html lang="he" dir="rtl" id="root-element">
 <head>
-    <title>2M1T-Bamidbar</title>
+    <title>2M1T-Bamidbar-mobile-zoom</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta charset="utf-8">
         <meta http-equiv="content-language" content="he" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta http-equiv="cleartype" content="on">
-    <link href="content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link href="content/css/style_portion_razor.css" rel="stylesheet" />
-        <link href="content/css/style_flex2.css" rel="stylesheet" />
-        <script src="content/lib/jquery/3.5.1/jquery.js"></script>
-        <script src="content/js/site_flex2.js"></script>
-        <style>
-            
-div.allText {
-}
+    <link href="file:///C:/Git/!myRepos/TwoMikraOneTaj/TwoMikraOneTaj/bin/Debug/net8.0-windows/content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="file:///C:/Git/!myRepos/TwoMikraOneTaj/TwoMikraOneTaj/bin/Debug/net8.0-windows/content/css/style_portion_razor.css" rel="stylesheet" />
+        <link href="file:///C:/Git/!myRepos/TwoMikraOneTaj/TwoMikraOneTaj/bin/Debug/net8.0-windows/content/css/style_flex2.css" rel="stylesheet" />
+        <script src="file:///C:/Git/!myRepos/TwoMikraOneTaj/TwoMikraOneTaj/bin/Debug/net8.0-windows/content/lib/jquery/3.5.1/jquery.js"></script>
+        <script src="file:///C:/Git/!myRepos/TwoMikraOneTaj/TwoMikraOneTaj/bin/Debug/net8.0-windows/content/js/site_flex2.js"></script>
+    <style>
+        :root {
+            --tmot-zoom-multiplier: 1;
+            --tmot-overlay-bg: rgba(0, 0, 0, 0.82);
+            --tmot-overlay-text: #ffffff;
+            --tmot-line-tight: calc(0.88 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-normal: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-medium: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
+            --tmot-line-reading: calc(1.22 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
+        }
 
-div.chapterText {
-    font-family: mysbl_64 !important;
-    -webkit-transform: scaleX(0.94) !important;
-    letter-spacing: -1px !important;
-}
-        </style>
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #f4f7f6;
+        }
+
+        div.allText {
+        }
+
+        div.chapterText {
+            font-family: mysbl_64 !important;
+            -webkit-transform: scaleX(0.94) !important;
+            letter-spacing: -1px !important;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                touch-action: pan-y;
+                overscroll-behavior: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #parashaContentRow {
+                padding-right: 8px !important;
+                padding-left: 8px !important;
+                box-sizing: border-box;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            #parashaContentRow #parashaName {
+                font-size: calc(1.35rem * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-tight);
+            }
+
+            ul#aliyusTableLinks {
+                padding-right: 2px !important;
+                padding-inline-start: 2px !important;
+                font-size: calc(1.25rem * var(--tmot-zoom-multiplier)) !important;
+                line-height: calc(var(--tmot-line-reading) + 0.05) !important;
+            }
+
+            #torahStatistcsForPortion {
+                font-size: calc(0.95rem * var(--tmot-zoom-multiplier));
+                line-height: var(--tmot-line-medium);
+            }
+
+            div.allText,
+            div.allText div.chapterText,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
+                font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
+                font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-medium) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
+
+            div.allText {
+                padding-top: 24px !important;
+            }
+
+            div.allText span.shemot,
+            div.allText span.book,
+            div.allText span.godName {
+                font-size: calc(30px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-normal) !important;
+            }
+
+            div.allText span.small {
+                font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-medium) !important;
+            }
+
+            #parashaContentRow .aliya {
+                padding-top: 28px !important;
+            }
+
+            #parashaContentRow .aliya .toStartOfPortion {
+                display: inline-block;
+                font-size: calc(1rem * var(--tmot-zoom-multiplier)) !important;
+                margin-bottom: 6px;
+            }
+
+            #parashaContentRow .aliya .a-header {
+                display: inline-block;
+                font-size: calc(38px * var(--tmot-zoom-multiplier)) !important;
+                letter-spacing: 6px !important;
+                line-height: var(--tmot-line-tight) !important;
+            }
+
+            .base-header,
+            .lastVerse .header,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
+                font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-medium) !important;
+                letter-spacing: normal !important;
+                padding-top: 18px !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader {
+                padding: 8px 10px;
+                overflow-wrap: anywhere;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
+                font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-normal) !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlLastDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlLastDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
+                font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-normal) !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
+                font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
+
+            .lastVerse .base-last-verse,
+            .lastVerse .last_pasuk_mikra_1,
+            .lastVerse .last_pasuk_mikra_2 {
+                font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: -1px !important;
+                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #parashaContentRow,
+            #parashaContentRow .aliya,
+            #parashaContentRow .verse,
+            #parashaContentRow .pasuk2m1t,
+            #parashaContentRow .contentHeader,
+            #parashaContentRow .lastVerse,
+            div.allText,
+            div.chapterText {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+        }
+    </style>
 </head>
 <body dir="rtl">
-        <div id="parashaContentRow">
-            <div id="parashaName"><h1>פרשת בְּמִדְבַּר</h1></div>
+    <div id="parashaContentRow">
+        <div id="parashaName"><h1>פרשת בְּמִדְבַּר</h1></div>
 <ul id="aliyusTableLinks">
         <li><a href="#1_one_header">ראשון - (19)</a></li>
         <li><a href="#2_two_header">שני - (35)</a></li>
@@ -3944,9 +4123,75 @@ div.chapterText {
 
 
 
+            <hr />
+    </div>
+    <script>
+        (function () {
+            const root = document.getElementById("root-element");
+            if (!root) {
+                return;
+            }
 
+            let currentScale = 1;
+            let initialScale = 1;
+            let initialDistance = 0;
+            const minScale = 0.8;
+            const maxScale = 2.2;
 
-                <hr />
-        </div>
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function applyScale() {
+                root.style.setProperty("--tmot-zoom-multiplier", currentScale.toFixed(3));
+            }
+
+            function getDistance(touchA, touchB) {
+                return Math.hypot(
+                    touchA.pageX - touchB.pageX,
+                    touchA.pageY - touchB.pageY
+                );
+            }
+
+            document.addEventListener("touchstart", function (event) {
+                if (event.touches.length !== 2) {
+                    return;
+                }
+
+                initialDistance = getDistance(event.touches[0], event.touches[1]);
+                initialScale = currentScale;
+            }, { passive: false });
+
+            document.addEventListener("touchmove", function (event) {
+                if (event.touches.length !== 2) {
+                    return;
+                }
+
+                event.preventDefault();
+                const currentDistance = getDistance(event.touches[0], event.touches[1]);
+
+                if (initialDistance <= 0) {
+                    initialDistance = currentDistance;
+                    initialScale = currentScale;
+                }
+
+                const ratio = currentDistance / initialDistance;
+                currentScale = clamp(initialScale * ratio, minScale, maxScale);
+                applyScale();
+            }, { passive: false });
+
+            document.addEventListener("touchend", function (event) {
+                if (event.touches.length < 2) {
+                    initialDistance = 0;
+                }
+            }, { passive: true });
+
+            document.addEventListener("touchcancel", function () {
+                initialDistance = 0;
+            }, { passive: true });
+
+            applyScale();
+        })();
+    </script>
 </body>
 </html>
