@@ -4220,10 +4220,14 @@
                 <input id="autoScrollEnabledCheckbox" type="checkbox" />
             </div>
             <div class="tmot-auto-scroll-row">
+                <label for="autoScrollDirectionCheckbox">Direction</label>
+                <input id="autoScrollDirectionCheckbox" type="checkbox" />
+            </div>
+            <div class="tmot-auto-scroll-row">
                 <label for="autoScrollSpeedRange">Base speed</label>
                 <span id="autoScrollSpeedValue" class="tmot-auto-scroll-value">0 px/s</span>
             </div>
-            <input id="autoScrollSpeedRange" class="tmot-auto-scroll-range" type="range" min="-60" max="140" step="1" />
+            <input id="autoScrollSpeedRange" class="tmot-auto-scroll-range" type="range" min="20" max="120" step="1" />
             <div class="tmot-auto-scroll-row">
                 <label for="autoScrollIdleDelayRange">Resume delay</label>
                 <span id="autoScrollIdleDelayValue" class="tmot-auto-scroll-value">0 ms</span>
@@ -4245,6 +4249,7 @@
             const autoScrollToggleButton = document.getElementById("autoScrollToggleButton");
             const autoScrollPanel = document.getElementById("autoScrollPanel");
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
+            const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
             const autoScrollSpeedRange = document.getElementById("autoScrollSpeedRange");
             const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
             const autoScrollIdleDelayRange = document.getElementById("autoScrollIdleDelayRange");
@@ -4264,9 +4269,10 @@
                 showControlPanelByDefault: false,
                 startOnLoad: true,
                 baseSpeedPixelsPerSecond: 24,
+                minBaseSpeed: 20,
+                maxBaseSpeed: 120,
+                scrollDown: true,
                 idleResumeDelayMs: 1800,
-                minSpeedPixelsPerSecond: -60,
-                maxSpeedPixelsPerSecond: 140,
                 touchSpeedFactor: 0.22,
                 touchMoveThresholdPixels: 3,
                 programmaticScrollFlagMs: 140
@@ -4277,11 +4283,11 @@
             let singleTouchMoved = false;
             let activeTouchIdentifier = null;
             let touchAdjustStartY = 0;
-            let touchAdjustStartSpeed = autoScrollConfig.baseSpeedPixelsPerSecond;
 
             let autoScrollEnabled = autoScrollConfig.enabled;
-            let autoScrollBaseSpeed = autoScrollConfig.baseSpeedPixelsPerSecond;
-            let autoScrollTargetSpeed = autoScrollConfig.baseSpeedPixelsPerSecond;
+            let autoScrollDirectionDown = autoScrollConfig.scrollDown;
+            let autoScrollBaseSpeed = normalizeBaseSpeed(autoScrollConfig.baseSpeedPixelsPerSecond);
+            let autoScrollTargetSpeed = autoScrollDirectionDown ? autoScrollBaseSpeed : -autoScrollBaseSpeed;
             let autoScrollCurrentSpeed = 0;
             let autoScrollIdleDelayMs = autoScrollConfig.idleResumeDelayMs;
             let autoScrollPaused = true;
@@ -4290,9 +4296,23 @@
             let autoScrollResumeTimerId = 0;
             let programmaticScrollActive = false;
             let programmaticScrollReleaseTimerId = 0;
+            let touchAdjustStartSpeed = autoScrollTargetSpeed;
 
             function clamp(value, min, max) {
                 return Math.min(max, Math.max(min, value));
+            }
+
+            function normalizeBaseSpeed(speed) {
+                const numericSpeed = Number(speed);
+                const fallbackSpeed = autoScrollConfig.baseSpeedPixelsPerSecond;
+                const speedToUse = Number.isFinite(numericSpeed) ? numericSpeed : fallbackSpeed;
+                const absoluteSpeed = Math.abs(speedToUse);
+
+                return clamp(absoluteSpeed, autoScrollConfig.minBaseSpeed, autoScrollConfig.maxBaseSpeed);
+            }
+
+            function getSignedBaseSpeed() {
+                return autoScrollDirectionDown ? autoScrollBaseSpeed : -autoScrollBaseSpeed;
             }
 
             function applyScale() {
@@ -4359,12 +4379,18 @@
                     autoScrollEnabledCheckbox.checked = autoScrollEnabled;
                 }
 
+                if (autoScrollDirectionCheckbox) {
+                    autoScrollDirectionCheckbox.checked = autoScrollDirectionDown;
+                }
+
                 if (autoScrollSpeedRange) {
+                    autoScrollSpeedRange.min = String(autoScrollConfig.minBaseSpeed);
+                    autoScrollSpeedRange.max = String(autoScrollConfig.maxBaseSpeed);
                     autoScrollSpeedRange.value = String(Math.round(autoScrollBaseSpeed));
                 }
 
                 if (autoScrollSpeedValue) {
-                    autoScrollSpeedValue.textContent = formatSpeed(autoScrollBaseSpeed);
+                    autoScrollSpeedValue.textContent = formatSpeed(getSignedBaseSpeed());
                 }
 
                 if (autoScrollIdleDelayRange) {
@@ -4422,12 +4448,15 @@
             }
 
             function syncBaseSpeed(nextSpeed) {
-                autoScrollBaseSpeed = clamp(
-                    nextSpeed,
-                    autoScrollConfig.minSpeedPixelsPerSecond,
-                    autoScrollConfig.maxSpeedPixelsPerSecond
-                );
-                autoScrollTargetSpeed = autoScrollBaseSpeed;
+                autoScrollBaseSpeed = normalizeBaseSpeed(nextSpeed);
+                autoScrollTargetSpeed = getSignedBaseSpeed();
+                updateAutoScrollUi();
+            }
+
+            function syncSignedBaseSpeed(nextSpeed) {
+                autoScrollDirectionDown = Number(nextSpeed) >= 0;
+                autoScrollBaseSpeed = normalizeBaseSpeed(nextSpeed);
+                autoScrollTargetSpeed = getSignedBaseSpeed();
                 updateAutoScrollUi();
             }
 
@@ -4467,7 +4496,7 @@
                     return;
                 }
 
-                autoScrollTargetSpeed = autoScrollBaseSpeed;
+                autoScrollTargetSpeed = getSignedBaseSpeed();
                 setAutoScrollPaused(false, reason || "Auto-scroll is running.");
             }
 
@@ -4490,9 +4519,9 @@
             }
 
             function adjustAutoScrollSpeedFromTouch(totalDeltaY) {
-                // Added: moving down increases speed, moving up slows it down and can reverse it.
+                // Added: moving down increases speed, moving up slows it down and can reverse it through the Direction checkbox.
                 const nextSpeed = touchAdjustStartSpeed + (totalDeltaY * autoScrollConfig.touchSpeedFactor);
-                syncBaseSpeed(nextSpeed);
+                syncSignedBaseSpeed(nextSpeed);
             }
 
             function stepAutoScroll(timestamp) {
@@ -4561,7 +4590,7 @@
                 singleTouchMoved = false;
                 activeTouchIdentifier = event.touches[0].identifier;
                 touchAdjustStartY = event.touches[0].clientY;
-                touchAdjustStartSpeed = autoScrollBaseSpeed;
+                touchAdjustStartSpeed = getSignedBaseSpeed();
                 clearAutoScrollResumeTimer();
                 setAutoScrollPaused(true, "Auto-scroll paused while your finger is on the screen.");
             }, { passive: true });
@@ -4616,7 +4645,7 @@
                     singleTouchMoved = false;
                     activeTouchIdentifier = event.touches[0].identifier;
                     touchAdjustStartY = event.touches[0].clientY;
-                    touchAdjustStartSpeed = autoScrollBaseSpeed;
+                    touchAdjustStartSpeed = getSignedBaseSpeed();
                     setAutoScrollPaused(true, "Auto-scroll paused while your finger is on the screen.");
                     return;
                 }
@@ -4670,6 +4699,31 @@
                     }
 
                     scheduleAutoScrollResume("Auto-scroll enabled. It will resume after idle.");
+                });
+            }
+
+            if (autoScrollDirectionCheckbox) {
+                autoScrollDirectionCheckbox.addEventListener("change", function () {
+                    autoScrollDirectionDown = autoScrollDirectionCheckbox.checked;
+                    autoScrollTargetSpeed = getSignedBaseSpeed();
+                    updateAutoScrollUi();
+
+                    if (!autoScrollEnabled) {
+                        setAutoScrollStatus("Direction updated while auto-scroll is disabled.");
+                        return;
+                    }
+
+                    if (singleTouchActive || pinchZoomActive) {
+                        setAutoScrollStatus("Direction updated. Auto-scroll will resume after touch or zoom.");
+                        return;
+                    }
+
+                    if (autoScrollPaused) {
+                        scheduleAutoScrollResume("Direction updated. Auto-scroll will resume after idle.");
+                        return;
+                    }
+
+                    setAutoScrollStatus("Auto-scroll direction updated to " + formatSpeed(getSignedBaseSpeed()) + ".");
                 });
             }
 
