@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eye Friendly Smooth Auto Scroll</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --viewer-height: 62vh;
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --dark: #111827;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #f8fafc 0, var(--bg) 52%, #e5e7eb 100%);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 12px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+      background: rgba(17, 24, 39, 0.96);
+      color: white;
+      border-radius: 22px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: 19px;
+      letter-spacing: 0.2px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    button, select, input[type="range"] {
+      width: 100%;
+      font-size: 14px;
+    }
+
+    button, select {
+      min-height: 42px;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    button:active { transform: scale(0.97); }
+    button.secondary { background: #64748b; }
+    button.danger { background: var(--danger); }
+    button.success { background: var(--success); }
+    select { background: white; color: var(--text); }
+
+    .control-card {
+      grid-column: 1 / -1;
+      background: rgba(31, 41, 55, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .control-card label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #f9fafb;
+    }
+
+    .hint {
+      grid-column: 1 / -1;
+      margin: 2px 0 0;
+      color: #d1d5db;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    main {
+      padding: 16px 0 28px;
+    }
+
+    .viewer-wrap {
+      position: relative;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      background: rgba(255, 255, 255, 0.62);
+      padding: 10px;
+    }
+
+    .viewer-wrap::before,
+    .viewer-wrap::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      height: 52px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .viewer-wrap::before {
+      top: 10px;
+      border-radius: 24px 24px 0 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.96), rgba(255,255,255,0));
+    }
+
+    .viewer-wrap::after {
+      bottom: 10px;
+      border-radius: 0 0 24px 24px;
+      background: linear-gradient(to top, rgba(255,255,255,0.96), rgba(255,255,255,0));
+    }
+
+    .viewer {
+      height: var(--viewer-height);
+      min-height: 260px;
+      max-height: 78vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      scroll-behavior: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #94a3b8 #e5e7eb;
+      will-change: scroll-position;
+      transform: translateZ(0);
+    }
+
+    .viewer::-webkit-scrollbar { width: 8px; }
+    .viewer::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 999px; }
+    .viewer::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }
+
+    .content {
+      padding: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 16px;
+      margin: 0;
+      color: #374151;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #e5e7eb;
+      font-size: 13px;
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 20px; }
+      header h1 { font-size: 26px; }
+      .controls { grid-template-columns: repeat(4, 1fr); }
+      .content { padding: 28px; }
+      .card { padding: 28px; }
+      .card h2 { font-size: 28px; }
+      .card p { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Eye Friendly Smooth Auto Scroll</h1>
+
+      <div class="controls">
+        <button id="startScroll" class="success">Start</button>
+        <button id="pauseScroll" class="secondary">Pause</button>
+        <button id="stopScroll" class="danger">Stop</button>
+        <button id="centerScroll">Center</button>
+
+        <button id="scrollUp">Up</button>
+        <button id="scrollDown">Down</button>
+
+        <select id="directionSelect" aria-label="Scroll direction">
+          <option value="down">Direction: Down</option>
+          <option value="up">Direction: Up</option>
+        </select>
+
+        <select id="motionSelect" aria-label="Motion feel">
+          <option value="gentle" selected>Feel: Gentle</option>
+          <option value="reading">Feel: Reading</option>
+          <option value="faster">Feel: Faster</option>
+        </select>
+
+        <div class="control-card">
+          <label for="speedRange">
+            <span>Speed</span>
+            <strong><span id="speedValue">28</span> px/sec</strong>
+          </label>
+          <input id="speedRange" type="range" min="8" max="90" value="28" />
+        </div>
+
+        <div class="control-card">
+          <label for="viewerHeightRange">
+            <span>Visible area size</span>
+            <strong><span id="viewerHeightValue">62</span> vh</strong>
+          </label>
+          <input id="viewerHeightRange" type="range" min="35" max="78" value="62" />
+        </div>
+
+        <p class="hint">Scrolling happens inside the smooth reading window, with soft top/bottom fade to reduce flicker.</p>
+      </div>
+
+      <div id="status" class="status">Ready. Choose Start for very smooth requestAnimationFrame scrolling.</div>
+    </header>
+
+    <main>
+      <section class="viewer-wrap" aria-label="Smooth scrolling reading window">
+        <div id="viewer" class="viewer" tabindex="0">
+          <div class="content">
+            <section class="card"><h2>Section 1</h2><p>This version scrolls only the reading window instead of the whole page. That keeps the controls stable and makes the motion easier on the eye.</p></section>
+            <section class="card"><h2>Section 2</h2><p>The movement uses requestAnimationFrame and time-based pixels-per-second scrolling. This usually feels smoother than timer-based scrolling.</p></section>
+            <section class="card"><h2>Section 3</h2><p>You can control the visible area size. A smaller area is good for focused reading, while a larger area is better for presentation or dashboard mode.</p></section>
+            <section class="card"><h2>Section 4</h2><p>The top and bottom fade masks help hide sharp movement at the edges and reduce the feeling of flicker.</p></section>
+            <section class="card"><h2>Section 5</h2><p>Use Gentle for slow comfortable motion, Reading for normal text, and Faster only when you want a quick preview.</p></section>
+            <section class="card"><h2>Section 6</h2><p>Manual Up and Down buttons move in soft animated steps. Touching or using the mouse wheel pauses the automatic scroll.</p></section>
+            <section class="card"><h2>Section 7</h2><p>The page avoids layout changes during scrolling, uses a fixed scroll container, and keeps animation calculations very small.</p></section>
+            <section class="card"><h2>Section 8</h2><p>End of content. Auto-scroll pauses automatically when it reaches the bottom or the top.</p></section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let animationId = null;
+    let lastFrameTime = 0;
+    let scrollDirection = "down";
+    let pixelsPerSecond = 28;
+
+    const root = document.documentElement;
+    const viewer = document.getElementById("viewer");
+    const statusBox = document.getElementById("status");
+
+    const startButton = document.getElementById("startScroll");
+    const pauseButton = document.getElementById("pauseScroll");
+    const stopButton = document.getElementById("stopScroll");
+    const centerButton = document.getElementById("centerScroll");
+    const scrollUpButton = document.getElementById("scrollUp");
+    const scrollDownButton = document.getElementById("scrollDown");
+
+    const directionSelect = document.getElementById("directionSelect");
+    const motionSelect = document.getElementById("motionSelect");
+    const speedRange = document.getElementById("speedRange");
+    const speedValue = document.getElementById("speedValue");
+    const viewerHeightRange = document.getElementById("viewerHeightRange");
+    const viewerHeightValue = document.getElementById("viewerHeightValue");
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function getMaxScrollTop() {
+      return Math.max(0, viewer.scrollHeight - viewer.clientHeight);
+    }
+
+    function isAtScrollEnd() {
+      const maxTop = getMaxScrollTop();
+      if (scrollDirection === "down") {
+        return viewer.scrollTop >= maxTop - 0.5;
+      }
+      return viewer.scrollTop <= 0.5;
+    }
+
+    function animateScroll(frameTime) {
+      if (lastFrameTime === 0) {
+        lastFrameTime = frameTime;
+      }
+
+      const deltaSeconds = Math.min((frameTime - lastFrameTime) / 1000, 0.05);
+      lastFrameTime = frameTime;
+
+      const directionMultiplier = scrollDirection === "down" ? 1 : -1;
+      const nextTop = viewer.scrollTop + (pixelsPerSecond * deltaSeconds * directionMultiplier);
+      const maxTop = getMaxScrollTop();
+
+      viewer.scrollTop = Math.min(Math.max(nextTop, 0), maxTop);
+
+      if (isAtScrollEnd()) {
+        pauseAutoScroll();
+        setStatus(scrollDirection === "down" ? "Paused at bottom." : "Paused at top.");
+        return;
+      }
+
+      animationId = requestAnimationFrame(animateScroll);
+    }
+
+    function startAutoScroll() {
+      pauseAutoScroll(false);
+      lastFrameTime = 0;
+      animationId = requestAnimationFrame(animateScroll);
+      setStatus("Auto-scroll running smoothly.");
+    }
+
+    function pauseAutoScroll(updateStatus = true) {
+      if (animationId === null) {
+        return;
+      }
+
+      cancelAnimationFrame(animationId);
+      animationId = null;
+      lastFrameTime = 0;
+
+      if (updateStatus) {
+        setStatus("Paused.");
+      }
+    }
+
+    function stopAutoScroll() {
+      pauseAutoScroll(false);
+      viewer.scrollTo({ top: 0, behavior: "smooth" });
+      setStatus("Stopped and returned to top.");
+    }
+
+    function centerViewerOnPage() {
+      viewer.scrollIntoView({ behavior: "smooth", block: "center" });
+      setStatus("Reading window centered on screen.");
+    }
+
+    function manualScroll(amount) {
+      pauseAutoScroll(false);
+      viewer.scrollBy({ top: amount, behavior: "smooth" });
+      setStatus(amount > 0 ? "Moved down." : "Moved up.");
+    }
+
+    function updateDirection() {
+      scrollDirection = directionSelect.value;
+      setStatus("Direction changed to " + scrollDirection + ".");
+    }
+
+    function updateSpeed(value) {
+      pixelsPerSecond = Number(value);
+      speedRange.value = String(pixelsPerSecond);
+      speedValue.textContent = String(pixelsPerSecond);
+    }
+
+    function updateMotionFeel() {
+      switch (motionSelect.value) {
+        case "gentle":
+          updateSpeed(28);
+          setStatus("Gentle motion selected.");
+          return;
+        case "reading":
+          updateSpeed(45);
+          setStatus("Reading motion selected.");
+          return;
+        case "faster":
+          updateSpeed(70);
+          setStatus("Faster motion selected.");
+          return;
+        default:
+          updateSpeed(28);
+          setStatus("Gentle motion selected.");
+          return;
+      }
+    }
+
+    function updateViewerHeight() {
+      const value = Number(viewerHeightRange.value);
+      root.style.setProperty("--viewer-height", value + "vh");
+      viewerHeightValue.textContent = String(value);
+      setStatus("Visible area set to " + value + "vh.");
+    }
+
+    startButton.addEventListener("click", startAutoScroll);
+    pauseButton.addEventListener("click", pauseAutoScroll);
+    stopButton.addEventListener("click", stopAutoScroll);
+    centerButton.addEventListener("click", centerViewerOnPage);
+    scrollUpButton.addEventListener("click", function () { manualScroll(-Math.round(viewer.clientHeight * 0.55)); });
+    scrollDownButton.addEventListener("click", function () { manualScroll(Math.round(viewer.clientHeight * 0.55)); });
+
+    directionSelect.addEventListener("change", updateDirection);
+    motionSelect.addEventListener("change", updateMotionFeel);
+    speedRange.addEventListener("input", function () { updateSpeed(speedRange.value); setStatus("Speed set to " + speedRange.value + " px/sec."); });
+    viewerHeightRange.addEventListener("input", updateViewerHeight);
+
+    viewer.addEventListener("touchstart", function () { pauseAutoScroll(); }, { passive: true });
+    viewer.addEventListener("wheel", function () { pauseAutoScroll(); }, { passive: true });
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        pauseAutoScroll();
+      }
+    });
+
+    window.addEventListener("load", function () {
+      updateDirection();
+      updateSpeed(speedRange.value);
+      updateViewerHeight();
+      setStatus("Ready. Choose Start for very smooth requestAnimationFrame scrolling.");
+    });
+  </script>
+</body>
+</html>

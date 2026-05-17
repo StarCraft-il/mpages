@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobile First Auto Scroll Controls</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+      line-height: 1.6;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #111827;
+      color: white;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    header h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    button, select, input[type="range"] {
+      width: 100%;
+      font-size: 14px;
+    }
+    button, select {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+    }
+    button.secondary { background: #6b7280; }
+    button.danger { background: #dc2626; }
+    button.success { background: #16a34a; }
+    select {
+      background: white;
+      color: #111827;
+    }
+    .speed-control {
+      grid-column: 1 / -1;
+      background: #1f2937;
+      border-radius: 16px;
+      padding: 10px;
+      text-align: left;
+    }
+    .speed-control label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .auto-start-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      padding-top: 4px;
+    }
+    main {
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #111827;
+    }
+    .card p {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    .floating-top {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #111827;
+      color: white;
+      font-size: 22px;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+    @media (min-width: 768px) {
+      header h1 { font-size: 28px; }
+      .controls { grid-template-columns: repeat(4, 1fr); }
+      main { padding: 32px; }
+      .card { padding: 28px; }
+      .card h2 { font-size: 28px; }
+      .card p { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mobile First Auto Scroll</h1>
+    <div class="controls">
+      <button id="startScroll" class="success">Start</button>
+      <button id="pauseScroll" class="secondary">Pause</button>
+      <button id="stopScroll" class="danger">Stop</button>
+      <button id="scrollTop">Top</button>
+      <button id="scrollUp">Scroll Up</button>
+      <button id="scrollDown">Scroll Down</button>
+      <select id="directionSelect">
+        <option value="down">Direction: Down</option>
+        <option value="up">Direction: Up</option>
+      </select>
+      <select id="stepSelect">
+        <option value="1">Smooth</option>
+        <option value="2" selected>Normal</option>
+        <option value="4">Fast</option>
+        <option value="8">Very Fast</option>
+      </select>
+      <div class="speed-control">
+        <label for="speedRange">Speed: <span id="speedValue">20</span> ms</label>
+        <input id="speedRange" type="range" min="5" max="80" value="20" />
+      </div>
+      <label class="auto-start-row">
+        <input id="autoStartToggle" type="checkbox" />
+        Auto start on page load
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="card"><h2>Section 1</h2><p>This page is built mobile first. The controls are touch-friendly and optimized for small screens.</p></section>
+    <section class="card"><h2>Section 2</h2><p>Use Start, Pause, Stop, direction, speed, and manual scroll buttons.</p></section>
+    <section class="card"><h2>Section 3</h2><p>The speed slider controls how often the page scrolls. Lower value means faster movement.</p></section>
+    <section class="card"><h2>Section 4</h2><p>The step selector controls how many pixels the page moves each scroll tick.</p></section>
+    <section class="card"><h2>Section 5</h2><p>You can scroll down automatically, scroll up automatically, or manually jump to top.</p></section>
+    <section class="card"><h2>Section 6</h2><p>This is useful for mobile presentations, kiosk screens, article previews, or dashboards.</p></section>
+    <section class="card"><h2>Section 7</h2><p>End of content. Auto-scroll stops automatically at the bottom or top.</p></section>
+  </main>
+
+  <button id="floatingTop" class="floating-top" aria-label="Scroll to top">↑</button>
+
+  <script>
+    let scrollTimer = null;
+    let scrollDirection = "down";
+    let scrollStep = 2;
+    let scrollInterval = 20;
+
+    const startButton = document.getElementById("startScroll");
+    const pauseButton = document.getElementById("pauseScroll");
+    const stopButton = document.getElementById("stopScroll");
+    const scrollTopButton = document.getElementById("scrollTop");
+    const scrollUpButton = document.getElementById("scrollUp");
+    const scrollDownButton = document.getElementById("scrollDown");
+    const floatingTopButton = document.getElementById("floatingTop");
+    const directionSelect = document.getElementById("directionSelect");
+    const stepSelect = document.getElementById("stepSelect");
+    const speedRange = document.getElementById("speedRange");
+    const speedValue = document.getElementById("speedValue");
+    const autoStartToggle = document.getElementById("autoStartToggle");
+
+    function startAutoScroll() {
+      pauseAutoScroll();
+      scrollTimer = setInterval(function () {
+        const currentTop = window.scrollY;
+        const currentBottom = window.scrollY + window.innerHeight;
+        const pageHeight = document.documentElement.scrollHeight;
+
+        if (scrollDirection === "down" && currentBottom >= pageHeight) {
+          pauseAutoScroll();
+          return;
+        }
+        if (scrollDirection === "up" && currentTop <= 0) {
+          pauseAutoScroll();
+          return;
+        }
+
+        const amount = scrollDirection === "down" ? scrollStep : -scrollStep;
+        window.scrollBy(0, amount);
+      }, scrollInterval);
+    }
+
+    function pauseAutoScroll() {
+      if (scrollTimer === null) { return; }
+      clearInterval(scrollTimer);
+      scrollTimer = null;
+    }
+
+    function stopAutoScroll() {
+      pauseAutoScroll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function scrollToTop() {
+      pauseAutoScroll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function manualScrollUp() {
+      pauseAutoScroll();
+      window.scrollBy({ top: -300, behavior: "smooth" });
+    }
+
+    function manualScrollDown() {
+      pauseAutoScroll();
+      window.scrollBy({ top: 300, behavior: "smooth" });
+    }
+
+    function updateDirection() { scrollDirection = directionSelect.value; }
+    function updateStep() { scrollStep = Number(stepSelect.value); }
+
+    function updateSpeed() {
+      scrollInterval = Number(speedRange.value);
+      speedValue.textContent = scrollInterval;
+      if (scrollTimer !== null) { startAutoScroll(); }
+    }
+
+    startButton.addEventListener("click", startAutoScroll);
+    pauseButton.addEventListener("click", pauseAutoScroll);
+    stopButton.addEventListener("click", stopAutoScroll);
+    scrollTopButton.addEventListener("click", scrollToTop);
+    floatingTopButton.addEventListener("click", scrollToTop);
+    scrollUpButton.addEventListener("click", manualScrollUp);
+    scrollDownButton.addEventListener("click", manualScrollDown);
+    directionSelect.addEventListener("change", updateDirection);
+    stepSelect.addEventListener("change", updateStep);
+    speedRange.addEventListener("input", updateSpeed);
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { pauseAutoScroll(); }
+    });
+
+    window.addEventListener("touchstart", pauseAutoScroll, { passive: true });
+    window.addEventListener("wheel", pauseAutoScroll, { passive: true });
+
+    window.addEventListener("load", function () {
+      updateDirection();
+      updateStep();
+      updateSpeed();
+      if (autoStartToggle.checked) { startAutoScroll(); }
+    });
+  </script>
+</body>
+</html>

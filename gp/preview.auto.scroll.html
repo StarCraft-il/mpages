@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Mobile First Smooth Auto Scroll Reader</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(15, 23, 42, 0.86);
+      --card: #0f172a;
+      --card-soft: #111c31;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --soft: #94a3b8;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --border: rgba(255, 255, 255, 0.1);
+      --shadow: rgba(0, 0, 0, 0.38);
+
+      --reader-height: 62vh;
+      --focus-height: 54%;
+      --reader-text-size: 18px;
+      --reader-line-height: 1.75;
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), transparent 30rem),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.15), transparent 28rem),
+        var(--bg);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    .page {
+      width: min(100%, 920px);
+      margin: 0 auto;
+      padding: 22px 14px 180px;
+    }
+
+    .hero {
+      padding: 22px 4px 18px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 10vw, 4.7rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .hero p {
+      max-width: 68ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .reader-card {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 8rem),
+        var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 28px 90px var(--shadow);
+    }
+
+    .reader-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 8px 14px;
+    }
+
+    .reader-title {
+      min-width: 0;
+    }
+
+    .reader-title strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .reader-title span {
+      display: block;
+      margin-top: 3px;
+      color: var(--soft);
+      font-size: 0.84rem;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: #082f49;
+      background: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .reader-window {
+      position: relative;
+      height: var(--reader-height);
+      overflow: hidden;
+      border-radius: calc(var(--radius) - 8px);
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(17, 28, 49, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      isolation: isolate;
+      touch-action: none;
+    }
+
+    .reader-window::before,
+    .reader-window::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .reader-window::before {
+      top: 0;
+      height: 24%;
+      background: linear-gradient(
+        180deg,
+        rgba(7, 17, 31, 0.98),
+        rgba(7, 17, 31, 0.62),
+        transparent
+      );
+    }
+
+    .reader-window::after {
+      bottom: 0;
+      height: 24%;
+      background: linear-gradient(
+        0deg,
+        rgba(7, 17, 31, 0.98),
+        rgba(7, 17, 31, 0.62),
+        transparent
+      );
+    }
+
+    .focus-band {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: calc((100% - var(--focus-height)) / 2);
+      bottom: calc((100% - var(--focus-height)) / 2);
+      z-index: 4;
+      border-top: 1px solid rgba(56, 189, 248, 0.22);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 16px;
+      pointer-events: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 0 40px rgba(56, 189, 248, 0.035);
+    }
+
+    .scroll-content {
+      position: relative;
+      z-index: 2;
+      padding: 34vh 22px 34vh;
+      color: var(--text);
+      font-size: var(--reader-text-size);
+      line-height: var(--reader-line-height);
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      contain: layout paint;
+    }
+
+    .scroll-content h2 {
+      margin: 0 0 16px;
+      font-size: clamp(1.55rem, 7vw, 2.7rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .scroll-content h3 {
+      margin: 34px 0 10px;
+      color: var(--accent);
+      font-size: 1.08em;
+      line-height: 1.25;
+    }
+
+    .scroll-content p {
+      margin: 0 0 1.1em;
+      color: rgba(248, 250, 252, 0.88);
+    }
+
+    .scroll-content .lead {
+      color: var(--muted);
+      font-size: 1.08em;
+    }
+
+    .scroll-content blockquote {
+      margin: 26px 0;
+      padding: 18px 18px;
+      color: #e0f2fe;
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+    }
+
+    .controls-panel {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 20;
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+    }
+
+    .controls-panel.is-hidden {
+      opacity: 0;
+      transform: translateY(calc(100% + 20px));
+      pointer-events: none;
+    }
+
+    .controls-card {
+      max-height: 66svh;
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 12px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(18px);
+    }
+
+    .controls-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .controls-top strong {
+      font-size: 0.98rem;
+    }
+
+    .controls-top span {
+      display: block;
+      margin-top: 2px;
+      color: var(--soft);
+      font-size: 0.78rem;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .control-button {
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .control-button.primary {
+      color: #082f49;
+      background: var(--accent);
+    }
+
+    .control-button.subtle {
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .field {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .field label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 750;
+    }
+
+    .field output {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .show-controls {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 21;
+      min-height: 46px;
+      padding: 0 16px;
+      border-radius: 999px;
+      color: #082f49;
+      background: var(--accent);
+      font-weight: 900;
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+    }
+
+    .show-controls[hidden] {
+      display: none;
+    }
+
+    @media (min-width: 700px) {
+      .page {
+        padding: 34px 22px 130px;
+      }
+
+      .reader-card {
+        padding: 18px;
+      }
+
+      .scroll-content {
+        padding-inline: 48px;
+      }
+
+      .controls-panel {
+        left: auto;
+        right: 18px;
+        bottom: 18px;
+        width: min(430px, calc(100vw - 36px));
+      }
+
+      .control-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .field.position-field {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .controls-panel,
+      .scroll-content {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Mobile-first smooth reader</div>
+      <h1>Easy-on-the-eye auto scrolling</h1>
+      <p>
+        The text scrolls inside a controlled reading window instead of moving the
+        whole page. The faded edges and focus band make the movement calmer,
+        while the controls let you adjust speed, size, direction, and readability.
+      </p>
+    </header>
+
+    <section class="reader-card" aria-label="Auto scrolling reader">
+      <div class="reader-header">
+        <div class="reader-title">
+          <strong>Smooth reading window</strong>
+          <span>Use the controls to tune the scroll for your eyes.</span>
+        </div>
+
+        <div class="status-pill" id="statusPill">Playing</div>
+      </div>
+
+      <div class="reader-window" id="readerWindow">
+        <div class="focus-band" aria-hidden="true"></div>
+
+        <article class="scroll-content" id="scrollContent">
+          <h2>A calm scrolling text sample</h2>
+
+          <p class="lead">
+            This demo is built for a mobile screen first. It keeps the important
+            reading area stable, uses soft fading at the top and bottom, and moves
+            the text with a GPU-friendly transform instead of forcing the browser
+            to scroll the entire page.
+          </p>
+
+          <p>
+            Automatic scrolling can feel uncomfortable when it is too fast, when
+            the whole screen moves, or when the movement jumps between frames.
+            This version avoids that by moving only the text layer inside a fixed
+            reader window. The rest of the interface remains still, so the eyes
+            have a stable frame of reference.
+          </p>
+
+          <h3>Why the reader window helps</h3>
+
+          <p>
+            A full page scroll makes everything move: the header, the content,
+            the background, and often the browser interface. That can create a
+            feeling of flicker, especially on smaller screens. A contained reader
+            is gentler because only the text moves while the surrounding card
+            remains fixed.
+          </p>
+
+          <p>
+            The fade at the top and bottom hides the harsh moment where lines
+            enter or leave the visible area. The focus band gives the eye a
+            comfortable middle zone. You can change the focus size using the
+            controls panel.
+          </p>
+
+          <blockquote>
+            For comfortable reading, use a slow speed, a generous line height,
+            and a reader window that does not occupy the entire screen.
+          </blockquote>
+
+          <h3>Mobile-first behavior</h3>
+
+          <p>
+            On a phone, the layout uses one column, large touch targets, and a
+            compact controls panel. The panel can be hidden when you want the
+            reading area to feel clean. When hidden, a small button remains in
+            the corner so the controls are easy to bring back.
+          </p>
+
+          <p>
+            On wider screens, the same controls move to a compact floating panel.
+            The reader itself keeps a comfortable maximum width so the line
+            length does not become too wide. This is useful because long lines
+            make it harder to track the next line while reading.
+          </p>
+
+          <h3>Speed and direction</h3>
+
+          <p>
+            The scroll speed is measured in pixels per second. Low values feel
+            more like a teleprompter. Higher values are useful when testing or
+            scanning. The direction button lets the content move down or back up.
+          </p>
+
+          <p>
+            When the text reaches the end, it pauses briefly and then reverses
+            direction. This avoids the visual shock of instantly jumping from the
+            bottom back to the top. You can still use the reset button whenever
+            you want to return to the beginning.
+          </p>
+
+          <h3>Text size and line height</h3>
+
+          <p>
+            The text size control changes the reading text without changing the
+            interface. Larger text can be easier to read, but it also means fewer
+            words fit in the window. The line height control changes the spacing
+            between lines. A little extra spacing usually makes moving text more
+            comfortable.
+          </p>
+
+          <p>
+            If the motion feels tiring, first lower the speed. Then increase line
+            height slightly. After that, adjust the focus band until the middle
+            of the reading window feels calm and stable.
+          </p>
+
+          <h3>Reader window height</h3>
+
+          <p>
+            The window height control changes how much of the screen is used for
+            the scrolling text. A smaller window gives the eyes a tighter target.
+            A taller window shows more context. On mobile, a middle value often
+            feels best because it leaves enough room for the interface while
+            keeping the text area predictable.
+          </p>
+
+          <p>
+            The goal is not only smooth animation. The goal is stable visual
+            composition. When the background, borders, and controls remain still,
+            the moving text is easier to follow.
+          </p>
+
+          <h3>Manual control</h3>
+
+          <p>
+            The position slider lets you move through the content manually.
+            Using it automatically pauses the reader so you can inspect a
+            specific paragraph. Press play again to continue automatic movement
+            from the current position.
+          </p>
+
+          <p>
+            You can also drag directly inside the reading window on touch
+            screens. This gives you a simple way to correct the position without
+            relying only on the slider.
+          </p>
+
+          <h3>More sample text</h3>
+
+          <p>
+            Smooth scrolling is especially useful for speeches, scripts,
+            presentations, reading practice, guided meditation text, lyrics
+            practice, study notes, long instructions, or any situation where the
+            reader wants a steady pace without constantly touching the screen.
+          </p>
+
+          <p>
+            The best settings depend on the content. Dense technical material
+            should usually move slowly. Familiar text can move faster. Large text
+            needs more vertical space. Short lines need less effort to track.
+          </p>
+
+          <p>
+            For a teleprompter-like setup, hide the controls, increase the text
+            size, set the reader height high, and use a slow scroll speed. For a
+            reading practice setup, keep the controls visible and use the
+            position slider to repeat difficult sections.
+          </p>
+
+          <p>
+            The implementation uses `requestAnimationFrame`, which lets the
+            browser synchronize the animation with the screen refresh rate. The
+            content is moved with `translate3d`, which is usually smoother than
+            repeatedly changing layout properties.
+          </p>
+
+          <p>
+            The text includes extra padding before the first paragraph and after
+            the last paragraph. That lets the beginning and ending pass through
+            the focus band naturally instead of starting or stopping abruptly at
+            the edge of the visible area.
+          </p>
+
+          <h3>Final section</h3>
+
+          <p>
+            This final section gives you enough content to see the scrolling
+            behavior clearly. Try reducing the focus band size, increasing the
+            line height, and setting the speed to a very low value. The result
+            should feel calm, predictable, and easy to follow.
+          </p>
+
+          <p>
+            When you are satisfied with the settings, hide the controls panel.
+            The scrolling text will continue inside the reader window, and the
+            screen will remain visually stable.
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <button class="show-controls" id="showControlsButton" type="button" hidden>
+    Controls
+  </button>
+
+  <aside class="controls-panel" id="controlsPanel" aria-label="Scroll controls">
+    <div class="controls-card">
+      <div class="controls-top">
+        <div>
+          <strong>Scroll controls</strong>
+          <span>Adjust motion and readability</span>
+        </div>
+
+        <button class="control-button subtle" id="hideControlsButton" type="button">
+          Hide
+        </button>
+      </div>
+
+      <div class="button-row">
+        <button class="control-button primary" id="playPauseButton" type="button">
+          Pause
+        </button>
+
+        <button class="control-button" id="directionButton" type="button">
+          Direction: Down
+        </button>
+
+        <button class="control-button" id="slowerButton" type="button">
+          Slower
+        </button>
+
+        <button class="control-button" id="fasterButton" type="button">
+          Faster
+        </button>
+
+        <button class="control-button subtle" id="resetButton" type="button">
+          Reset
+        </button>
+
+        <button class="control-button subtle" id="comfortButton" type="button">
+          Comfort
+        </button>
+      </div>
+
+      <div class="control-grid">
+        <div class="field">
+          <label for="speedRange">
+            Speed
+            <output id="speedOutput">28 px/s</output>
+          </label>
+          <input id="speedRange" type="range" min="4" max="120" step="1" value="28" />
+        </div>
+
+        <div class="field">
+          <label for="heightRange">
+            Window size
+            <output id="heightOutput">62 vh</output>
+          </label>
+          <input id="heightRange" type="range" min="38" max="86" step="1" value="62" />
+        </div>
+
+        <div class="field">
+          <label for="focusRange">
+            Focus size
+            <output id="focusOutput">54%</output>
+          </label>
+          <input id="focusRange" type="range" min="28" max="82" step="1" value="54" />
+        </div>
+
+        <div class="field">
+          <label for="textSizeRange">
+            Text size
+            <output id="textSizeOutput">18 px</output>
+          </label>
+          <input id="textSizeRange" type="range" min="15" max="30" step="1" value="18" />
+        </div>
+
+        <div class="field">
+          <label for="lineHeightRange">
+            Line height
+            <output id="lineHeightOutput">1.75</output>
+          </label>
+          <input id="lineHeightRange" type="range" min="1.35" max="2.35" step="0.05" value="1.75" />
+        </div>
+
+        <div class="field position-field">
+          <label for="positionRange">
+            Position
+            <output id="positionOutput">0%</output>
+          </label>
+          <input id="positionRange" type="range" min="0" max="1000" step="1" value="0" />
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    const root = document.documentElement;
+
+    const readerWindow = document.getElementById("readerWindow");
+    const scrollContent = document.getElementById("scrollContent");
+
+    const controlsPanel = document.getElementById("controlsPanel");
+    const showControlsButton = document.getElementById("showControlsButton");
+    const hideControlsButton = document.getElementById("hideControlsButton");
+
+    const playPauseButton = document.getElementById("playPauseButton");
+    const directionButton = document.getElementById("directionButton");
+    const slowerButton = document.getElementById("slowerButton");
+    const fasterButton = document.getElementById("fasterButton");
+    const resetButton = document.getElementById("resetButton");
+    const comfortButton = document.getElementById("comfortButton");
+
+    const speedRange = document.getElementById("speedRange");
+    const heightRange = document.getElementById("heightRange");
+    const focusRange = document.getElementById("focusRange");
+    const textSizeRange = document.getElementById("textSizeRange");
+    const lineHeightRange = document.getElementById("lineHeightRange");
+    const positionRange = document.getElementById("positionRange");
+
+    const speedOutput = document.getElementById("speedOutput");
+    const heightOutput = document.getElementById("heightOutput");
+    const focusOutput = document.getElementById("focusOutput");
+    const textSizeOutput = document.getElementById("textSizeOutput");
+    const lineHeightOutput = document.getElementById("lineHeightOutput");
+    const positionOutput = document.getElementById("positionOutput");
+    const statusPill = document.getElementById("statusPill");
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    let isPlaying = !prefersReducedMotion;
+    let direction = 1;
+    let scrollPosition = 0;
+    let maximumScrollPosition = 0;
+    let lastFrameTime = null;
+    let edgePauseUntil = 0;
+    let touchStartY = 0;
+
+    const edgePauseMilliseconds = 700;
+
+    function clamp(value, minimum, maximum) {
+      return Math.min(Math.max(value, minimum), maximum);
+    }
+
+    function getSpeed() {
+      return Number(speedRange.value);
+    }
+
+    function refreshMaximumScrollPosition() {
+      maximumScrollPosition = Math.max(
+        0,
+        scrollContent.scrollHeight - readerWindow.clientHeight
+      );
+
+      scrollPosition = clamp(scrollPosition, 0, maximumScrollPosition);
+      applyScrollPosition();
+    }
+
+    function applyScrollPosition() {
+      scrollContent.style.transform =
+        "translate3d(0, " + (-scrollPosition).toFixed(2) + "px, 0)";
+
+      const progress =
+        maximumScrollPosition === 0
+          ? 0
+          : Math.round((scrollPosition / maximumScrollPosition) * 1000);
+
+      positionRange.value = String(progress);
+      positionOutput.textContent = (progress / 10).toFixed(1) + "%";
+    }
+
+    function updatePlayStateText() {
+      playPauseButton.textContent = isPlaying ? "Pause" : "Play";
+      statusPill.textContent = isPlaying ? "Playing" : "Paused";
+    }
+
+    function updateDirectionText() {
+      directionButton.textContent =
+        direction === 1 ? "Direction: Down" : "Direction: Up";
+    }
+
+    function setPlaying(value) {
+      isPlaying = value;
+      lastFrameTime = null;
+      updatePlayStateText();
+    }
+
+    function setDirection(value) {
+      direction = value;
+      updateDirectionText();
+    }
+
+    function setSpeed(value) {
+      const nextValue = clamp(Number(value), Number(speedRange.min), Number(speedRange.max));
+      speedRange.value = String(nextValue);
+      speedOutput.textContent = nextValue + " px/s";
+    }
+
+    function setReaderHeight(value) {
+      const nextValue = clamp(Number(value), Number(heightRange.min), Number(heightRange.max));
+      heightRange.value = String(nextValue);
+      root.style.setProperty("--reader-height", nextValue + "vh");
+      heightOutput.textContent = nextValue + " vh";
+
+      requestAnimationFrame(refreshMaximumScrollPosition);
+    }
+
+    function setFocusSize(value) {
+      const nextValue = clamp(Number(value), Number(focusRange.min), Number(focusRange.max));
+      focusRange.value = String(nextValue);
+      root.style.setProperty("--focus-height", nextValue + "%");
+      focusOutput.textContent = nextValue + "%";
+    }
+
+    function setTextSize(value) {
+      const nextValue = clamp(Number(value), Number(textSizeRange.min), Number(textSizeRange.max));
+      textSizeRange.value = String(nextValue);
+      root.style.setProperty("--reader-text-size", nextValue + "px");
+      textSizeOutput.textContent = nextValue + " px";
+
+      requestAnimationFrame(refreshMaximumScrollPosition);
+    }
+
+    function setLineHeight(value) {
+      const nextValue = clamp(
+        Number(value),
+        Number(lineHeightRange.min),
+        Number(lineHeightRange.max)
+      );
+
+      lineHeightRange.value = String(nextValue);
+      root.style.setProperty("--reader-line-height", String(nextValue));
+      lineHeightOutput.textContent = nextValue.toFixed(2);
+
+      requestAnimationFrame(refreshMaximumScrollPosition);
+    }
+
+    function resetReader() {
+      scrollPosition = 0;
+      edgePauseUntil = 0;
+      setDirection(1);
+      applyScrollPosition();
+    }
+
+    function moveByAmount(amount) {
+      scrollPosition = clamp(
+        scrollPosition + amount,
+        0,
+        maximumScrollPosition
+      );
+
+      applyScrollPosition();
+    }
+
+    function applyComfortPreset() {
+      setSpeed(22);
+      setReaderHeight(62);
+      setFocusSize(52);
+      setTextSize(19);
+      setLineHeight(1.85);
+      setPlaying(true);
+    }
+
+    function animate(currentTime) {
+      if (lastFrameTime === null) {
+        lastFrameTime = currentTime;
+      }
+
+      const deltaSeconds = Math.min((currentTime - lastFrameTime) / 1000, 0.08);
+      lastFrameTime = currentTime;
+
+      if (isPlaying && currentTime >= edgePauseUntil && maximumScrollPosition > 0) {
+        const nextPosition =
+          scrollPosition + direction * getSpeed() * deltaSeconds;
+
+        if (nextPosition >= maximumScrollPosition) {
+          scrollPosition = maximumScrollPosition;
+          setDirection(-1);
+          edgePauseUntil = currentTime + edgePauseMilliseconds;
+        } else if (nextPosition <= 0) {
+          scrollPosition = 0;
+          setDirection(1);
+          edgePauseUntil = currentTime + edgePauseMilliseconds;
+        } else {
+          scrollPosition = nextPosition;
+        }
+
+        applyScrollPosition();
+      }
+
+      window.requestAnimationFrame(animate);
+    }
+
+    playPauseButton.addEventListener("click", function () {
+      setPlaying(!isPlaying);
+    });
+
+    directionButton.addEventListener("click", function () {
+      setDirection(direction * -1);
+    });
+
+    slowerButton.addEventListener("click", function () {
+      setSpeed(getSpeed() - 4);
+    });
+
+    fasterButton.addEventListener("click", function () {
+      setSpeed(getSpeed() + 4);
+    });
+
+    resetButton.addEventListener("click", function () {
+      resetReader();
+    });
+
+    comfortButton.addEventListener("click", function () {
+      applyComfortPreset();
+    });
+
+    hideControlsButton.addEventListener("click", function () {
+      controlsPanel.classList.add("is-hidden");
+      showControlsButton.hidden = false;
+    });
+
+    showControlsButton.addEventListener("click", function () {
+      controlsPanel.classList.remove("is-hidden");
+      showControlsButton.hidden = true;
+    });
+
+    speedRange.addEventListener("input", function () {
+      setSpeed(speedRange.value);
+    });
+
+    heightRange.addEventListener("input", function () {
+      setReaderHeight(heightRange.value);
+    });
+
+    focusRange.addEventListener("input", function () {
+      setFocusSize(focusRange.value);
+    });
+
+    textSizeRange.addEventListener("input", function () {
+      setTextSize(textSizeRange.value);
+    });
+
+    lineHeightRange.addEventListener("input", function () {
+      setLineHeight(lineHeightRange.value);
+    });
+
+    positionRange.addEventListener("input", function () {
+      setPlaying(false);
+
+      const progress = Number(positionRange.value) / 1000;
+      scrollPosition = maximumScrollPosition * progress;
+
+      applyScrollPosition();
+    });
+
+    readerWindow.addEventListener(
+      "wheel",
+      function (event) {
+        event.preventDefault();
+        setPlaying(false);
+        moveByAmount(event.deltaY);
+      },
+      { passive: false }
+    );
+
+    readerWindow.addEventListener(
+      "touchstart",
+      function (event) {
+        if (event.touches.length !== 1) {
+          return;
+        }
+
+        setPlaying(false);
+        touchStartY = event.touches[0].clientY;
+      },
+      { passive: true }
+    );
+
+    readerWindow.addEventListener(
+      "touchmove",
+      function (event) {
+        if (event.touches.length !== 1) {
+          return;
+        }
+
+        event.preventDefault();
+
+        const currentY = event.touches[0].clientY;
+        const deltaY = touchStartY - currentY;
+
+        touchStartY = currentY;
+        moveByAmount(deltaY);
+      },
+      { passive: false }
+    );
+
+    window.addEventListener("resize", function () {
+      refreshMaximumScrollPosition();
+    });
+
+    setSpeed(speedRange.value);
+    setReaderHeight(heightRange.value);
+    setFocusSize(focusRange.value);
+    setTextSize(textSizeRange.value);
+    setLineHeight(lineHeightRange.value);
+    updatePlayStateText();
+    updateDirectionText();
+
+    requestAnimationFrame(function () {
+      refreshMaximumScrollPosition();
+      window.requestAnimationFrame(animate);
+    });
+  </script>
+</body>
+</html>
