@@ -574,7 +574,7 @@ ul#aliyusTableLinks {
                     @extend .base-pasuk;
                     padding-top: ($pasukPaddingTop - 6px);
                     padding-bottom: ($pasukPaddingBottom - 6px);
-                    color: #006000;
+                    color: maroon;
                     word-spacing: $wordSpacingSize !important;
                     //page-break-before: avoid !important;
                     //break-before: avoid !important;
@@ -586,7 +586,7 @@ ul#aliyusTableLinks {
                     //line-height: $tajLineHeight;
                     padding-top: ($pasukPaddingTop - 6px);
                     padding-bottom: ($pasukPaddingBottom - 6px);
-                    color: maroon;
+                    color: #006000;
                     word-spacing: $wordSpacingSize !important;
                     //page-break-before: avoid !important;
                     //break-before: avoid !important;

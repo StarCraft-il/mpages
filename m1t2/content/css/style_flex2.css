@@ -378,13 +378,13 @@ ul#aliyusTableLinks {
 #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
   padding-top: 8px;
   padding-bottom: 4px;
-  color: #006000;
+  color: maroon;
   word-spacing: 36px !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
   padding-top: 8px;
   padding-bottom: 4px;
-  color: maroon;
+  color: #006000;
   word-spacing: 36px !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
