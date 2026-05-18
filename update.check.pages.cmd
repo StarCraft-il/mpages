@@ -106,6 +106,18 @@ function Get-HtmlFiles {
     return @($items | ForEach-Object { $_.RelativePath })
 }
 
+function New-RandomLinkVersion {
+    param(
+        [System.Collections.Generic.HashSet[int]]$UsedVersions
+    )
+
+    do {
+        $version = Get-Random -Minimum 100000000 -Maximum 1000000000
+    } while (-not $UsedVersions.Add($version))
+
+    return $version
+}
+
 function Get-CheckPagesTemplate {
 @'
 <!DOCTYPE html>
@@ -386,7 +398,7 @@ function Get-CheckPagesTemplate {
                     <input id="txtFilter" class="search-box" type="text" placeholder="Filter html pages by file name or path..." />
                     <div class="toolbar-actions">
                         <button id="btnReloadPage" class="button-action blue" type="button">Reload page</button>
-                        <a class="button-link" href="./index.html">Back to index</a>
+                        <a class="button-link" href="./index.html?v=__INDEX_LINK_VERSION__">Back to index</a>
                     </div>
                 </div>
             </div>
@@ -407,6 +419,14 @@ function Get-CheckPagesTemplate {
             const filesContainer = document.getElementById('filesContainer');
             const fileCountElement = document.getElementById('fileCount');
             const folderCountElement = document.getElementById('folderCount');
+
+            function getFilePath(fileEntry) {
+                return fileEntry.path;
+            }
+
+            function getFileVersion(fileEntry) {
+                return fileEntry.version;
+            }
 
             function escapeHtml(value) {
                 return String(value)
@@ -437,12 +457,13 @@ function Get-CheckPagesTemplate {
                 return path.substring(lastSlashIndex + 1);
             }
 
-            function buildFileHref(path) {
+            function buildFileHref(fileEntry) {
+                const path = getFilePath(fileEntry);
                 const encodedPath = path.split('/').map(function (segment) {
                     return encodeURIComponent(segment);
                 }).join('/');
 
-                return './' + encodedPath;
+                return './' + encodedPath + '?v=' + encodeURIComponent(getFileVersion(fileEntry));
             }
 
             function getFolderRank(folderPath) {
@@ -460,21 +481,22 @@ function Get-CheckPagesTemplate {
             function groupFiles(files) {
                 const groups = new Map();
 
-                files.forEach(function (filePath) {
+                files.forEach(function (fileEntry) {
+                    const filePath = getFilePath(fileEntry);
                     const folderPath = getFolderPath(filePath);
 
                     if (!groups.has(folderPath)) {
                         groups.set(folderPath, []);
                     }
 
-                    groups.get(folderPath).push(filePath);
+                    groups.get(folderPath).push(fileEntry);
                 });
 
                 const groupedResult = Array.from(groups.entries()).map(function (entry) {
                     return {
                         folderPath: entry[0],
                         files: entry[1].slice().sort(function (left, right) {
-                            return left.localeCompare(right, undefined, { sensitivity: 'base' });
+                            return getFilePath(left).localeCompare(getFilePath(right), undefined, { sensitivity: 'base' });
                         })
                     };
                 });
@@ -495,7 +517,9 @@ function Get-CheckPagesTemplate {
 
             function renderFiles() {
                 const rawFilter = txtFilter.value.trim().toLowerCase();
-                const filteredFiles = allFiles.filter(function (filePath) {
+                const filteredFiles = allFiles.filter(function (fileEntry) {
+                    const filePath = getFilePath(fileEntry);
+
                     if (rawFilter.length === 0) {
                         return true;
                     }
@@ -513,10 +537,12 @@ function Get-CheckPagesTemplate {
                 }
 
                 const html = groupedFiles.map(function (group) {
-                    const fileLinksHtml = group.files.map(function (filePath) {
+                    const fileLinksHtml = group.files.map(function (fileEntry) {
+                        const filePath = getFilePath(fileEntry);
+
                         return [
                             '<a class="file-link" href="',
-                            buildFileHref(filePath),
+                            buildFileHref(fileEntry),
                             '">',
                             '<span class="file-name">',
                             escapeHtml(getFileName(filePath)),
@@ -566,16 +592,25 @@ function Get-CheckPagesTemplate {
 
 function Update-CheckPagesFile {
     $htmlFiles = Get-HtmlFiles
-    $jsonFiles = $htmlFiles | ConvertTo-Json -Depth 3
+    $usedVersions = [System.Collections.Generic.HashSet[int]]::new()
+    $htmlFileLinks = @($htmlFiles | ForEach-Object {
+        [PSCustomObject]@{
+            path = $_
+            version = New-RandomLinkVersion -UsedVersions $usedVersions
+        }
+    })
+    $jsonFiles = ConvertTo-Json -InputObject $htmlFileLinks -Depth 4
     $template = Get-CheckPagesTemplate
     $generatedOn = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     $outputPath = Join-Path -Path $script:RootPath -ChildPath 'check.pages.html'
+    $indexLinkVersion = New-RandomLinkVersion -UsedVersions $usedVersions
 
     $content = $template.
         Replace('__FILE_LIST_JSON__', $jsonFiles).
         Replace('__GENERATED_ON__', $generatedOn).
         Replace('__FILE_COUNT__', [string]$htmlFiles.Count).
-        Replace('__LOG_FILE_NAME__', $script:LogFileName)
+        Replace('__LOG_FILE_NAME__', $script:LogFileName).
+        Replace('__INDEX_LINK_VERSION__', [string]$indexLinkVersion)
 
     Set-Content -LiteralPath $outputPath -Value $content -Encoding UTF8
     Write-Log -Level ([LogLevel]::Info) -Message ("Updated check.pages.html with {0} html page(s)." -f $htmlFiles.Count)
