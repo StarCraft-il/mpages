@@ -1,1 +1,585 @@
-1
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Auto Scroll Reader</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e10;
+    --surface: #18181c;
+    --surface2: #22222a;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8e6e0;
+    --muted: #8a8880;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.15);
+    --success: #5dba8a;
+    --success-dim: rgba(93,186,138,0.15);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-title { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-doc { font-family: 'Lora', serif; font-size: 15px; color: var(--text); }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface);
+    transition: all 0.3s ease;
+  }
+  .status-pill.live { color: var(--success); border-color: var(--success-dim); background: var(--success-dim); }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    transition: all 0.3s;
+  }
+  .status-pill.live .status-dot { animation: blink 1.2s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ── Progress bar ── */
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), #e8c98e);
+    transition: width 0.12s linear;
+  }
+
+  /* ── Scroll area ── */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 32px 24px 120px;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  .article-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .article-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(22px, 6vw, 28px);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .article-byline {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-h {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 32px 0 12px;
+    line-height: 1.4;
+  }
+
+  .article-p {
+    font-size: 15.5px;
+    line-height: 1.8;
+    color: #c8c6c0;
+    margin-bottom: 20px;
+    font-family: 'Lora', serif;
+    font-weight: 400;
+  }
+
+  .article-pull {
+    border-left: 2px solid var(--accent);
+    padding: 14px 18px;
+    margin: 28px 0;
+    background: var(--accent-dim);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .article-pull p {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .end-marker {
+    text-align: center;
+    padding: 40px 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .end-marker::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 auto 16px;
+  }
+
+  /* ── Controls Panel ── */
+  .controls-panel {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(14,14,16,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 16px 20px 24px;
+    z-index: 20;
+  }
+
+  .ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .ctrl-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ctrl-icon svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .ctrl-label {
+    font-size: 12px;
+    color: var(--muted);
+    width: 52px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .ctrl-track {
+    flex: 1;
+    position: relative;
+    height: 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.15); }
+  input[type=range]::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 3px solid var(--bg);
+    cursor: pointer;
+  }
+
+  .ctrl-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 48px 48px;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .btn-play {
+    height: 48px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-play:active { transform: scale(0.97); }
+  .btn-play.scrolling {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1000;
+  }
+  .btn-play svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .btn-icon {
+    height: 48px;
+    width: 48px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-icon:active { transform: scale(0.93); background: var(--surface2); }
+  .btn-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Slider fill track */
+  .range-wrap { position: relative; flex: 1; height: 28px; display: flex; align-items: center; }
+  .range-fill {
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    border-radius: 2px;
+    background: var(--accent);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <span class="header-title">Auto Scroll</span>
+    <span class="header-doc">The Reader</span>
+  </div>
+  <div class="status-pill" id="statusPill">
+    <span class="status-dot"></span>
+    <span id="statusLabel">Paused</span>
+  </div>
+</header>
+
+<div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+
+<div class="scroll-area" id="scrollArea">
+  <p class="article-eyebrow">Long-form · 8 min read</p>
+  <h1 class="article-title">The slow art of reading in a distracted age</h1>
+  <p class="article-byline">By the Editors · Updated this morning</p>
+
+  <p class="article-p">In a world engineered for constant interruption, sitting with a piece of long-form writing has become almost countercultural. Push notifications, algorithmic feeds, and infinite scroll have rewired our attention spans — and not for the better. Auto-scroll is a small act of reclaiming that lost depth.</p>
+
+  <p class="article-p">The idea is simple: instead of manually dragging your thumb upward every few seconds, you set a pace and let the text come to you. Your hands rest. Your eyes settle. Your mind, freed from the mechanical task of scrolling, can finally give itself over to meaning.</p>
+
+  <div class="article-pull">
+    <p>"When the text moves at your reading speed, comprehension doesn't just improve — it transforms. You begin to hear the writer's voice."</p>
+  </div>
+
+  <h2 class="article-h">Speed and the brain</h2>
+
+  <p class="article-p">Reading speed is not a fixed trait. It fluctuates by time of day, subject matter, fatigue, and mood. Dense academic prose demands a crawl; a breezy travel essay invites a glide. The speed slider lets you match the pace to the moment, not to some average human norm.</p>
+
+  <p class="article-p">Research in cognitive psychology suggests that controlled, predictable text motion reduces the cognitive overhead of self-paced reading. When you don't have to decide when to scroll, the decision-making parts of your brain quiet down, and the language-processing parts can take centre stage.</p>
+
+  <h2 class="article-h">Why smoothness is not cosmetic</h2>
+
+  <p class="article-p">A scroll that jumps in discrete ticks forces the visual system to perform micro-saccades — rapid, involuntary eye movements — to re-anchor on the text. Over minutes, this creates a subtle fatigue. Smooth, continuous motion removes those micro-saccades entirely. The eye doesn't chase; it leads.</p>
+
+  <p class="article-p">The smoothness control blends each scroll step into the last using linear interpolation — an easing function borrowed from animation. The result feels like the page is breathing rather than lurching. At high smoothness, there is a gentle inertia: the scroll accelerates softly as it begins and decelerates as it approaches a stop, like water finding its level.</p>
+
+  <div class="article-pull">
+    <p>"Smooth motion is not a luxury. It is the difference between reading that feels effortless and reading that quietly exhausts you."</p>
+  </div>
+
+  <h2 class="article-h">The discipline of a set pace</h2>
+
+  <p class="article-p">There is an unexpected benefit to surrendering control of the scroll speed: it makes skimming harder. When text moves at a deliberate pace, the temptation to race ahead diminishes. You are held gently accountable to the paragraph in front of you, the way a guided museum tour holds you to each room before moving to the next.</p>
+
+  <p class="article-p">Writers, particularly essayists and novelists, structure sentences and paragraphs to be experienced in sequence. Auto-scroll honours that structure. The rhythm of a sentence is not just its grammar — it is also its timing, the breath between clauses, the pause after a colon. Moving at a measured pace, you begin to feel that rhythm as the author intended it.</p>
+
+  <h2 class="article-h">Practical advice for long sessions</h2>
+
+  <p class="article-p">Start slower than you think necessary. Most people overestimate their comfortable reading speed on a screen, especially at night or in low light. Set the speed one notch below where you feel impatient; after a few paragraphs, you will rarely want to go faster.</p>
+
+  <p class="article-p">Keep smoothness high for narrative or literary writing, where the flow of prose is part of the experience. For technical documentation or structured lists, you can lower smoothness — the slight jitter actually helps the eye catch discrete items, like bullets or code lines, as distinct units.</p>
+
+  <p class="article-p">Pause freely. Auto-scroll is not a deadline. The pause button exists precisely so you can linger on a sentence, look up a word, or simply breathe. Resume when you are ready. The text is patient.</p>
+
+  <h2 class="article-h">A quiet resistance</h2>
+
+  <p class="article-p">Choosing to read slowly is, in a modest way, a political act. It asserts that not all information needs to be consumed instantly. That some ideas require incubation time. That the writer's craft — the choice of this word over that one, the placement of a paragraph break — deserves to be noticed, not skipped past.</p>
+
+  <p class="article-p">Auto-scroll does not make you read faster. It makes the act of reading feel less effortful, so you are more willing to read at all. And that willingness — to sit with something for ten or twenty or forty minutes — is the rarest digital resource we have left.</p>
+
+  <div class="end-marker">End of article</div>
+</div>
+
+<div class="controls-panel">
+  <div class="ctrl-row">
+    <div class="ctrl-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <span class="ctrl-label">Speed</span>
+    <div class="range-wrap">
+      <div class="range-fill" id="speedFill"></div>
+      <input type="range" id="speedSlider" min="1" max="10" value="3" step="1">
+    </div>
+    <span class="ctrl-val" id="speedVal">3</span>
+  </div>
+
+  <div class="ctrl-row">
+    <div class="ctrl-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 12 C6 6 10 6 12 12 C14 18 18 18 21 12"/></svg>
+    </div>
+    <span class="ctrl-label">Smooth</span>
+    <div class="range-wrap">
+      <div class="range-fill" id="smoothFill"></div>
+      <input type="range" id="smoothSlider" min="1" max="10" value="7" step="1">
+    </div>
+    <span class="ctrl-val" id="smoothVal">7</span>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-play" id="playBtn" onclick="togglePlay()">
+      <svg id="playIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/>
+      </svg>
+      <span id="playLabel">Play</span>
+    </button>
+    <button class="btn-icon" onclick="resetTop()" title="Back to top">
+      <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/><line x1="12" y1="9" x2="12" y2="21"/></svg>
+    </button>
+    <button class="btn-icon" onclick="jumpBottom()" title="Jump to end">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const scrollArea = document.getElementById('scrollArea');
+const progFill = document.getElementById('progFill');
+const playBtn = document.getElementById('playBtn');
+const playIcon = document.getElementById('playIcon');
+const playLabel = document.getElementById('playLabel');
+const statusPill = document.getElementById('statusPill');
+const statusLabel = document.getElementById('statusLabel');
+const speedSlider = document.getElementById('speedSlider');
+const smoothSlider = document.getElementById('smoothSlider');
+const speedVal = document.getElementById('speedVal');
+const smoothVal = document.getElementById('smoothVal');
+const speedFill = document.getElementById('speedFill');
+const smoothFill = document.getElementById('smoothFill');
+
+let playing = false;
+let rafId = null;
+let targetY = 0;
+let currentY = 0;
+let lastTs = null;
+
+const PAUSE_SVG = `<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>`;
+const PLAY_SVG = `<polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/>`;
+
+function updateSliderFill(slider, fill) {
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  fill.style.width = pct + '%';
+}
+
+speedSlider.oninput = () => {
+  speedVal.textContent = speedSlider.value;
+  updateSliderFill(speedSlider, speedFill);
+};
+
+smoothSlider.oninput = () => {
+  smoothVal.textContent = smoothSlider.value;
+  updateSliderFill(smoothSlider, smoothFill);
+};
+
+updateSliderFill(speedSlider, speedFill);
+updateSliderFill(smoothSlider, smoothFill);
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function tick(ts) {
+  if (!playing) return;
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min(ts - lastTs, 50);
+  lastTs = ts;
+
+  const speed = parseInt(speedSlider.value);
+  const smooth = parseInt(smoothSlider.value);
+  const pxPerMs = speed * 0.045;
+  targetY += pxPerMs * dt;
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+
+  if (targetY >= maxScroll) {
+    targetY = maxScroll;
+    const lerpT = 1 - (smooth / 10) * 0.88;
+    currentY = lerp(currentY, targetY, Math.min(1, lerpT + 0.25));
+    scrollArea.scrollTop = Math.round(currentY);
+    updateProgress(currentY, maxScroll);
+    stopPlay();
+    return;
+  }
+
+  const lerpT = 1 - (smooth / 10) * 0.92;
+  currentY = lerp(currentY, targetY, Math.max(0.008, lerpT));
+  scrollArea.scrollTop = Math.round(currentY);
+  updateProgress(currentY, maxScroll);
+
+  rafId = requestAnimationFrame(tick);
+}
+
+function updateProgress(cur, max) {
+  const pct = max > 0 ? Math.min(100, (cur / max) * 100) : 0;
+  progFill.style.width = pct.toFixed(1) + '%';
+}
+
+function togglePlay() {
+  playing ? stopPlay() : startPlay();
+}
+
+function startPlay() {
+  playing = true;
+  currentY = scrollArea.scrollTop;
+  targetY = currentY;
+  lastTs = null;
+
+  playIcon.innerHTML = PAUSE_SVG;
+  playLabel.textContent = 'Pause';
+  playBtn.classList.add('scrolling');
+  statusPill.classList.add('live');
+  statusLabel.textContent = 'Scrolling';
+
+  rafId = requestAnimationFrame(tick);
+}
+
+function stopPlay() {
+  playing = false;
+  cancelAnimationFrame(rafId);
+  lastTs = null;
+
+  playIcon.innerHTML = PLAY_SVG;
+  playLabel.textContent = 'Play';
+  playBtn.classList.remove('scrolling');
+  statusPill.classList.remove('live');
+  statusLabel.textContent = 'Paused';
+}
+
+scrollArea.addEventListener('scroll', () => {
+  if (!playing) {
+    currentY = scrollArea.scrollTop;
+    targetY = currentY;
+    const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+    updateProgress(currentY, maxScroll);
+  }
+}, { passive: true });
+
+scrollArea.addEventListener('touchstart', () => {
+  if (playing) stopPlay();
+}, { passive: true });
+
+function resetTop() {
+  stopPlay();
+  currentY = 0; targetY = 0;
+  scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress(0, scrollArea.scrollHeight - scrollArea.clientHeight);
+}
+
+function jumpBottom() {
+  stopPlay();
+  const max = scrollArea.scrollHeight - scrollArea.clientHeight;
+  currentY = max; targetY = max;
+  scrollArea.scrollTo({ top: max, behavior: 'smooth' });
+  updateProgress(max, max);
+}
+</script>
+</body>
+</html>
