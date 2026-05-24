@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Full Screen Demo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .screen {
+            width: 100%;
+            min-height: 90vh;
+            padding: 24px 18px;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .screen:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .screen:-webkit-full-screen {
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            line-height: 1.2;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        button {
+            width: 100%;
+            min-height: 52px;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .message {
+            min-height: 22px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        @media (min-width: 768px) {
+            .screen {
+                max-width: 560px;
+                min-height: 620px;
+                padding: 40px;
+            }
+
+            h1 {
+                font-size: 2.6rem;
+            }
+
+            p {
+                font-size: 1.1rem;
+            }
+
+            button {
+                width: auto;
+                min-width: 220px;
+                align-self: center;
+                padding: 0 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="screen" id="fullscreenArea">
+        <h1>Mobile First Full Screen</h1>
+
+        <p>
+            This page is designed mobile first. Tap the button below to display
+            this content in full screen mode.
+        </p>
+
+        <button type="button" id="fullscreenButton">
+            Open Full Screen
+        </button>
+
+        <div class="message" id="message"></div>
+    </main>
+
+    <script>
+        const fullscreenArea = document.getElementById("fullscreenArea");
+        const fullscreenButton = document.getElementById("fullscreenButton");
+        const message = document.getElementById("message");
+
+        function getFullscreenElement() {
+            return document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                null;
+        }
+
+        async function openFullscreen(element) {
+            if (element.requestFullscreen) {
+                await element.requestFullscreen();
+                return;
+            }
+
+            if (element.webkitRequestFullscreen) {
+                await element.webkitRequestFullscreen();
+                return;
+            }
+
+            throw new Error("Fullscreen is not supported by this browser.");
+        }
+
+        async function closeFullscreen() {
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+                return;
+            }
+
+            if (document.webkitExitFullscreen) {
+                await document.webkitExitFullscreen();
+                return;
+            }
+
+            throw new Error("Exit fullscreen is not supported by this browser.");
+        }
+
+        async function toggleFullscreen() {
+            message.textContent = "";
+
+            try {
+                if (getFullscreenElement()) {
+                    await closeFullscreen();
+                    return;
+                }
+
+                await openFullscreen(fullscreenArea);
+            } catch (error) {
+                message.textContent = "Fullscreen is not supported or was blocked by this browser.";
+            }
+        }
+
+        function updateButtonText() {
+            fullscreenButton.textContent = getFullscreenElement()
+                ? "Exit Full Screen"
+                : "Open Full Screen";
+        }
+
+        fullscreenButton.addEventListener("click", toggleFullscreen);
+        document.addEventListener("fullscreenchange", updateButtonText);
+        document.addEventListener("webkitfullscreenchange", updateButtonText);
+    </script>
+
+</body>
+</html>
