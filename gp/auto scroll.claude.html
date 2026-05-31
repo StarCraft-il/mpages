@@ -421,9 +421,9 @@
     <span class="ctrl-label">Smooth</span>
     <div class="range-wrap">
       <div class="range-fill" id="smoothFill"></div>
-      <input type="range" id="smoothSlider" min="1" max="10" value="7" step="1">
+      <input type="range" id="smoothSlider" min="1" max="100" value="50" step="1">
     </div>
-    <span class="ctrl-val" id="smoothVal">7</span>
+    <span class="ctrl-val" id="smoothVal">50</span>
   </div>
 
   <div class="btn-row">
@@ -494,7 +494,7 @@ function tick(ts) {
 
   const speed = parseInt(speedSlider.value);
   const smooth = parseInt(smoothSlider.value);
-  const pxPerMs = speed * 0.045;
+  const pxPerMs = speed * 0.025;
   targetY += pxPerMs * dt;
 
   const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
@@ -509,7 +509,7 @@ function tick(ts) {
     return;
   }
 
-  const lerpT = 1 - (smooth / 10) * 0.92;
+  const lerpT = 1 - (smooth / 10) * 0.02;
   currentY = lerp(currentY, targetY, Math.max(0.008, lerpT));
   scrollArea.scrollTop = Math.round(currentY);
   updateProgress(currentY, maxScroll);
