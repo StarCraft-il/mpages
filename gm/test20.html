@@ -258,4 +258,218 @@
             <div class="cell" data-index="3"></div>
             <div class="cell" data-index="4"></div>
             <div class="cell" data-index="5"></div>
-            <div class
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <div class="status-text" id="status">Your turn</div>
+
+        <button class="reset-btn" onclick="resetGame(false)">Restart Match</button>
+    </div>
+
+    <script>
+        const boardEl = document.getElementById('board');
+        const cells = document.querySelectorAll('.cell');
+        const statusEl = document.getElementById('status');
+        const scorePlayerEl = document.getElementById('score-player');
+        const scoreAiEl = document.getElementById('score-ai');
+        const scoreTiesEl = document.getElementById('score-ties');
+        const diffButtons = document.querySelectorAll('.diff-btn');
+
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let isGameActive = true;
+        let currentPlayer = 'X'; // Human is X, AI is O
+        let difficulty = 'easy';
+        
+        let scores = { player: 0, ai: 0, ties: 0 };
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (board[clickedCellIndex] !== '' || !isGameActive || currentPlayer === 'O') {
+                return;
+            }
+
+            makeMove(clickedCellIndex, 'X');
+            
+            if (!checkResult()) {
+                currentPlayer = 'O';
+                statusEl.innerHTML = `AI thinking...`;
+                setTimeout(aiMove, 400); // Slight delay for realistic feel
+            }
+        }
+
+        function makeMove(index, player) {
+            board[index] = player;
+            cells[index].classList.add(player.toLowerCase());
+        }
+
+        function setDifficulty(level) {
+            difficulty = level;
+            diffButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.toLowerCase() === level) btn.classList.add('active');
+            });
+            resetGame(true); // Reset board but keep scores when changing difficulty
+        }
+
+        /* AI Engines */
+        function aiMove() {
+            if (!isGameActive) return;
+
+            let move;
+            if (difficulty === 'easy') {
+                move = getRandomMove();
+            } else if (difficulty === 'medium') {
+                // 60% chance to make smartest move, 40% random
+                move = Math.random() < 0.6 ? getBestMove() : getRandomMove();
+            } else {
+                move = getBestMove(); // Unbeatable Minimax
+            }
+
+            if (move !== null && move !== undefined) {
+                makeMove(move, 'O');
+                if (!checkResult()) {
+                    currentPlayer = 'X';
+                    statusEl.innerHTML = `Your turn`;
+                }
+            }
+        }
+
+        function getRandomMove() {
+            let avail = board.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+            return avail.length > 0 ? avail[Math.floor(Math.random() * avail.length)] : null;
+        }
+
+        function getBestMove() {
+            let bestScore = -Infinity;
+            let move;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    let score = minimax(board, 0, false);
+                    board[i] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            return move;
+        }
+
+        function minimax(currBoard, depth, isMaximizing) {
+            let result = evaluateBoard();
+            if (result !== null) {
+                if (result === 'O') return 10 - depth;
+                if (result === 'X') return depth - 10;
+                if (result === 'tie') return 0;
+            }
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (currBoard[i] === '') {
+                        currBoard[i] = 'O';
+                        let score = minimax(currBoard, depth + 1, false);
+                        currBoard[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (currBoard[i] === '') {
+                        currBoard[i] = 'X';
+                        let score = minimax(currBoard, depth + 1, true);
+                        currBoard[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function evaluateBoard() {
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            if (!board.includes('')) return 'tie';
+            return null;
+        }
+
+        /* Check Results & Score handling */
+        function checkResult() {
+            let roundWon = false;
+            let winningLine = [];
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (board[a] === '' || board[b] === '' || board[c] === '') continue;
+                if (board[a] === board[b] && board[b] === board[c]) {
+                    roundWon = true;
+                    winningLine = [a, b, c];
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                isGameActive = false;
+                winningLine.forEach(idx => cells[idx].classList.add('winning-cell'));
+                if (currentPlayer === 'X') {
+                    statusEl.innerHTML = `<span style="color: var(--color-x)">You Won!</span>`;
+                    scores.player++;
+                    scorePlayerEl.textContent = scores.player;
+                } else {
+                    statusEl.innerHTML = `<span style="color: var(--color-o)">AI Won!</span>`;
+                    scores.ai++;
+                    scoreAiEl.textContent = scores.ai;
+                }
+                return true;
+            }
+
+            if (!board.includes('')) {
+                statusEl.innerHTML = `It's a <span style="color: var(--text-muted)">Tie!</span>`;
+                scores.ties++;
+                scoreTiesEl.textContent = scores.ties;
+                isGameActive = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        function resetGame(resetScoreboard = false) {
+            board = ['', '', '', '', '', '', '', '', ''];
+            isGameActive = true;
+            currentPlayer = 'X';
+            statusEl.innerHTML = `Your turn`;
+            
+            cells.forEach(cell => {
+                cell.className = 'cell'; // clears 'x', 'o', and 'winning-cell'
+            });
+
+            if (resetScoreboard) {
+                scores = { player: 0, ai: 0, ties: 0 };
+                scorePlayerEl.textContent = '0';
+                scoreAiEl.textContent = '0';
+                scoreTiesEl.textContent = '0';
+            }
+        }
+    </script>
+</body>
+</html>
