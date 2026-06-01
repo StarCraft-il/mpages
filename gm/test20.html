@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Nexus Tic-Tac-Toe</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --color-x: #38bdf8;
+            --shadow-x: 0 0 15px #0284c7;
+            --color-o: #f43f5e;
+            --shadow-o: 0 0 15px #e11d48;
+            --accent: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, var(--color-x), var(--color-o));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Difficulty Selector */
+        .difficulty-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+        }
+
+        .diff-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .diff-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.1);
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .score-block h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .score-block p {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .score-x { color: var(--color-x); }
+        .score-o { color: var(--color-o); }
+
+        /* Game Board */
+        .board {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px;
+            padding: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .cell {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            position: relative;
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        /* X and O visual effects */
+        .cell.x::before, .cell.x::after {
+            content: '';
+            position: absolute;
+            width: 10%;
+            height: 60%;
+            background-color: var(--color-x);
+            border-radius: 4px;
+            box-shadow: var(--shadow-x);
+            animation: spawn 0.25s ease-out forwards;
+        }
+        .cell.x::before { transform: rotate(45deg); }
+        .cell.x::after { transform: rotate(-45deg); }
+
+        .cell.o::before {
+            content: '';
+            position: absolute;
+            width: 45%;
+            height: 45%;
+            border: 8px solid var(--color-o);
+            border-radius: 50%;
+            box-shadow: var(--shadow-o), inset var(--shadow-o);
+            animation: spawn 0.25s ease-out forwards;
+        }
+
+        @keyframes spawn {
+            from { transform: scale(0) rotate(0deg); opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Winning highlight line effect mimicry */
+        .cell.winning-cell {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent);
+        }
+
+        /* Status and Controls */
+        .status-text {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-height: 27px;
+            color: var(--text-muted);
+        }
+
+        .status-text span {
+            font-weight: 700;
+        }
+
+        .reset-btn {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            padding: 15px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>NEON NEXUS</h1>
+        </header>
+
+        <div class="difficulty-container">
+            <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
+            <button class="diff-btn" onclick="setDifficulty('medium')">Medium</button>
+            <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+
+        <div class="scoreboard">
+            <div class="score-block">
+                <h3>Player (X)</h3>
+                <p id="score-player" class="score-x">0</p>
+            </div>
+            <div class="score-block">
+                <h3>Ties</h3>
+                <p id="score-ties">0</p>
+            </div>
+            <div class="score-block">
+                <h3>AI (O)</h3>
+                <p id="score-ai" class="score-o">0</p>
+            </div>
+        </div>
+
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class
