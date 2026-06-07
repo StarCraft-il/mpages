@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="he" dir="rtl" id="root-element">
 <head>
-    <title>PDF - f2.z056.Korach.20260607.155544</title>
+    <title>PDF - f2.z064.Korach.20260607.172851</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -155,10 +155,10 @@
 <body>
     <div id="pdfDisplayShell" class="pdf-display-shell">
         <div id="pdfScrollContainer" class="pdf-scroll-container">
-            <iframe id="pdfFrame" class="pdf-frame" src="f2.z056.Korach.20260607.155544.pdf#toolbar=0&amp;navpanes=0&amp;scrollbar=1" title="f2.z056.Korach.20260607.155544.pdf"></iframe>
+            <iframe id="pdfFrame" class="pdf-frame" src="about:blank" data-pdf-source="f2.z064.Korach.20260607.172851.pdf" title="f2.z064.Korach.20260607.172851.pdf" allowfullscreen></iframe>
             <div class="pdf-fallback">
                 אם ה-PDF לא מוצג, פתח את הקובץ:
-                <a href="f2.z056.Korach.20260607.155544.pdf#toolbar=0&amp;navpanes=0&amp;scrollbar=1">f2.z056.Korach.20260607.155544.pdf</a>
+                <a href="f2.z064.Korach.20260607.172851.pdf">f2.z064.Korach.20260607.172851.pdf</a>
             </div>
         </div>
 
@@ -203,6 +203,7 @@
             const pdfDisplayShell = document.getElementById("pdfDisplayShell");
             const pdfScrollContainer = document.getElementById("pdfScrollContainer");
             const pdfFrame = document.getElementById("pdfFrame");
+            const pdfSource = pdfFrame ? pdfFrame.getAttribute("data-pdf-source") : "";
             const autoScrollToggleButton = document.getElementById("autoScrollToggleButton");
             const autoScrollPanel = document.getElementById("autoScrollPanel");
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
@@ -250,6 +251,21 @@
             let programmaticScrollReleaseTimerId = 0;
             let fullScreenEnabled = true;
             let fullScreenActivationPending = false;
+
+            function loadPdfInFrame() {
+                if (!pdfFrame || !pdfSource) {
+                    setStatus("PDF source is missing.");
+                    return;
+                }
+
+                const currentFrameSource = pdfFrame.getAttribute("src") || "";
+                if (currentFrameSource === pdfSource) {
+                    return;
+                }
+
+                pdfFrame.setAttribute("src", pdfSource);
+                setStatus("Loading PDF file.");
+            }
 
             function clamp(value, min, max) {
                 return Math.min(max, Math.max(min, value));
@@ -607,6 +623,7 @@
 
             if (autoScrollToggleButton) {
                 autoScrollToggleButton.addEventListener("click", function () {
+                    loadPdfInFrame();
                     setPanelVisible(autoScrollPanel.hidden);
                 });
             }
@@ -703,8 +720,10 @@
             setPanelVisible(stepScrollConfig.showControlPanelByDefault);
             updateUi();
             clearProgrammaticScrollFlag();
+            loadPdfInFrame();
 
             window.addEventListener("load", function () {
+                loadPdfInFrame();
                 requestFullScreen("Full screen opened on page load.");
 
                 if (stepScrollConfig.startOnLoad && stepScrollEnabled) {
