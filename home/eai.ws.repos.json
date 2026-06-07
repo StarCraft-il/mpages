@@ -1,0 +1,369 @@
+{
+  "repos": [
+    {
+      "category": "Main",
+      "name": "EAI.ES_ETL.RestRishonitCreateNewVisit",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS.RestShavitQuantityCheck",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestCustomerByIdGetDetailed",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.CustomerById",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.CustomerByIdGetDetailed",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.DiaryAppSpecificTreatmentGetDetails",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.GetLabResultsGeneticsList",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.IdanDigitalWalletCardUpdateStatus",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.KPMDCPatientSensitivitiesGet",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.MedicalReferralsGet",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.OmryQueuesGetAvailable",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.OmryTofes17CreateDirect",
+      "iisName": ""
+    },
+    {
+      "category": "Dal",
+      "name": "EAI.WS_ETL.RestDal.PersonCategoriesGetById",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestDiaryAppSpecificTreatmentGetDetails",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestErpayGetKey",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestErpayNewKeyGenerate",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestErpaySignByData",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestFhirHospitalCoverageEligibilityGetList",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestFhirOmryCoverageEligibilityCreate",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestFhirOmryCoverageEligibilityDelete",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestFhirOmryCoverageEligibilityUpdate",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestHandshakeGetKey",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestHandshakeTokenAsync",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestIdanDigitalWalletCardAddRemove",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestIdanDigitalWalletCardUpdateStatus",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestIdanGuardianGetListForPatientId",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestIdanNotesGetByID",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestIdanPregnancyRequestAdd",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestKHSiebelASRDescriptionISRequestAction",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestKPMDCPatientChronicDrugsGetFiltered",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestKPMDCPatientSensitivitiesGet",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestLabResultsGetGeneticsList",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestLogWriter",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMazalHospitalQueueByID",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMedicalEngineeringEquipmentGetById",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMedicalEngineeringOpenServiceRequest",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMedicalReferralsGetFiltered",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMeserApproveApplyServices",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMeserCreateApplyMedicine",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMeserCreateApplyServices",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestOmryOpiateMedicinesGetById",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestOmryTofes17CreateDirect",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestOmryTofes17DeleteDirect",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestOmryTofes17UpdateDirect",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestPersonCategoriesGetById",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestPrintbosProcessRequestById",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestRishonitQueuesCancelVisit",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestRishonitQueuesUpdateVisit",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestSendSMSIsrael",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestShilaPatientVisitsGet",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestTaarRequestsOnlinePatientRecords",
+      "iisName": ""
+    },
+    {
+      "category": "Test",
+      "name": "EAI.WS_ETL.RestTestCICD",
+      "iisName": ""
+    },
+    {
+      "category": "Test",
+      "name": "EAI.WS_ETL.RestTestCICDService1",
+      "iisName": ""
+    },
+    {
+      "category": "Test",
+      "name": "EAI.WS_ETL.RestTestCICDService2",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestTofes17ByPatientHospitalServicesGetUnusedList",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestWhatsAppMessageSend",
+      "iisName": ""
+    },
+    {
+      "category": "Test",
+      "name": "EAI.WS_ETL.RestWhatsAppMessageSend1",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestYarpaStockInfoGetByRobotId",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestYarpaStockOrderUpdateByRobotId",
+      "iisName": ""
+    },
+    {
+      "category": "Main",
+      "name": "EAI.WS_ETL.RestMorDoctorDiariesGet",
+      "iisName": ""
+    },
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestSpecialistsVisitsGetByPatients",
+		"iisName":""
+	},
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestSpecialistsVisitsCreate",
+		"iisName":""
+	},
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestMOHNewBornNotification",
+		"iisName":""
+	},
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestPersonCategories",
+		"iisName":""
+	},
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestMorQueueGuidanceGet",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestMedicalEngineeringHearingAidOrderCreate",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestSpecialistsDoctorDiariesGet",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestSpecialistsWaitingListUpsert",
+		"iisName":""
+	},
+	{
+		"category":"Dal",
+		"name":"EAI.WS_ETL.RestDal.ChameleonFertilityPatientDetailsGetList",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestEncryptIdGetList",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestChameleonFertilityPatientDetailsGetList",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestDemographyForSuppliersInternal",
+		"iisName":""
+	},	
+	{
+		"category":"Main",
+		"name":"EAI.WS_ETL.RestSiebelPetitionSRGetList",
+		"iisName":""
+	}
+  ]
+}

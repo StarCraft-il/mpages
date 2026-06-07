@@ -1,0 +1,128 @@
+﻿(function () {
+    var STR = window.STR || {};
+
+    STR.padStringZero = function (str, len, c) {
+        var s = str,
+          c = c || "0";
+        while (s.length < len) s = c + s;
+        return s;
+    };
+
+    window.STR = STR;
+})();
+
+String.prototype.padZero = function (len, c) {
+    var s = this,
+      c = c || "0";
+    while (s.length < len) s = c + s;
+    return s;
+};
+
+function AllowUnsignedIntegerOnlyNoCtrl() {
+    // Only for mtvIDField
+    if (event.keyCode < 48 || event.keyCode > 57) {
+        if (event.keyCode == 13) {
+            var ctrl = event.target || event.srcElement;
+            ctrl.onblur();
+            event.returnValue = true;
+        } else {
+            event.returnValue = false;
+        }
+    } else {
+        var ctrl = event.target || event.srcElement;
+        if (parseInt(ctrl.value) == 0) {
+            ctrl.value = "";
+            event.returnValue = false;
+        }
+    }
+}
+
+function calcIdCheck(strId) {
+    var sum = 0;
+    var temp, decade, checkDigit;
+    var j = 0;
+    var strId_length = strId.length;
+    for (var i = strId_length; i >= 1; i--) {
+        j++;
+        if (j % 2 != 0) {
+            temp = parseInt(strId.substring(i - 1, i), "10") * 2;
+            if (temp > 8) sum += 1 + (temp % 10);
+            else sum += temp;
+        } else {
+            sum += parseInt(strId.substring(i - 1, i), "10");
+        }
+    }
+
+    if (sum % 10 != 0) decade = (parseInt(sum / 10) + 1) * 10;
+    else decade = sum;
+    checkDigit = decade - sum;
+
+    return checkDigit;
+
+    /*int num = 15;			int	digits =(int) (num % 10) + (num / 10);
+			//--------
+			for(int i=1;i<10;i++){
+				if(i%2==0)
+					System.out.println(i);
+					///*2
+				else
+					////*1
+			}*/
+}
+
+
+function calcCode(valIn) {
+    var val = valIn.toString();
+    var sum = 0;
+    for (var i = 0; i < val.length; i++) {
+        var digit = parseInt(val[i]);
+        if (isNaN(digit))
+            return;
+        var result = digit * (i % 2 == 0 ? 1 : 2);
+        while (result > 0) {
+            sum += result % 10;
+            result = parseInt(result / 10);
+        }
+    }
+    return (10 - (sum % 10)) % 10;
+}
+
+
+function IDValidator(id) {
+    id = id.toString();
+    if (id.length != 9 || isNaN(id)) {  // Make sure ID is formatted properly
+        return false;
+    }
+    var sum = 0, incNum;
+    for (var i in id) {
+        incNum = Number(id[i]) * ((i % 2) + 1);  // Multiply number by 1 or 2
+        sum += (incNum > 9) ? incNum - 9 : incNum;  // Sum the digits up and add to total
+    }
+    var oo = sum;
+    console.log(sum);
+    return (sum % 10 === 0);
+}
+
+function SetIdCheck(dropdownObject, textboxObject, textboxCheckObject) {
+    var idValue;
+    var preValue;
+    var s = "";
+    idValue = textboxObject.value;
+    if (idValue != "") {
+        preValue = dropdownObject.value;
+        var strId_length = idValue.length;
+        if (preValue == -1) {
+            dropdownObject.value = 1;
+            preValue = dropdownObject.value;
+        }
+        if (preValue == 1) {
+            if (idValue.length < 10) {
+                for (var i = strId_length; i < 10; i++) {
+                    s += "0";
+                }
+                textboxObject.value = s + textboxObject.value;
+            }
+            textboxCheckObject.value = calcIdCheck(idValue);
+        }
+    }
+}
