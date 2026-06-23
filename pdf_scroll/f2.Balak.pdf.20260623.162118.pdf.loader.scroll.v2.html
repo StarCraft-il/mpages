@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Loader v2 - Balak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <style>
+        /* Custom scrollbar treatment for clean appearance */
+        #pdf-viewport::-webkit-scrollbar {
+            width: 6px;
+        }
+        #pdf-viewport::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+        canvas {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 12px;
+            width: 100% !important;
+            height: auto !important;
+        }
+        /* Ensure the app container expands properly in native fullscreen mode */
+        #app-container:fullscreen {
+            background-color: #030712;
+            width: 100vw;
+            height: 100vh;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col justify-between select-none">
+
+    <div id="app-container" class="flex flex-col flex-grow justify-between min-h-screen">
+        
+        <div class="bg-gray-800 border-b border-gray-700 p-4 sticky top-0 z-50 shadow-md space-y-4 rounded-b-lg">
+            
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <input type="file" id="file-selector" accept=".pdf" class="block w-full sm:w-1/2 text-xs text-gray-400
+                    file:mr-3 file:py-2 file:px-3
+                    file:rounded-md file:border-0
+                    file:text-xs file:font-semibold
+                    file:bg-indigo-600 file:text-white
+                    hover:file:bg-indigo-500 cursor-pointer" />
+                    
+                <div class="flex gap-2 w-full sm:w-1/2">
+                    <button id="btn-toggle" class="flex-1 bg-emerald-600 active:bg-emerald-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow">
+                        Start
+                    </button>
+                    <button id="btn-fullscreen" class="flex-1 bg-indigo-600 active:bg-indigo-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow flex items-center justify-center gap-1">
+                        Fullscreen
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-900/60 border border-gray-700 rounded-md p-2 text-xs text-gray-300">
+                <span class="font-semibold text-gray-100">PDF pattern:</span>
+                <span class="break-all">f2.*.Balak.pdf.*.pdf</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
+                
+                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
+                    <span class="text-gray-400 font-medium block mb-1">View Height: <span id="val-height" class="text-indigo-400 font-bold">400px</span></span>
+                    <div class="flex gap-1">
+                        <button onclick="adjustHeight(-50)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold text-center">-50</button>
+                        <button onclick="adjustHeight(50)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold text-center">+50</button>
+                        <button onclick="setPresetHeight('75vh')" class="bg-indigo-900/50 text-indigo-300 p-2 rounded border border-indigo-700">75vh</button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
+                    <span class="text-gray-400 font-medium block mb-1">Speed (px/step): <span id="val-speed" class="text-amber-400 font-bold">1px</span></span>
+                    <div class="flex gap-1">
+                        <button onclick="adjustSpeed(-1)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">-1</button>
+                        <button onclick="adjustSpeed(1)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">+1</button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
+                    <span class="text-gray-400 font-medium block mb-1">Step Delay: <span id="val-delay" class="text-pink-400 font-bold">30ms</span></span>
+                    <div class="flex gap-1">
+                        <button onclick="adjustDelay(-5)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">-5ms</button>
+                        <button onclick="adjustDelay(5)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">+5ms</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="flex-grow flex items-center justify-center p-2 bg-gray-950">
+            <div id="pdf-viewport" class="w-full max-w-md mx-auto overflow-y-auto bg-gray-900 rounded-lg border-2 border-dashed border-gray-700 p-2 transition-all duration-200">
+                <div id="pdf-render-container" class="w-full">
+                    <p id="placeholder-text" class="text-center text-gray-500 py-12 text-sm px-4">
+                        Please tap the file button above and load a PDF file matching f2.*.Balak.pdf.*.pdf to begin auto-scrolling.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set up PDF.js Global Worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        // Configuration States
+        let currentPdf = null;
+        let isScrolling = false;
+        let scrollIntervalId = null;
+
+        let scrollHeight = 400; // in pixels
+        let scrollSpeed = 1;    // pixels moved per interval step
+        let scrollDelay = 30;   // millisecond delay between interval steps
+
+        // DOM elements
+        const appContainer = document.getElementById('app-container');
+        const fileSelector = document.getElementById('file-selector');
+        const btnToggle = document.getElementById('btn-toggle');
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+        const pdfViewport = document.getElementById('pdf-viewport');
+        const pdfRenderContainer = document.getElementById('pdf-render-container');
+        const placeholderText = document.getElementById('placeholder-text');
+
+        // Dynamic State UI Printers
+        function updateUIIndicators() {
+            document.getElementById('val-height').innerText = typeof scrollHeight === 'number' ? `${scrollHeight}px` : scrollHeight;
+            document.getElementById('val-speed').innerText = `${scrollSpeed}px`;
+            document.getElementById('val-delay').innerText = `${scrollDelay}ms`;
+            
+            // Set styles dynamically
+            pdfViewport.style.height = typeof scrollHeight === 'number' ? `${scrollHeight}px` : scrollHeight;
+        }
+
+        // Control Adjusters
+        function adjustHeight(amount) {
+            if (typeof scrollHeight !== 'number') scrollHeight = 400;
+            scrollHeight = Math.max(150, Math.min(scrollHeight + amount, 1200));
+            updateUIIndicators();
+        }
+
+        function setPresetHeight(preset) {
+            scrollHeight = preset;
+            updateUIIndicators();
+        }
+
+        function adjustSpeed(amount) {
+            scrollSpeed = Math.max(1, Math.min(scrollSpeed + amount, 20));
+            updateUIIndicators();
+            restartScrollLoopIfNeeded();
+        }
+
+        function adjustDelay(amount) {
+            scrollDelay = Math.max(5, Math.min(scrollDelay + amount, 500));
+            updateUIIndicators();
+            restartScrollLoopIfNeeded();
+        }
+
+        // Auto Scroll Controller
+        function startScrolling() {
+            if (scrollIntervalId) clearInterval(scrollIntervalId);
+            isScrolling = true;
+            btnToggle.innerText = "Pause";
+            btnToggle.classList.replace('bg-emerald-600', 'bg-amber-600');
+            btnToggle.classList.replace('active:bg-emerald-700', 'active:bg-amber-700');
+
+            scrollIntervalId = setInterval(() => {
+                const maxScroll = pdfViewport.scrollHeight - pdfViewport.clientHeight;
+                if (pdfViewport.scrollTop >= maxScroll - 1) {
+                    pdfViewport.scrollTop = 0;
+                } else {
+                    pdfViewport.scrollTop += scrollSpeed;
+                }
+            }, scrollDelay);
+        }
+
+        function stopScrolling() {
+            isScrolling = false;
+            if (scrollIntervalId) {
+                clearInterval(scrollIntervalId);
+                scrollIntervalId = null;
+            }
+            btnToggle.innerText = "Start";
+            btnToggle.classList.replace('bg-amber-600', 'bg-emerald-600');
+            btnToggle.classList.replace('active:bg-amber-700', 'active:bg-emerald-700');
+        }
+
+        function restartScrollLoopIfNeeded() {
+            if (isScrolling) {
+                startScrolling();
+            }
+        }
+
+        // Action Toggles
+        btnToggle.addEventListener('click', () => {
+            if (!currentPdf) {
+                alert("Please upload a PDF file first before trying to play.");
+                return;
+            }
+            if (isScrolling) {
+                stopScrolling();
+            } else {
+                startScrolling();
+            }
+        });
+
+        // Native Fullscreen Toggle Logic
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                appContainer.requestFullscreen().catch(err => {
+                    alert(`Error trying to enable fullscreen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Watch for fullscreen escape changes (e.g. system back buttons) to update UI text
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                btnFullscreen.innerText = "Exit Fullscreen";
+                btnFullscreen.classList.replace('bg-indigo-600', 'bg-rose-600');
+                btnFullscreen.classList.replace('active:bg-indigo-700', 'active:bg-rose-700');
+                
+                // Optional optimization: switch view height to fill layout space when opening fullscreen
+                if (typeof scrollHeight === 'string' && scrollHeight.includes('vh')) {
+                     updateUIIndicators();
+                }
+            } else {
+                btnFullscreen.innerText = "Fullscreen";
+                btnFullscreen.classList.replace('bg-rose-600', 'bg-indigo-600');
+                btnFullscreen.classList.replace('active:bg-rose-700', 'active:bg-indigo-700');
+            }
+        });
+
+        // Async PDF Document Parsing and Pipeline Generation
+        fileSelector.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file || file.type !== 'application/pdf') {
+                alert("Invalid format detected. Please submit a valid PDF document file structure.");
+                return;
+            }
+
+            stopScrolling();
+            placeholderText.innerText = "Processing document pages. Please wait...";
+            pdfRenderContainer.querySelectorAll('canvas').forEach(canvas => canvas.remove());
+
+            const fileReader = new FileReader();
+            fileReader.onload = async function () {
+                const typedarray = new Uint8Array(this.result);
+
+                try {
+                    currentPdf = await pdfjsLib.getDocument(typedarray).promise;
+                    placeholderText.style.display = 'none';
+                    
+                    for (let pageNum = 1; pageNum <= currentPdf.numPages; pageNum++) {
+                        await renderPdfPage(pageNum);
+                    }
+                    
+                    pdfViewport.scrollTop = 0;
+                } catch (error) {
+                    console.error(error);
+                    alert("An error occurred while compiling the asset elements of this PDF.");
+                    placeholderText.innerText = "Error loading PDF.";
+                    placeholderText.style.display = 'block';
+                }
+            };
+            fileReader.readAsArrayBuffer(file);
+        });
+
+        // Page Renderer Logic Context
+        async function renderPdfPage(pageNum) {
+            const page = await currentPdf.getPage(pageNum);
+            const viewportPrototype = page.getViewport({ scale: 1.0 });
+            const customScale = (pdfViewport.clientWidth - 16) / viewportPrototype.width; 
+            const viewport = page.getViewport({ scale: customScale });
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            pdfRenderContainer.appendChild(canvas);
+
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            await page.render(renderContext).promise;
+        }
+
+        // Initialize view metric states
+        updateUIIndicators();
+    </script>
+</body>
+</html>
