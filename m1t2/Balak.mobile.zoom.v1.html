@@ -292,15 +292,43 @@
             }
 
         .tmot-auto-scroll-value {
-            min-width: 70px;
-            text-align: right;
+            min-width: 76px;
+            text-align: center;
             font-size: 13px;
+            font-weight: bold;
             color: #d9ecff;
+            white-space: nowrap;
         }
 
-        .tmot-auto-scroll-range {
+        .tmot-auto-scroll-button-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             width: 100%;
             margin-top: 6px;
+            direction: ltr;
+            flex-wrap: nowrap;
+        }
+
+        .tmot-auto-scroll-button-row .tmot-auto-scroll-value {
+            flex: 1 0 76px;
+        }
+
+        .tmot-auto-scroll-step-button {
+            flex: 0 0 auto;
+            min-width: 42px;
+            padding: 9px 6px;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .tmot-auto-scroll-step-button:active {
+            background: rgba(125, 211, 252, 0.32);
         }
 
         .tmot-auto-scroll-status {
@@ -3046,15 +3074,25 @@
                 <input id="autoScrollDirectionCheckbox" type="checkbox" />
             </div>
             <div class="tmot-auto-scroll-row">
-                <label for="autoScrollSpeedRange">Base speed</label>
+                <label>Base speed</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Base speed">
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="10">+10</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="1">+1</button>
                 <span id="autoScrollSpeedValue" class="tmot-auto-scroll-value">0 px/s</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="-10">-10</button>
             </div>
-            <input id="autoScrollSpeedRange" class="tmot-auto-scroll-range" type="range" min="20" max="120" step="1" />
             <div class="tmot-auto-scroll-row">
-                <label for="autoScrollIdleDelayRange">Resume delay</label>
-                <span id="autoScrollIdleDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                <label>Resume delay</label>
             </div>
-            <input id="autoScrollIdleDelayRange" class="tmot-auto-scroll-range" type="range" min="500" max="5000" step="100" />
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Resume delay">
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="1000">+1000</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="100">+100</button>
+                <span id="autoScrollIdleDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-100">-100</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-1000">-1000</button>
+            </div>
             <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Auto-scroll is preparing.</div>
         </div>
     </div>
@@ -3072,9 +3110,8 @@
             const autoScrollPanel = document.getElementById("autoScrollPanel");
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
             const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
-            const autoScrollSpeedRange = document.getElementById("autoScrollSpeedRange");
+            const autoScrollStepButtons = document.querySelectorAll("[data-auto-scroll-control]");
             const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
-            const autoScrollIdleDelayRange = document.getElementById("autoScrollIdleDelayRange");
             const autoScrollIdleDelayValue = document.getElementById("autoScrollIdleDelayValue");
             const autoScrollStatus = document.getElementById("autoScrollStatus");
 
@@ -3095,6 +3132,8 @@
                 maxBaseSpeed: 120,
                 scrollDown: true,
                 idleResumeDelayMs: 1800,
+                minIdleResumeDelayMs: 500,
+                maxIdleResumeDelayMs: 5000,
                 touchSpeedFactor: 0.22,
                 touchMoveThresholdPixels: 3,
                 programmaticScrollFlagMs: 140
@@ -3205,18 +3244,8 @@
                     autoScrollDirectionCheckbox.checked = autoScrollDirectionDown;
                 }
 
-                if (autoScrollSpeedRange) {
-                    autoScrollSpeedRange.min = String(autoScrollConfig.minBaseSpeed);
-                    autoScrollSpeedRange.max = String(autoScrollConfig.maxBaseSpeed);
-                    autoScrollSpeedRange.value = String(Math.round(autoScrollBaseSpeed));
-                }
-
                 if (autoScrollSpeedValue) {
                     autoScrollSpeedValue.textContent = formatSpeed(getSignedBaseSpeed());
-                }
-
-                if (autoScrollIdleDelayRange) {
-                    autoScrollIdleDelayRange.value = String(autoScrollIdleDelayMs);
                 }
 
                 if (autoScrollIdleDelayValue) {
@@ -3280,6 +3309,44 @@
                 autoScrollBaseSpeed = normalizeBaseSpeed(nextSpeed);
                 autoScrollTargetSpeed = getSignedBaseSpeed();
                 updateAutoScrollUi();
+            }
+
+            function applyAutoScrollControlDelta(controlName, delta) {
+                if (!Number.isFinite(delta)) {
+                    return;
+                }
+
+                if (controlName === "speed") {
+                    syncBaseSpeed(autoScrollBaseSpeed + delta);
+
+                    if (!autoScrollEnabled) {
+                        setAutoScrollStatus("Speed updated while auto-scroll is disabled.");
+                        return;
+                    }
+
+                    if (singleTouchActive || pinchZoomActive) {
+                        setAutoScrollStatus("Speed updated. Auto-scroll will resume after touch or zoom.");
+                        return;
+                    }
+
+                    if (autoScrollPaused) {
+                        scheduleAutoScrollResume("Speed updated. Auto-scroll will resume after idle.");
+                        return;
+                    }
+
+                    setAutoScrollStatus("Auto-scroll speed updated to " + formatSpeed(getSignedBaseSpeed()) + ".");
+                    return;
+                }
+
+                if (controlName === "idleDelay") {
+                    autoScrollIdleDelayMs = clamp(
+                        autoScrollIdleDelayMs + delta,
+                        autoScrollConfig.minIdleResumeDelayMs,
+                        autoScrollConfig.maxIdleResumeDelayMs
+                    );
+                    updateAutoScrollUi();
+                    setAutoScrollStatus("Resume delay updated to " + autoScrollIdleDelayMs + " ms.");
+                }
             }
 
             function setAutoScrollPaused(isPaused, reason) {
@@ -3549,36 +3616,13 @@
                 });
             }
 
-            if (autoScrollSpeedRange) {
-                autoScrollSpeedRange.addEventListener("input", function () {
-                    syncBaseSpeed(Number(autoScrollSpeedRange.value));
-
-                    if (!autoScrollEnabled) {
-                        setAutoScrollStatus("Speed updated while auto-scroll is disabled.");
-                        return;
-                    }
-
-                    if (singleTouchActive || pinchZoomActive) {
-                        setAutoScrollStatus("Speed updated. Auto-scroll will resume after touch or zoom.");
-                        return;
-                    }
-
-                    if (autoScrollPaused) {
-                        scheduleAutoScrollResume("Speed updated. Auto-scroll will resume after idle.");
-                        return;
-                    }
-
-                    setAutoScrollStatus("Auto-scroll speed updated to " + formatSpeed(autoScrollBaseSpeed) + ".");
+            autoScrollStepButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const controlName = button.getAttribute("data-auto-scroll-control");
+                    const delta = Number(button.getAttribute("data-auto-scroll-delta"));
+                    applyAutoScrollControlDelta(controlName, delta);
                 });
-            }
-
-            if (autoScrollIdleDelayRange) {
-                autoScrollIdleDelayRange.addEventListener("input", function () {
-                    autoScrollIdleDelayMs = Number(autoScrollIdleDelayRange.value);
-                    updateAutoScrollUi();
-                    setAutoScrollStatus("Resume delay updated to " + autoScrollIdleDelayMs + " ms.");
-                });
-            }
+            });
 
             if (window.MutationObserver && contentRoot) {
                 const observer = new MutationObserver(function (mutations) {

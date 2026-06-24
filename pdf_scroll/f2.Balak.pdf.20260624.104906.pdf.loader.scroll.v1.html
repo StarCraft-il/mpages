@@ -1,0 +1,991 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl" id="root-element">
+<head>
+    <title>PDF Loader v1 - Balak</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta charset="utf-8" />
+    <meta http-equiv="content-language" content="he" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #111827;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .pdf-display-shell {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #111827;
+            direction: ltr;
+        }
+
+        .pdf-display-shell:fullscreen,
+        .pdf-display-shell:-webkit-full-screen {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #111827;
+        }
+
+        .pdf-scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #202938;
+        }
+
+        .pdf-pages {
+            width: 100%;
+            min-height: 100vh;
+            padding: 8px 0 20px;
+            background: #d1d5db;
+            direction: ltr;
+        }
+
+        .pdf-page-shell {
+            width: fit-content;
+            max-width: 100%;
+            margin: 0 auto 10px;
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        .pdf-page-canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            background: #ffffff;
+        }
+
+        .pdf-loading-message {
+            padding: 28px 16px;
+            color: #111827;
+            background: #ffffff;
+            direction: rtl;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .pdf-loader-panel {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(17, 24, 39, 0.92);
+            direction: rtl;
+        }
+
+        .pdf-loader-panel[hidden] {
+            display: none !important;
+        }
+
+        .pdf-loader-card {
+            width: min(92vw, 420px);
+            padding: 20px;
+            border-radius: 18px;
+            background: #ffffff;
+            color: #111827;
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .pdf-loader-card h1 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            line-height: 1.3;
+        }
+
+        .pdf-loader-card p {
+            margin: 8px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .pdf-loader-expected {
+            direction: ltr;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .pdf-loader-button {
+            width: 100%;
+            margin-top: 14px;
+            border: 0;
+            border-radius: 999px;
+            padding: 14px 18px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: bold;
+            touch-action: manipulation;
+        }
+
+        .pdf-loader-button:active {
+            background: #1d4ed8;
+        }
+
+        .pdf-loader-file-input {
+            display: none;
+        }
+
+        .pdf-fallback {
+            padding: 18px;
+            color: #111827;
+            background: #ffffff;
+            direction: rtl;
+            text-align: center;
+        }
+
+        .pdf-fallback[hidden] {
+            display: none !important;
+        }
+
+        .tmot-auto-scroll-shell {
+            position: fixed;
+            inset-inline-start: 12px;
+            bottom: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            direction: ltr;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .tmot-auto-scroll-toggle,
+        .tmot-auto-scroll-panel button,
+        .tmot-auto-scroll-panel input {
+            touch-action: manipulation;
+        }
+
+        .tmot-auto-scroll-toggle {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 16px;
+            background: rgba(8, 17, 31, 0.92);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .tmot-auto-scroll-panel {
+            width: min(92vw, 320px);
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(8, 17, 31, 0.94);
+            color: #ffffff;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+        }
+
+        .tmot-auto-scroll-panel[hidden] {
+            display: none !important;
+        }
+
+        .tmot-auto-scroll-panel h2 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .tmot-auto-scroll-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tmot-auto-scroll-row label {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .tmot-auto-scroll-value {
+            min-width: 76px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #d9ecff;
+            white-space: nowrap;
+        }
+
+        .tmot-auto-scroll-button-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 6px;
+            direction: ltr;
+            flex-wrap: nowrap;
+        }
+
+        .tmot-auto-scroll-button-row .tmot-auto-scroll-value {
+            flex: 1 0 76px;
+        }
+
+        .tmot-auto-scroll-step-button {
+            flex: 0 0 auto;
+            min-width: 42px;
+            padding: 9px 6px;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .tmot-auto-scroll-step-button:active {
+            background: rgba(125, 211, 252, 0.32);
+        }
+
+        .tmot-auto-scroll-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            line-height: 1.5;
+            color: #e8f3ff;
+        }
+    </style>
+</head>
+<body>
+    <div id="pdfDisplayShell" class="pdf-display-shell">
+        <div id="pdfScrollContainer" class="pdf-scroll-container">
+            <div id="pdfPages" class="pdf-pages">
+                <div id="pdfLoadingMessage" class="pdf-loading-message">Choose a PDF file to display.</div>
+            </div>
+            <div id="pdfFallback" class="pdf-fallback" hidden>
+                לא ניתן להציג את קובץ ה-PDF בדפדפן הזה. נסה לבחור את הקובץ שוב.
+            </div>
+        </div>
+
+        <div id="pdfLoaderPanel" class="pdf-loader-panel">
+            <div class="pdf-loader-card">
+                <h1>PDF Loader v1 - Balak</h1>
+                <p>בחר קובץ PDF כדי להציג אותו במסך הנייד עם גלילה בשלבים.</p>
+                <p>תבנית קובץ PDF:</p>
+                <p class="pdf-loader-expected">f2.*.Balak.pdf.*.pdf</p>
+                <button id="loadPdfButton" type="button" class="pdf-loader-button">Load PDF file</button>
+                <input id="pdfFileInput" class="pdf-loader-file-input" type="file" accept="application/pdf,.pdf" />
+            </div>
+        </div>
+
+        <div class="tmot-auto-scroll-shell" dir="ltr">
+            <button id="autoScrollToggleButton" type="button" class="tmot-auto-scroll-toggle" aria-expanded="false" aria-controls="autoScrollPanel">PDF Scroll</button>
+            <div id="autoScrollPanel" class="tmot-auto-scroll-panel" hidden>
+                <h2>PDF Scroll</h2>
+                <div class="tmot-auto-scroll-row">
+                    <button id="reloadPdfButton" type="button">Load PDF file</button>
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label for="autoScrollEnabledCheckbox">Enabled</label>
+                    <input id="autoScrollEnabledCheckbox" type="checkbox" />
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label for="pdfFullScreenCheckbox">Full screen</label>
+                    <input id="pdfFullScreenCheckbox" type="checkbox" checked />
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label for="autoScrollDirectionCheckbox">Direction</label>
+                    <input id="autoScrollDirectionCheckbox" type="checkbox" />
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label>Screen height</label>
+                </div>
+                <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Screen height">
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="10">+10</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="1">+1</button>
+                    <span id="autoScrollStepHeightValue" class="tmot-auto-scroll-value">0%</span>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-1">-1</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-10">-10</button>
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label>Wait delay</label>
+                </div>
+                <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Wait delay">
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="1000">+1000</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="100">+100</button>
+                    <span id="autoScrollWaitDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-100">-100</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-1000">-1000</button>
+                </div>
+                <div class="tmot-auto-scroll-row">
+                    <label>Scroll duration</label>
+                </div>
+                <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Scroll duration">
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="500">+500</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="50">+50</button>
+                    <span id="autoScrollAnimationDurationValue" class="tmot-auto-scroll-value">0 ms</span>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-50">-50</button>
+                    <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-500">-500</button>
+                </div>
+                <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Choose a PDF file.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        (function () {
+            const pdfDisplayShell = document.getElementById("pdfDisplayShell");
+            const pdfScrollContainer = document.getElementById("pdfScrollContainer");
+            const pdfPages = document.getElementById("pdfPages");
+            const pdfFallback = document.getElementById("pdfFallback");
+            const pdfLoaderPanel = document.getElementById("pdfLoaderPanel");
+            const loadPdfButton = document.getElementById("loadPdfButton");
+            const reloadPdfButton = document.getElementById("reloadPdfButton");
+            const pdfFileInput = document.getElementById("pdfFileInput");
+            const autoScrollToggleButton = document.getElementById("autoScrollToggleButton");
+            const autoScrollPanel = document.getElementById("autoScrollPanel");
+            const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
+            const pdfFullScreenCheckbox = document.getElementById("pdfFullScreenCheckbox");
+            const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
+            const autoScrollStepButtons = document.querySelectorAll("[data-step-scroll-control]");
+            const autoScrollStepHeightValue = document.getElementById("autoScrollStepHeightValue");
+            const autoScrollWaitDelayValue = document.getElementById("autoScrollWaitDelayValue");
+            const autoScrollAnimationDurationValue = document.getElementById("autoScrollAnimationDurationValue");
+            const autoScrollStatus = document.getElementById("autoScrollStatus");
+
+            const stepScrollConfig = {
+                enabled: true,
+                showControlPanelByDefault: false,
+                screenHeightPercent: 30,
+                minScreenHeightPercent: 25,
+                maxScreenHeightPercent: 100,
+                waitDelayMs: 4000,
+                minWaitDelayMs: 500,
+                maxWaitDelayMs: 10000,
+                animationDurationMs: 5000,
+                minAnimationDurationMs: 2000,
+                maxAnimationDurationMs: 10000,
+                scrollDown: true,
+                manualResumeDelayMs: 1800,
+                programmaticScrollFlagMs: 160
+            };
+
+            let stepScrollEnabled = stepScrollConfig.enabled;
+            let stepScrollDirectionDown = stepScrollConfig.scrollDown;
+            let stepScrollScreenHeightPercent = stepScrollConfig.screenHeightPercent;
+            let stepScrollWaitDelayMs = stepScrollConfig.waitDelayMs;
+            let stepScrollAnimationDurationMs = stepScrollConfig.animationDurationMs;
+            let stepScrollPaused = true;
+            let stepScrollWaitTimerId = 0;
+            let stepScrollFrameId = 0;
+            let stepScrollAnimationStartTime = 0;
+            let stepScrollStartTop = 0;
+            let stepScrollTargetTop = 0;
+            let manualResumeTimerId = 0;
+            let programmaticScrollActive = false;
+            let programmaticScrollReleaseTimerId = 0;
+            let fullScreenEnabled = true;
+            let fullScreenActivationPending = false;
+            let pdfRenderCompleted = false;
+
+            function configurePdfJsWorker() {
+                if (!window.pdfjsLib) {
+                    return false;
+                }
+
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+                return true;
+            }
+
+            async function loadSelectedPdfFile(file) {
+                if (!file) {
+                    return;
+                }
+
+                if (!configurePdfJsWorker()) {
+                    showPdfFallback("PDF renderer was not loaded.");
+                    return;
+                }
+
+                try {
+                    setPaused(true, "Reading PDF file.");
+                    showLoadingMessage("Reading PDF file: " + file.name);
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdfBytes = new Uint8Array(arrayBuffer);
+                    await renderPdfBytes(pdfBytes, file.name);
+                } catch (error) {
+                    showPdfFallback("Could not read the selected PDF file.");
+                }
+            }
+
+            async function renderPdfBytes(pdfBytes, fileName) {
+                try {
+                    setPaused(true, "Rendering PDF file.");
+                    clearPdfPages();
+                    showLoadingMessage("Rendering PDF file: " + fileName);
+                    const loadingTask = window.pdfjsLib.getDocument({ data: pdfBytes });
+                    const pdfDocument = await loadingTask.promise;
+                    clearPdfPages();
+
+                    for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber++) {
+                        await renderPdfPage(pdfDocument, pageNumber);
+                        setStatus("Rendered PDF page " + pageNumber + "/" + pdfDocument.numPages + ".");
+                    }
+
+                    pdfRenderCompleted = true;
+                    if (pdfFallback) {
+                        pdfFallback.hidden = true;
+                    }
+
+                    if (pdfLoaderPanel) {
+                        pdfLoaderPanel.hidden = true;
+                    }
+
+                    setStatus("PDF loaded in mobile display.");
+                    if (stepScrollEnabled) {
+                        resumeScroll("PDF scroll started after PDF loaded.");
+                    }
+                } catch (error) {
+                    pdfRenderCompleted = false;
+                    showPdfFallback("Could not render the selected PDF file.");
+                }
+            }
+
+            async function renderPdfPage(pdfDocument, pageNumber) {
+                const page = await pdfDocument.getPage(pageNumber);
+                const baseViewport = page.getViewport({ scale: 1 });
+                const availableWidth = Math.max(280, pdfScrollContainer.clientWidth - 16);
+                const scale = availableWidth / baseViewport.width;
+                const viewport = page.getViewport({ scale: scale });
+                const pixelRatio = window.devicePixelRatio || 1;
+                const canvas = document.createElement("canvas");
+                const canvasContext = canvas.getContext("2d");
+                const pageShell = document.createElement("div");
+                const renderContext = {
+                    canvasContext: canvasContext,
+                    viewport: viewport
+                };
+
+                if (!canvasContext) {
+                    throw new Error("Canvas is not supported.");
+                }
+
+                canvas.className = "pdf-page-canvas";
+                canvas.width = Math.floor(viewport.width * pixelRatio);
+                canvas.height = Math.floor(viewport.height * pixelRatio);
+                canvas.style.width = Math.floor(viewport.width) + "px";
+                canvas.style.height = Math.floor(viewport.height) + "px";
+
+                if (pixelRatio !== 1) {
+                    renderContext.transform = [pixelRatio, 0, 0, pixelRatio, 0, 0];
+                }
+
+                pageShell.className = "pdf-page-shell";
+                pageShell.appendChild(canvas);
+                pdfPages.appendChild(pageShell);
+                await page.render(renderContext).promise;
+            }
+
+            function clearPdfPages() {
+                while (pdfPages.firstChild) {
+                    pdfPages.removeChild(pdfPages.firstChild);
+                }
+            }
+
+            function showLoadingMessage(message) {
+                clearPdfPages();
+                const loadingMessage = document.createElement("div");
+                loadingMessage.id = "pdfLoadingMessage";
+                loadingMessage.className = "pdf-loading-message";
+                loadingMessage.textContent = message;
+                pdfPages.appendChild(loadingMessage);
+            }
+
+            function showPdfFallback(message) {
+                if (pdfLoaderPanel) {
+                    pdfLoaderPanel.hidden = false;
+                }
+
+                showLoadingMessage(message);
+
+                if (pdfFallback) {
+                    pdfFallback.hidden = false;
+                }
+
+                setStatus(message);
+            }
+
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function normalizeNumber(value, min, max, fallbackValue) {
+                const numericValue = Number(value);
+                if (Number.isFinite(numericValue)) {
+                    return clamp(numericValue, min, max);
+                }
+
+                return clamp(fallbackValue, min, max);
+            }
+
+            function setStatus(message) {
+                if (!autoScrollStatus) {
+                    return;
+                }
+
+                autoScrollStatus.textContent = message;
+            }
+
+            function getFullScreenElement() {
+                return document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    null;
+            }
+
+            async function openFullScreen() {
+                if (pdfDisplayShell.requestFullscreen) {
+                    await pdfDisplayShell.requestFullscreen();
+                    return;
+                }
+
+                if (pdfDisplayShell.webkitRequestFullscreen) {
+                    await pdfDisplayShell.webkitRequestFullscreen();
+                    return;
+                }
+
+                throw new Error("Fullscreen is not supported by this browser.");
+            }
+
+            async function closeFullScreen() {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                    return;
+                }
+
+                if (document.webkitExitFullscreen) {
+                    await document.webkitExitFullscreen();
+                    return;
+                }
+
+                throw new Error("Exit fullscreen is not supported by this browser.");
+            }
+
+            async function requestFullScreen(messageWhenOpened) {
+                if (!fullScreenEnabled || getFullScreenElement()) {
+                    return;
+                }
+
+                try {
+                    await openFullScreen();
+                    fullScreenActivationPending = false;
+                    if (messageWhenOpened) {
+                        setStatus(messageWhenOpened);
+                    }
+                } catch (error) {
+                    fullScreenActivationPending = true;
+                    setStatus("Full screen will open after the next tap/click.");
+                }
+            }
+
+            async function closeFullScreenIfNeeded() {
+                fullScreenActivationPending = false;
+                if (!getFullScreenElement()) {
+                    return;
+                }
+
+                try {
+                    await closeFullScreen();
+                    setStatus("Full screen disabled.");
+                } catch (error) {
+                    setStatus("Could not exit full screen from this browser.");
+                }
+            }
+
+            function requestPendingFullScreen(event) {
+                if (!fullScreenEnabled || !fullScreenActivationPending || getFullScreenElement()) {
+                    return;
+                }
+
+                if (event.target === pdfFullScreenCheckbox || event.target === pdfFileInput) {
+                    return;
+                }
+
+                requestFullScreen("Full screen opened.");
+            }
+
+            function getScrollElement() {
+                return pdfScrollContainer;
+            }
+
+            function getMaxScrollTop(scrollElement) {
+                return Math.max(0, scrollElement.scrollHeight - scrollElement.clientHeight);
+            }
+
+            function getStepPixels() {
+                return Math.max(1, Math.round(window.innerHeight * (stepScrollScreenHeightPercent / 100)));
+            }
+
+            function setPanelVisible(isVisible) {
+                if (!autoScrollPanel || !autoScrollToggleButton) {
+                    return;
+                }
+
+                autoScrollPanel.hidden = !isVisible;
+                autoScrollToggleButton.setAttribute("aria-expanded", String(isVisible));
+            }
+
+            function updateUi() {
+                if (autoScrollEnabledCheckbox) {
+                    autoScrollEnabledCheckbox.checked = stepScrollEnabled;
+                }
+
+                if (pdfFullScreenCheckbox) {
+                    pdfFullScreenCheckbox.checked = fullScreenEnabled;
+                }
+
+                if (autoScrollDirectionCheckbox) {
+                    autoScrollDirectionCheckbox.checked = stepScrollDirectionDown;
+                }
+
+                if (autoScrollStepHeightValue) {
+                    autoScrollStepHeightValue.textContent = Math.round(stepScrollScreenHeightPercent) + "%";
+                }
+
+                if (autoScrollWaitDelayValue) {
+                    autoScrollWaitDelayValue.textContent = Math.round(stepScrollWaitDelayMs) + " ms";
+                }
+
+                if (autoScrollAnimationDurationValue) {
+                    autoScrollAnimationDurationValue.textContent = Math.round(stepScrollAnimationDurationMs) + " ms";
+                }
+            }
+
+            function applyStepScrollControlDelta(controlName, delta) {
+                if (!Number.isFinite(delta)) {
+                    return;
+                }
+
+                if (controlName === "screenHeight") {
+                    stepScrollScreenHeightPercent = normalizeNumber(
+                        stepScrollScreenHeightPercent + delta,
+                        stepScrollConfig.minScreenHeightPercent,
+                        stepScrollConfig.maxScreenHeightPercent,
+                        stepScrollConfig.screenHeightPercent
+                    );
+                    updateUi();
+                    setStatus("Step height updated to " + Math.round(stepScrollScreenHeightPercent) + "% of screen.");
+                    return;
+                }
+
+                if (controlName === "waitDelay") {
+                    stepScrollWaitDelayMs = normalizeNumber(
+                        stepScrollWaitDelayMs + delta,
+                        stepScrollConfig.minWaitDelayMs,
+                        stepScrollConfig.maxWaitDelayMs,
+                        stepScrollConfig.waitDelayMs
+                    );
+                    updateUi();
+                    setStatus("Wait delay updated to " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "animationDuration") {
+                    stepScrollAnimationDurationMs = normalizeNumber(
+                        stepScrollAnimationDurationMs + delta,
+                        stepScrollConfig.minAnimationDurationMs,
+                        stepScrollConfig.maxAnimationDurationMs,
+                        stepScrollConfig.animationDurationMs
+                    );
+                    updateUi();
+                    setStatus("Scroll duration updated to " + Math.round(stepScrollAnimationDurationMs) + " ms.");
+                }
+            }
+
+            function clearWaitTimer() {
+                if (stepScrollWaitTimerId === 0) {
+                    return;
+                }
+
+                window.clearTimeout(stepScrollWaitTimerId);
+                stepScrollWaitTimerId = 0;
+            }
+
+            function clearManualResumeTimer() {
+                if (manualResumeTimerId === 0) {
+                    return;
+                }
+
+                window.clearTimeout(manualResumeTimerId);
+                manualResumeTimerId = 0;
+            }
+
+            function cancelScrollFrame() {
+                if (stepScrollFrameId === 0) {
+                    return;
+                }
+
+                window.cancelAnimationFrame(stepScrollFrameId);
+                stepScrollFrameId = 0;
+                stepScrollAnimationStartTime = 0;
+            }
+
+            function clearProgrammaticScrollFlag() {
+                if (programmaticScrollReleaseTimerId !== 0) {
+                    window.clearTimeout(programmaticScrollReleaseTimerId);
+                    programmaticScrollReleaseTimerId = 0;
+                }
+
+                programmaticScrollActive = false;
+            }
+
+            function markProgrammaticScroll() {
+                programmaticScrollActive = true;
+
+                if (programmaticScrollReleaseTimerId !== 0) {
+                    window.clearTimeout(programmaticScrollReleaseTimerId);
+                }
+
+                programmaticScrollReleaseTimerId = window.setTimeout(function () {
+                    programmaticScrollActive = false;
+                    programmaticScrollReleaseTimerId = 0;
+                }, stepScrollConfig.programmaticScrollFlagMs);
+            }
+
+            function setPaused(isPaused, reason) {
+                stepScrollPaused = isPaused;
+
+                if (isPaused) {
+                    clearWaitTimer();
+                    cancelScrollFrame();
+                    if (reason) {
+                        setStatus(reason);
+                    }
+                    return;
+                }
+
+                if (reason) {
+                    setStatus(reason);
+                }
+            }
+
+            function scheduleNextStep(delayOverrideMs) {
+                clearWaitTimer();
+                cancelScrollFrame();
+
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                const waitMs = typeof delayOverrideMs === "number" ? delayOverrideMs : stepScrollWaitDelayMs;
+                if (waitMs > 0) {
+                    setStatus("Waiting " + Math.round(waitMs) + " ms before next " + Math.round(stepScrollScreenHeightPercent) + "% screen step.");
+                }
+
+                stepScrollWaitTimerId = window.setTimeout(function () {
+                    stepScrollWaitTimerId = 0;
+                    startScrollAnimation();
+                }, waitMs);
+            }
+
+            function resumeScroll(reason) {
+                clearManualResumeTimer();
+                clearWaitTimer();
+
+                if (!stepScrollEnabled) {
+                    setPaused(true, "PDF scroll is disabled.");
+                    return;
+                }
+
+                if (!pdfRenderCompleted) {
+                    setPaused(true, "Choose a PDF file first.");
+                    return;
+                }
+
+                setPaused(false, reason || "PDF scroll is running.");
+                scheduleNextStep(0);
+            }
+
+            function scheduleManualResume(reason) {
+                clearManualResumeTimer();
+                if (!stepScrollEnabled) {
+                    setPaused(true, "PDF scroll is disabled.");
+                    return;
+                }
+
+                setStatus(reason || ("PDF scroll will resume in " + stepScrollConfig.manualResumeDelayMs + " ms."));
+                manualResumeTimerId = window.setTimeout(function () {
+                    resumeScroll("PDF scroll resumed after manual idle.");
+                }, stepScrollConfig.manualResumeDelayMs);
+            }
+
+            function startScrollAnimation() {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                const scrollElement = getScrollElement();
+                const maxScrollTop = getMaxScrollTop(scrollElement);
+                const directionMultiplier = stepScrollDirectionDown ? 1 : -1;
+                stepScrollStartTop = scrollElement.scrollTop;
+                stepScrollTargetTop = clamp(stepScrollStartTop + (getStepPixels() * directionMultiplier), 0, maxScrollTop);
+
+                if (Math.abs(stepScrollTargetTop - stepScrollStartTop) <= 0.5) {
+                    setPaused(
+                        true,
+                        stepScrollDirectionDown
+                            ? "PDF scroll reached the end of the display."
+                            : "PDF scroll reached the top of the display."
+                    );
+                    return;
+                }
+
+                stepScrollAnimationStartTime = 0;
+                setStatus("Scrolling " + Math.round(stepScrollScreenHeightPercent) + "% of the screen, then waiting " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                stepScrollFrameId = window.requestAnimationFrame(animateScroll);
+            }
+
+            function animateScroll(timestamp) {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    cancelScrollFrame();
+                    return;
+                }
+
+                if (stepScrollAnimationStartTime === 0) {
+                    stepScrollAnimationStartTime = timestamp;
+                }
+
+                const scrollElement = getScrollElement();
+                const elapsedMs = timestamp - stepScrollAnimationStartTime;
+                const progress = clamp(elapsedMs / stepScrollAnimationDurationMs, 0, 1);
+                const easedProgress = progress < 0.5
+                    ? 2 * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                const nextScrollTop = stepScrollStartTop + ((stepScrollTargetTop - stepScrollStartTop) * easedProgress);
+
+                markProgrammaticScroll();
+                scrollElement.scrollTop = nextScrollTop;
+
+                if (progress < 1) {
+                    stepScrollFrameId = window.requestAnimationFrame(animateScroll);
+                    return;
+                }
+
+                stepScrollFrameId = 0;
+                scrollElement.scrollTop = stepScrollTargetTop;
+                scheduleNextStep(stepScrollWaitDelayMs);
+            }
+
+            function openPdfPicker() {
+                if (pdfFileInput) {
+                    requestFullScreen("Full screen opened.");
+                    pdfFileInput.click();
+                }
+            }
+
+            if (loadPdfButton) {
+                loadPdfButton.addEventListener("click", openPdfPicker);
+            }
+
+            if (reloadPdfButton) {
+                reloadPdfButton.addEventListener("click", openPdfPicker);
+            }
+
+            if (pdfFileInput) {
+                pdfFileInput.addEventListener("change", function () {
+                    const file = pdfFileInput.files && pdfFileInput.files.length > 0
+                        ? pdfFileInput.files[0]
+                        : null;
+                    loadSelectedPdfFile(file);
+                });
+            }
+
+            if (autoScrollToggleButton) {
+                autoScrollToggleButton.addEventListener("click", function () {
+                    setPanelVisible(autoScrollPanel.hidden);
+                });
+            }
+
+            if (autoScrollEnabledCheckbox) {
+                autoScrollEnabledCheckbox.addEventListener("change", function () {
+                    stepScrollEnabled = autoScrollEnabledCheckbox.checked;
+                    updateUi();
+
+                    if (!stepScrollEnabled) {
+                        setPaused(true, "PDF scroll disabled from controls.");
+                        return;
+                    }
+
+                    resumeScroll("PDF scroll enabled.");
+                });
+            }
+
+            if (pdfFullScreenCheckbox) {
+                pdfFullScreenCheckbox.addEventListener("change", function () {
+                    fullScreenEnabled = pdfFullScreenCheckbox.checked;
+                    updateUi();
+
+                    if (fullScreenEnabled) {
+                        requestFullScreen("Full screen enabled.");
+                        return;
+                    }
+
+                    closeFullScreenIfNeeded();
+                });
+            }
+
+            if (autoScrollDirectionCheckbox) {
+                autoScrollDirectionCheckbox.addEventListener("change", function () {
+                    stepScrollDirectionDown = autoScrollDirectionCheckbox.checked;
+                    updateUi();
+                    resumeScroll("Direction updated. PDF scroll restarted.");
+                });
+            }
+
+            autoScrollStepButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const controlName = button.getAttribute("data-step-scroll-control");
+                    const delta = Number(button.getAttribute("data-step-scroll-delta"));
+                    applyStepScrollControlDelta(controlName, delta);
+                });
+            });
+
+            pdfScrollContainer.addEventListener("scroll", function () {
+                if (programmaticScrollActive || !pdfRenderCompleted) {
+                    return;
+                }
+
+                setPaused(true, "PDF scroll paused after manual scroll.");
+                scheduleManualResume("PDF scroll will resume after manual scroll idle delay.");
+            }, { passive: true });
+
+            document.addEventListener("fullscreenchange", updateUi);
+            document.addEventListener("webkitfullscreenchange", updateUi);
+            document.addEventListener("click", requestPendingFullScreen);
+            document.addEventListener("touchend", requestPendingFullScreen, { passive: true });
+
+            setPanelVisible(stepScrollConfig.showControlPanelByDefault);
+            updateUi();
+            clearProgrammaticScrollFlag();
+            setPaused(true, "Choose a PDF file first.");
+        })();
+    </script>
+</body>
+</html>

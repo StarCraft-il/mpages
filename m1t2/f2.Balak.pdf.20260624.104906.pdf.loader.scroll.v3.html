@@ -125,11 +125,11 @@
     overflow: hidden;
   }
 
-  /* Row of sliders */
+  /* Button rows: big plus, small plus, value, small minus, big minus. */
   .ctrl-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .ctrl-label {
@@ -141,38 +141,43 @@
     text-transform: uppercase;
   }
 
+  .ctrl-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+    direction: ltr;
+    flex-wrap: nowrap;
+  }
+
   .ctrl-val {
     font-size: 12px;
     font-weight: 700;
     color: var(--accent);
-    width: 48px;
-    text-align: right;
-    flex-shrink: 0;
+    min-width: 52px;
+    text-align: center;
+    flex: 1 0 52px;
+    white-space: nowrap;
   }
 
-  input[type=range] {
-    -webkit-appearance: none;
-    flex: 1;
-    height: 4px;
-    border-radius: 4px;
-    background: var(--surface2);
-    outline: none;
-    cursor: pointer;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 3px #4f8ef720;
-    cursor: pointer;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--accent);
+  .ctrl-step-btn {
+    flex: 0 0 auto;
+    min-width: 38px;
+    height: 32px;
     border: none;
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .ctrl-step-btn:active {
+    background: var(--accent);
+    color: #fff;
   }
 
   /* ── BOTTOM ACTION BAR ── */
@@ -404,23 +409,43 @@
 <div id="controls">
   <div class="ctrl-row">
     <span class="ctrl-label">View Height</span>
-    <input type="range" id="sl-height" min="20" max="95" value="60">
-    <span class="ctrl-val" id="val-height">60%</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="View height">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', 10)">+10</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', 1)">+1</button>
+      <span class="ctrl-val" id="val-height">60%</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', -10)">-10</button>
+    </div>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Scroll Speed</span>
-    <input type="range" id="sl-speed" min="1" max="10" value="3">
-    <span class="ctrl-val" id="val-speed">3</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Scroll speed">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', 3)">+3</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', 1)">+1</button>
+      <span class="ctrl-val" id="val-speed">3x</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', -3)">-3</button>
+    </div>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Step Size</span>
-    <input type="range" id="sl-step" min="1" max="20" value="4">
-    <span class="ctrl-val" id="val-step">4 px</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Step size">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', 5)">+5</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', 1)">+1</button>
+      <span class="ctrl-val" id="val-step">4 px</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', -5)">-5</button>
+    </div>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Delay</span>
-    <input type="range" id="sl-delay" min="0" max="10" value="2">
-    <span class="ctrl-val" id="val-delay">2 s</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Delay">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', 5)">+5</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', 1)">+1</button>
+      <span class="ctrl-val" id="val-delay">2 s</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', -5)">-5</button>
+    </div>
   </div>
 </div>
 
@@ -465,29 +490,59 @@ const loading = document.getElementById('loading');
 const loadMsg = document.getElementById('loading-msg');
 const fileInput = document.getElementById('file-input');
 
-// ── SLIDER WIRING ─────────────────────────────────────
-function wire(id, valId, suffix, callback) {
-  const sl = document.getElementById(id);
-  const val = document.getElementById(valId);
-  sl.addEventListener('input', () => {
-    val.textContent = sl.value + suffix;
-    callback(Number(sl.value));
-  });
+// ── BUTTON CONTROL WIRING ─────────────────────────────
+function clampControlValue(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
 
-wire('sl-height', 'val-height', '%', v => {
-  viewerHeightPct = v;
-  applyViewerHeight();
-});
-wire('sl-speed', 'val-speed', '', v => {
-  scrollSpeed = v;
-  if (isScrolling) restartScroll();
-});
-wire('sl-step', 'val-step', ' px', v => {
-  scrollStep = v;
-  if (isScrolling) restartScroll();
-});
-wire('sl-delay', 'val-delay', ' s', v => { startDelay = v; });
+function updateControlValue(controlName) {
+  if (controlName === 'height') {
+    document.getElementById('val-height').textContent = viewerHeightPct + '%';
+    return;
+  }
+
+  if (controlName === 'speed') {
+    document.getElementById('val-speed').textContent = scrollSpeed + 'x';
+    return;
+  }
+
+  if (controlName === 'step') {
+    document.getElementById('val-step').textContent = scrollStep + ' px';
+    return;
+  }
+
+  if (controlName === 'delay') {
+    document.getElementById('val-delay').textContent = startDelay + ' s';
+  }
+}
+
+function adjustControl(controlName, delta) {
+  if (controlName === 'height') {
+    viewerHeightPct = clampControlValue(viewerHeightPct + delta, 20, 95);
+    updateControlValue('height');
+    applyViewerHeight();
+    return;
+  }
+
+  if (controlName === 'speed') {
+    scrollSpeed = clampControlValue(scrollSpeed + delta, 1, 10);
+    updateControlValue('speed');
+    if (isScrolling) restartScroll();
+    return;
+  }
+
+  if (controlName === 'step') {
+    scrollStep = clampControlValue(scrollStep + delta, 1, 20);
+    updateControlValue('step');
+    if (isScrolling) restartScroll();
+    return;
+  }
+
+  if (controlName === 'delay') {
+    startDelay = clampControlValue(startDelay + delta, 0, 10);
+    updateControlValue('delay');
+  }
+}
 
 function applyViewerHeight() {
   // Distribute height between viewer and controls
@@ -658,18 +713,10 @@ document.getElementById('fs-play-icon').addEventListener('click', () => {
   isScrolling ? stopScroll() : startScroll();
 });
 document.getElementById('fs-slower').addEventListener('click', () => {
-  const sl = document.getElementById('sl-speed');
-  sl.value = Math.max(1, Number(sl.value) - 1);
-  scrollSpeed = Number(sl.value);
-  document.getElementById('val-speed').textContent = sl.value;
-  if (isScrolling) restartScroll();
+  adjustControl('speed', -1);
 });
 document.getElementById('fs-faster').addEventListener('click', () => {
-  const sl = document.getElementById('sl-speed');
-  sl.value = Math.min(10, Number(sl.value) + 1);
-  scrollSpeed = Number(sl.value);
-  document.getElementById('val-speed').textContent = sl.value;
-  if (isScrolling) restartScroll();
+  adjustControl('speed', 1);
 });
 
 // ── TOUCH SWIPE to pause/resume ───────────────────────
@@ -679,9 +726,8 @@ viewer.addEventListener('touchmove', () => { if (isScrolling) stopScroll(); }, {
 
 // ── REDUCED MOTION ────────────────────────────────────
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.getElementById('sl-speed').value = 1;
   scrollSpeed = 1;
-  document.getElementById('val-speed').textContent = '1';
+  updateControlValue('speed');
 }
 </script>
 </body>

@@ -30,6 +30,31 @@
             display: flex;
             flex-direction: column;
         }
+        .tmot-control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            direction: ltr;
+            flex-wrap: nowrap;
+        }
+        .tmot-control-button {
+            flex: 0 0 auto;
+            min-width: 40px;
+            padding: 8px 4px;
+            border-radius: 6px;
+            background: #374151;
+            font-weight: 700;
+            text-align: center;
+        }
+        .tmot-control-button:active {
+            background: #4b5563;
+        }
+        .tmot-control-value {
+            flex: 1 0 58px;
+            text-align: center;
+            white-space: nowrap;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col justify-between select-none">
@@ -64,27 +89,35 @@
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
                 
                 <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">View Height: <span id="val-height" class="text-indigo-400 font-bold">400px</span></span>
-                    <div class="flex gap-1">
-                        <button onclick="adjustHeight(-50)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold text-center">-50</button>
-                        <button onclick="adjustHeight(50)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold text-center">+50</button>
-                        <button onclick="setPresetHeight('75vh')" class="bg-indigo-900/50 text-indigo-300 p-2 rounded border border-indigo-700">75vh</button>
+                    <span class="text-gray-400 font-medium block mb-1">View Height</span>
+                    <div class="tmot-control-buttons" dir="ltr" aria-label="View height">
+                        <button type="button" onclick="adjustHeight(200)" class="tmot-control-button">+200</button>
+                        <button type="button" onclick="adjustHeight(50)" class="tmot-control-button">+50</button>
+                        <span id="val-height" class="tmot-control-value text-indigo-400">400px</span>
+                        <button type="button" onclick="adjustHeight(-50)" class="tmot-control-button">-50</button>
+                        <button type="button" onclick="adjustHeight(-200)" class="tmot-control-button">-200</button>
                     </div>
                 </div>
 
                 <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">Speed (px/step): <span id="val-speed" class="text-amber-400 font-bold">1px</span></span>
-                    <div class="flex gap-1">
-                        <button onclick="adjustSpeed(-1)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">-1</button>
-                        <button onclick="adjustSpeed(1)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">+1</button>
+                    <span class="text-gray-400 font-medium block mb-1">Speed (px/step)</span>
+                    <div class="tmot-control-buttons" dir="ltr" aria-label="Speed">
+                        <button type="button" onclick="adjustSpeed(5)" class="tmot-control-button">+5</button>
+                        <button type="button" onclick="adjustSpeed(1)" class="tmot-control-button">+1</button>
+                        <span id="val-speed" class="tmot-control-value text-amber-400">1px</span>
+                        <button type="button" onclick="adjustSpeed(-1)" class="tmot-control-button">-1</button>
+                        <button type="button" onclick="adjustSpeed(-5)" class="tmot-control-button">-5</button>
                     </div>
                 </div>
 
                 <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">Step Delay: <span id="val-delay" class="text-pink-400 font-bold">30ms</span></span>
-                    <div class="flex gap-1">
-                        <button onclick="adjustDelay(-5)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">-5ms</button>
-                        <button onclick="adjustDelay(5)" class="flex-1 bg-gray-700 active:bg-gray-600 p-2 rounded font-bold">+5ms</button>
+                    <span class="text-gray-400 font-medium block mb-1">Step Delay</span>
+                    <div class="tmot-control-buttons" dir="ltr" aria-label="Step delay">
+                        <button type="button" onclick="adjustDelay(50)" class="tmot-control-button">+50</button>
+                        <button type="button" onclick="adjustDelay(5)" class="tmot-control-button">+5</button>
+                        <span id="val-delay" class="tmot-control-value text-pink-400">30ms</span>
+                        <button type="button" onclick="adjustDelay(-5)" class="tmot-control-button">-5</button>
+                        <button type="button" onclick="adjustDelay(-50)" class="tmot-control-button">-50</button>
                     </div>
                 </div>
 

@@ -1,0 +1,734 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PDF Loader v3 - Balak</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #7c3aed;
+    --text: #e8eaf0;
+    --text-dim: #7a7f9a;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --radius: 12px;
+    --ctrl-h: 52px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid #ffffff10;
+    flex-shrink: 0;
+    z-index: 20;
+  }
+
+  #topbar h1 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: var(--accent);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    background: var(--surface2);
+    border: 1px solid #ffffff15;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background .15s, transform .1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .icon-btn:active { transform: scale(.92); background: var(--accent); }
+
+  /* ── PDF VIEWPORT ── */
+  #viewer-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #080a10;
+  }
+
+  #viewer {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 80px;
+  }
+
+  .page-canvas {
+    display: block;
+    box-shadow: 0 4px 24px #00000066;
+    border-radius: 4px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ── CONTROLS PANEL ── */
+  #controls {
+    flex-shrink: 0;
+    background: var(--surface);
+    border-top: 1px solid #ffffff10;
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 20;
+    transition: max-height .3s ease, opacity .3s ease;
+    max-height: 500px;
+  }
+
+  #controls.collapsed {
+    max-height: 0;
+    padding: 0 12px;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* Button rows: big plus, small plus, value, small minus, big minus. */
+  .ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctrl-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 80px;
+    flex-shrink: 0;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  .ctrl-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+    direction: ltr;
+    flex-wrap: nowrap;
+  }
+
+  .ctrl-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 52px;
+    text-align: center;
+    flex: 1 0 52px;
+    white-space: nowrap;
+  }
+
+  .ctrl-step-btn {
+    flex: 0 0 auto;
+    min-width: 38px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .ctrl-step-btn:active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── BOTTOM ACTION BAR ── */
+  #action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-top: 1px solid #ffffff08;
+    flex-shrink: 0;
+    z-index: 20;
+  }
+
+  .pill-btn {
+    flex: 1;
+    height: var(--ctrl-h);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .3px;
+    transition: filter .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .pill-btn:active { transform: scale(.95); filter: brightness(1.2); }
+
+  #btn-play { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  #btn-reset { background: var(--surface2); color: var(--text-dim); border: 1px solid #ffffff15; flex: 0 0 var(--ctrl-h); border-radius: var(--radius); }
+  #btn-settings { background: var(--surface2); color: var(--text-dim); border: 1px solid #ffffff15; flex: 0 0 var(--ctrl-h); border-radius: var(--radius); }
+  #btn-fs { background: var(--surface2); color: var(--text-dim); border: 1px solid #ffffff15; flex: 0 0 var(--ctrl-h); border-radius: var(--radius); }
+
+  /* ── FILE DROP OVERLAY ── */
+  #drop-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 30;
+    padding: 24px;
+  }
+
+  #drop-overlay svg { color: var(--accent); opacity: .6; }
+
+  #drop-overlay h2 {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text);
+  }
+
+  #drop-overlay p {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  #file-input { display: none; }
+
+  .choose-btn {
+    margin-top: 8px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .3px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── PAGE INDICATOR ── */
+  #page-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #00000099;
+    backdrop-filter: blur(6px);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity .3s;
+  }
+
+  /* Progress bar */
+  #progress-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width .15s;
+    z-index: 10;
+    border-radius: 0 2px 0 0;
+  }
+
+  /* Fullscreen override */
+  :fullscreen #topbar,
+  :fullscreen #controls,
+  :fullscreen #action-bar { display: none !important; }
+  :-webkit-full-screen #topbar,
+  :-webkit-full-screen #controls,
+  :-webkit-full-screen #action-bar { display: none !important; }
+
+  :fullscreen #viewer-wrap,
+  :-webkit-full-screen #viewer-wrap { flex: 1; height: 100dvh; }
+
+  /* Fullscreen floating overlay */
+  #fs-overlay {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00000099;
+    backdrop-filter: blur(8px);
+    border: 1px solid #ffffff20;
+    border-radius: 30px;
+    padding: 10px 20px;
+    gap: 16px;
+    z-index: 9999;
+    align-items: center;
+    color: var(--text);
+    font-size: 22px;
+  }
+  :fullscreen #fs-overlay,
+  :-webkit-full-screen #fs-overlay { display: flex; }
+
+  .fs-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    line-height: 1;
+    transition: color .15s;
+  }
+  .fs-btn:active { color: var(--accent); }
+
+  #fs-play-icon { font-size: 26px; }
+
+  /* Loading spinner */
+  #loading {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    background: #0f111799;
+    z-index: 25;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #loading.show { display: flex; }
+
+  .spinner {
+    width: 44px; height: 44px;
+    border: 3px solid #ffffff20;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #loading p { font-size: 13px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <h1 id="file-title">PDF Loader v3 - Balak</h1>
+  <div class="icon-btn" id="btn-fs-top" title="Fullscreen">⛶</div>
+</div>
+
+<!-- PDF VIEWER -->
+<div id="viewer-wrap">
+  <!-- Drop / open overlay -->
+  <div id="drop-overlay">
+    <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="18" x2="12" y2="12"/>
+      <line x1="9" y1="15" x2="15" y2="15"/>
+    </svg>
+    <h2>Open a PDF to begin</h2>
+    <p>Tap below to choose a file, or drag &amp; drop a PDF onto this page.</p>
+    <p>PDF pattern: f2.*.Balak.pdf.*.pdf</p>
+    <button class="choose-btn" onclick="document.getElementById('file-input').click()">📄 Choose PDF</button>
+    <input type="file" id="file-input" accept="application/pdf">
+  </div>
+
+  <!-- Scroll container -->
+  <div id="viewer">
+    <div id="canvas-container"></div>
+  </div>
+
+  <!-- Overlays -->
+  <div id="page-indicator">0 / 0</div>
+  <div id="progress-bar"></div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p id="loading-msg">Loading PDF…</p>
+  </div>
+</div>
+
+<!-- CONTROLS PANEL -->
+<div id="controls">
+  <div class="ctrl-row">
+    <span class="ctrl-label">View Height</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="View height">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', 10)">+10</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', 1)">+1</button>
+      <span class="ctrl-val" id="val-height">60%</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('height', -10)">-10</button>
+    </div>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Scroll Speed</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Scroll speed">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', 3)">+3</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', 1)">+1</button>
+      <span class="ctrl-val" id="val-speed">3x</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('speed', -3)">-3</button>
+    </div>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Step Size</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Step size">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', 5)">+5</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', 1)">+1</button>
+      <span class="ctrl-val" id="val-step">4 px</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('step', -5)">-5</button>
+    </div>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Delay</span>
+    <div class="ctrl-buttons" dir="ltr" aria-label="Delay">
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', 5)">+5</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', 1)">+1</button>
+      <span class="ctrl-val" id="val-delay">2 s</span>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', -1)">-1</button>
+      <button type="button" class="ctrl-step-btn" onclick="adjustControl('delay', -5)">-5</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM ACTION BAR -->
+<div id="action-bar">
+  <button class="pill-btn" id="btn-settings" title="Toggle Settings">⚙️</button>
+  <button class="pill-btn" id="btn-play">▶ Start Scroll</button>
+  <button class="pill-btn" id="btn-reset" title="Reset to Top">↑</button>
+  <button class="pill-btn" id="btn-fs" title="Fullscreen">⛶</button>
+</div>
+
+<!-- Fullscreen floating controls -->
+<div id="fs-overlay">
+  <button class="fs-btn" id="fs-slower">🐢</button>
+  <button class="fs-btn" id="fs-play-icon" id="fs-play">⏸</button>
+  <button class="fs-btn" id="fs-faster">🐇</button>
+  <button class="fs-btn" id="fs-exit">✕</button>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── STATE ──────────────────────────────────────────────
+let pdfDoc = null;
+let totalPages = 0;
+let renderedPages = new Set();
+let scrollTimer = null;
+let isScrolling = false;
+let controlsVisible = true;
+let scrollSpeed = 3; // interval ms factor
+let scrollStep = 4; // px per tick
+let startDelay = 2; // seconds before starting
+let viewerHeightPct = 60;
+
+const viewer = document.getElementById('viewer');
+const container = document.getElementById('canvas-container');
+const indicator = document.getElementById('page-indicator');
+const progress = document.getElementById('progress-bar');
+const dropOver = document.getElementById('drop-overlay');
+const loading = document.getElementById('loading');
+const loadMsg = document.getElementById('loading-msg');
+const fileInput = document.getElementById('file-input');
+
+// ── BUTTON CONTROL WIRING ─────────────────────────────
+function clampControlValue(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function updateControlValue(controlName) {
+  if (controlName === 'height') {
+    document.getElementById('val-height').textContent = viewerHeightPct + '%';
+    return;
+  }
+
+  if (controlName === 'speed') {
+    document.getElementById('val-speed').textContent = scrollSpeed + 'x';
+    return;
+  }
+
+  if (controlName === 'step') {
+    document.getElementById('val-step').textContent = scrollStep + ' px';
+    return;
+  }
+
+  if (controlName === 'delay') {
+    document.getElementById('val-delay').textContent = startDelay + ' s';
+  }
+}
+
+function adjustControl(controlName, delta) {
+  if (controlName === 'height') {
+    viewerHeightPct = clampControlValue(viewerHeightPct + delta, 20, 95);
+    updateControlValue('height');
+    applyViewerHeight();
+    return;
+  }
+
+  if (controlName === 'speed') {
+    scrollSpeed = clampControlValue(scrollSpeed + delta, 1, 10);
+    updateControlValue('speed');
+    if (isScrolling) restartScroll();
+    return;
+  }
+
+  if (controlName === 'step') {
+    scrollStep = clampControlValue(scrollStep + delta, 1, 20);
+    updateControlValue('step');
+    if (isScrolling) restartScroll();
+    return;
+  }
+
+  if (controlName === 'delay') {
+    startDelay = clampControlValue(startDelay + delta, 0, 10);
+    updateControlValue('delay');
+  }
+}
+
+function applyViewerHeight() {
+  // Distribute height between viewer and controls
+  document.getElementById('viewer-wrap').style.flex = 'none';
+  document.getElementById('viewer-wrap').style.height = viewerHeightPct + 'dvh';
+}
+applyViewerHeight();
+
+// ── SETTINGS TOGGLE ───────────────────────────────────
+document.getElementById('btn-settings').addEventListener('click', () => {
+  controlsVisible = !controlsVisible;
+  document.getElementById('controls').classList.toggle('collapsed', !controlsVisible);
+});
+
+// ── FILE INPUT ────────────────────────────────────────
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) loadPDF(e.target.files[0]);
+});
+
+// Drag & drop
+document.body.addEventListener('dragover', e => e.preventDefault());
+document.body.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') loadPDF(file);
+});
+
+// ── LOAD PDF ──────────────────────────────────────────
+async function loadPDF(file) {
+  stopScroll();
+  container.innerHTML = '';
+  renderedPages.clear();
+  dropOver.style.display = 'none';
+  loading.classList.add('show');
+  loadMsg.textContent = 'Loading PDF…';
+  document.getElementById('file-title').textContent = file.name;
+
+  const arrayBuf = await file.arrayBuffer();
+  pdfDoc = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+  totalPages = pdfDoc.numPages;
+
+  loading.classList.remove('show');
+  indicator.textContent = `1 / ${totalPages}`;
+
+  // Render all pages
+  await renderAllPages();
+  updateProgress();
+}
+
+async function renderAllPages() {
+  for (let i = 1; i <= totalPages; i++) {
+    loadMsg.textContent = `Rendering page ${i} of ${totalPages}…`;
+    loading.classList.add('show');
+    await renderPage(i);
+    loading.classList.remove('show');
+  }
+}
+
+async function renderPage(num) {
+  if (renderedPages.has(num)) return;
+  renderedPages.add(num);
+
+  const page = await pdfDoc.getPage(num);
+  const vw = viewer.clientWidth - 16;
+  const vp = page.getViewport({ scale: 1 });
+  const scale = vw / vp.width;
+  const scaled = page.getViewport({ scale });
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'page-canvas';
+  canvas.width = scaled.width;
+  canvas.height = scaled.height;
+  canvas.dataset.page = num;
+  container.appendChild(canvas);
+
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
+}
+
+// ── SCROLL LOGIC ──────────────────────────────────────
+function getInterval() {
+  // speed 1–10 → interval 80ms–8ms
+  return Math.max(8, 88 - scrollSpeed * 8);
+}
+
+function startScroll() {
+  if (!pdfDoc) return;
+  isScrolling = true;
+  document.getElementById('btn-play').innerHTML = '⏸ Pause';
+  document.getElementById('fs-play-icon').textContent = '⏸';
+
+  const delay = startDelay * 1000;
+  setTimeout(() => {
+    if (!isScrolling) return;
+    scrollTimer = setInterval(() => {
+      viewer.scrollTop += scrollStep;
+      updateProgress();
+      // Auto stop at bottom
+      if (viewer.scrollTop + viewer.clientHeight >= viewer.scrollHeight - 2) {
+        stopScroll();
+      }
+    }, getInterval());
+  }, delay);
+}
+
+function stopScroll() {
+  isScrolling = false;
+  clearInterval(scrollTimer);
+  scrollTimer = null;
+  document.getElementById('btn-play').innerHTML = '▶ Start Scroll';
+  document.getElementById('fs-play-icon').textContent = '▶';
+}
+
+function restartScroll() {
+  clearInterval(scrollTimer);
+  scrollTimer = setInterval(() => {
+    viewer.scrollTop += scrollStep;
+    updateProgress();
+    if (viewer.scrollTop + viewer.clientHeight >= viewer.scrollHeight - 2) {
+      stopScroll();
+    }
+  }, getInterval());
+}
+
+document.getElementById('btn-play').addEventListener('click', () => {
+  isScrolling ? stopScroll() : startScroll();
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  stopScroll();
+  viewer.scrollTop = 0;
+  updateProgress();
+});
+
+// ── PROGRESS & PAGE INDICATOR ─────────────────────────
+viewer.addEventListener('scroll', updateProgress);
+
+function updateProgress() {
+  if (!pdfDoc) return;
+  const pct = viewer.scrollTop / (viewer.scrollHeight - viewer.clientHeight) || 0;
+  progress.style.width = (pct * 100).toFixed(1) + '%';
+
+  // Detect current page
+  const canvases = container.querySelectorAll('.page-canvas');
+  let cur = 1;
+  for (const c of canvases) {
+    const rect = c.getBoundingClientRect();
+    const vRect = viewer.getBoundingClientRect();
+    if (rect.top <= vRect.top + vRect.height / 2) cur = Number(c.dataset.page);
+  }
+  indicator.textContent = `${cur} / ${totalPages}`;
+}
+
+// ── FULLSCREEN ────────────────────────────────────────
+function requestFS() {
+  const el = document.documentElement;
+  (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
+}
+function exitFS() {
+  (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+}
+
+document.getElementById('btn-fs').addEventListener('click', requestFS);
+document.getElementById('btn-fs-top').addEventListener('click', requestFS);
+document.getElementById('fs-exit').addEventListener('click', exitFS);
+
+// Fullscreen floating controls
+document.getElementById('fs-play-icon').addEventListener('click', () => {
+  isScrolling ? stopScroll() : startScroll();
+});
+document.getElementById('fs-slower').addEventListener('click', () => {
+  adjustControl('speed', -1);
+});
+document.getElementById('fs-faster').addEventListener('click', () => {
+  adjustControl('speed', 1);
+});
+
+// ── TOUCH SWIPE to pause/resume ───────────────────────
+let touchStartY = 0;
+viewer.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+viewer.addEventListener('touchmove', () => { if (isScrolling) stopScroll(); }, { passive: true });
+
+// ── REDUCED MOTION ────────────────────────────────────
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  scrollSpeed = 1;
+  updateControlValue('speed');
+}
+</script>
+</body>
+</html>

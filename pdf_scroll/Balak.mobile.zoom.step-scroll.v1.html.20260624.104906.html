@@ -292,15 +292,43 @@
             }
 
         .tmot-auto-scroll-value {
-            min-width: 70px;
-            text-align: right;
+            min-width: 76px;
+            text-align: center;
             font-size: 13px;
+            font-weight: bold;
             color: #d9ecff;
+            white-space: nowrap;
         }
 
-        .tmot-auto-scroll-range {
+        .tmot-auto-scroll-button-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             width: 100%;
             margin-top: 6px;
+            direction: ltr;
+            flex-wrap: nowrap;
+        }
+
+        .tmot-auto-scroll-button-row .tmot-auto-scroll-value {
+            flex: 1 0 76px;
+        }
+
+        .tmot-auto-scroll-step-button {
+            flex: 0 0 auto;
+            min-width: 42px;
+            padding: 9px 6px;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .tmot-auto-scroll-step-button:active {
+            background: rgba(125, 211, 252, 0.32);
         }
 
         .tmot-auto-scroll-status {
@@ -3046,20 +3074,35 @@
                 <input id="autoScrollDirectionCheckbox" type="checkbox" />
             </div>
             <div class="tmot-auto-scroll-row">
-                <label for="autoScrollStepHeightRange">Screen height</label>
+                <label>Screen height</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Screen height">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="10">+10</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="1">+1</button>
                 <span id="autoScrollStepHeightValue" class="tmot-auto-scroll-value">0%</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-10">-10</button>
             </div>
-            <input id="autoScrollStepHeightRange" class="tmot-auto-scroll-range" type="range" min="25" max="100" step="1" />
             <div class="tmot-auto-scroll-row">
-                <label for="autoScrollWaitDelayRange">Wait delay</label>
+                <label>Wait delay</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Wait delay">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="1000">+1000</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="100">+100</button>
                 <span id="autoScrollWaitDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-100">-100</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-1000">-1000</button>
             </div>
-            <input id="autoScrollWaitDelayRange" class="tmot-auto-scroll-range" type="range" min="500" max="10000" step="100" />
             <div class="tmot-auto-scroll-row">
-                <label for="autoScrollAnimationDurationRange">Scroll duration</label>
-                <span id="autoScrollAnimationDurationValue" class="tmot-auto-scroll-value">0 ms</span>
+                <label>Scroll duration</label>
             </div>
-            <input id="autoScrollAnimationDurationRange" class="tmot-auto-scroll-range" type="range" min="2000" max="10000" step="50" />
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Scroll duration">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="500">+500</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="50">+50</button>
+                <span id="autoScrollAnimationDurationValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-50">-50</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-500">-500</button>
+            </div>
             <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Step-scroll is preparing.</div>
         </div>
     </div>
@@ -3077,11 +3120,9 @@
             const autoScrollPanel = document.getElementById("autoScrollPanel");
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
             const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
-            const autoScrollStepHeightRange = document.getElementById("autoScrollStepHeightRange");
+            const autoScrollStepButtons = document.querySelectorAll("[data-step-scroll-control]");
             const autoScrollStepHeightValue = document.getElementById("autoScrollStepHeightValue");
-            const autoScrollWaitDelayRange = document.getElementById("autoScrollWaitDelayRange");
             const autoScrollWaitDelayValue = document.getElementById("autoScrollWaitDelayValue");
-            const autoScrollAnimationDurationRange = document.getElementById("autoScrollAnimationDurationRange");
             const autoScrollAnimationDurationValue = document.getElementById("autoScrollAnimationDurationValue");
             const autoScrollStatus = document.getElementById("autoScrollStatus");
 
@@ -3269,34 +3310,57 @@
                     autoScrollDirectionCheckbox.checked = stepScrollDirectionDown;
                 }
 
-                if (autoScrollStepHeightRange) {
-                    autoScrollStepHeightRange.min = String(stepScrollConfig.minScreenHeightPercent);
-                    autoScrollStepHeightRange.max = String(stepScrollConfig.maxScreenHeightPercent);
-                    autoScrollStepHeightRange.value = String(Math.round(stepScrollScreenHeightPercent));
-                }
-
                 if (autoScrollStepHeightValue) {
                     autoScrollStepHeightValue.textContent = Math.round(stepScrollScreenHeightPercent) + "%";
-                }
-
-                if (autoScrollWaitDelayRange) {
-                    autoScrollWaitDelayRange.min = String(stepScrollConfig.minWaitDelayMs);
-                    autoScrollWaitDelayRange.max = String(stepScrollConfig.maxWaitDelayMs);
-                    autoScrollWaitDelayRange.value = String(Math.round(stepScrollWaitDelayMs));
                 }
 
                 if (autoScrollWaitDelayValue) {
                     autoScrollWaitDelayValue.textContent = Math.round(stepScrollWaitDelayMs) + " ms";
                 }
 
-                if (autoScrollAnimationDurationRange) {
-                    autoScrollAnimationDurationRange.min = String(stepScrollConfig.minAnimationDurationMs);
-                    autoScrollAnimationDurationRange.max = String(stepScrollConfig.maxAnimationDurationMs);
-                    autoScrollAnimationDurationRange.value = String(Math.round(stepScrollAnimationDurationMs));
-                }
-
                 if (autoScrollAnimationDurationValue) {
                     autoScrollAnimationDurationValue.textContent = Math.round(stepScrollAnimationDurationMs) + " ms";
+                }
+            }
+
+            function applyStepScrollControlDelta(controlName, delta) {
+                if (!Number.isFinite(delta)) {
+                    return;
+                }
+
+                if (controlName === "screenHeight") {
+                    stepScrollScreenHeightPercent = normalizeNumber(
+                        stepScrollScreenHeightPercent + delta,
+                        stepScrollConfig.minScreenHeightPercent,
+                        stepScrollConfig.maxScreenHeightPercent,
+                        stepScrollConfig.screenHeightPercent
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Step height updated to " + Math.round(stepScrollScreenHeightPercent) + "% of screen (" + getStepPixels() + " px).");
+                    return;
+                }
+
+                if (controlName === "waitDelay") {
+                    stepScrollWaitDelayMs = normalizeNumber(
+                        stepScrollWaitDelayMs + delta,
+                        stepScrollConfig.minWaitDelayMs,
+                        stepScrollConfig.maxWaitDelayMs,
+                        stepScrollConfig.waitDelayMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Wait delay updated to " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "animationDuration") {
+                    stepScrollAnimationDurationMs = normalizeNumber(
+                        stepScrollAnimationDurationMs + delta,
+                        stepScrollConfig.minAnimationDurationMs,
+                        stepScrollConfig.maxAnimationDurationMs,
+                        stepScrollConfig.animationDurationMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Scroll duration updated to " + Math.round(stepScrollAnimationDurationMs) + " ms.");
                 }
             }
 
@@ -3597,44 +3661,13 @@
                 });
             }
 
-            if (autoScrollStepHeightRange) {
-                autoScrollStepHeightRange.addEventListener("input", function () {
-                    stepScrollScreenHeightPercent = normalizeNumber(
-                        Number(autoScrollStepHeightRange.value),
-                        stepScrollConfig.minScreenHeightPercent,
-                        stepScrollConfig.maxScreenHeightPercent,
-                        stepScrollConfig.screenHeightPercent
-                    );
-                    updateStepScrollUi();
-                    setStepScrollStatus("Step height updated to " + Math.round(stepScrollScreenHeightPercent) + "% of screen (" + getStepPixels() + " px).");
+            autoScrollStepButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const controlName = button.getAttribute("data-step-scroll-control");
+                    const delta = Number(button.getAttribute("data-step-scroll-delta"));
+                    applyStepScrollControlDelta(controlName, delta);
                 });
-            }
-
-            if (autoScrollWaitDelayRange) {
-                autoScrollWaitDelayRange.addEventListener("input", function () {
-                    stepScrollWaitDelayMs = normalizeNumber(
-                        Number(autoScrollWaitDelayRange.value),
-                        stepScrollConfig.minWaitDelayMs,
-                        stepScrollConfig.maxWaitDelayMs,
-                        stepScrollConfig.waitDelayMs
-                    );
-                    updateStepScrollUi();
-                    setStepScrollStatus("Wait delay updated to " + Math.round(stepScrollWaitDelayMs) + " ms.");
-                });
-            }
-
-            if (autoScrollAnimationDurationRange) {
-                autoScrollAnimationDurationRange.addEventListener("input", function () {
-                    stepScrollAnimationDurationMs = normalizeNumber(
-                        Number(autoScrollAnimationDurationRange.value),
-                        stepScrollConfig.minAnimationDurationMs,
-                        stepScrollConfig.maxAnimationDurationMs,
-                        stepScrollConfig.animationDurationMs
-                    );
-                    updateStepScrollUi();
-                    setStepScrollStatus("Scroll duration updated to " + Math.round(stepScrollAnimationDurationMs) + " ms.");
-                });
-            }
+            });
 
             if (window.MutationObserver && contentRoot) {
                 const observer = new MutationObserver(function (mutations) {
