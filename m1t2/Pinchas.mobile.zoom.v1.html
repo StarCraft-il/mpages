@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="he" dir="rtl" id="root-element">
+<html lang="he" dir="rtl" id="root-element" class="tmot-hide-onkelos">
 <head>
     <title>2M1T-Pinchas-mobile-zoom</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
@@ -226,6 +226,10 @@
                 margin-left: -8px;
                 margin-right: -12px;
             }
+        }
+
+        .tmot-hide-onkelos #parashaContentRow div.verse div.pasuk_onkelos_1 {
+            display: none !important;
         }
 
         /* Added: touch-friendly auto-scroll controls that stay outside the reading flow. */
@@ -4478,6 +4482,10 @@
 </div>
 
             <div class="tmot-auto-scroll-row">
+                <label for="onkelosVisibilityCheckbox">Hide Onkelos</label>
+                <input id="onkelosVisibilityCheckbox" type="checkbox" checked />
+            </div>
+            <div class="tmot-auto-scroll-row">
                 <label for="autoScrollDirectionCheckbox">Direction</label>
                 <input id="autoScrollDirectionCheckbox" type="checkbox" />
             </div>
@@ -4517,6 +4525,7 @@
             const autoScrollToggleButton = document.getElementById("autoScrollToggleButton");
             const autoScrollPanel = document.getElementById("autoScrollPanel");
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
+            const onkelosVisibilityCheckbox = document.getElementById("onkelosVisibilityCheckbox");
             const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
             const autoScrollStepButtons = document.querySelectorAll("[data-auto-scroll-control]");
             const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
@@ -4566,6 +4575,7 @@
             let programmaticScrollActive = false;
             let programmaticScrollReleaseTimerId = 0;
             let touchAdjustStartSpeed = autoScrollTargetSpeed;
+            let onkelosHidden = true;
 
             function clamp(value, min, max) {
                 return Math.min(max, Math.max(min, value));
@@ -4637,6 +4647,14 @@
 
                 autoScrollPanel.hidden = !isVisible;
                 autoScrollToggleButton.setAttribute("aria-expanded", String(isVisible));
+            }
+
+            function updateOnkelosVisibilityUi() {
+                if (onkelosVisibilityCheckbox) {
+                    onkelosVisibilityCheckbox.checked = onkelosHidden;
+                }
+
+                root.classList.toggle("tmot-hide-onkelos", onkelosHidden);
             }
 
             function updateAutoScrollUi() {
@@ -4999,6 +5017,13 @@
                 });
             }
 
+            if (onkelosVisibilityCheckbox) {
+                onkelosVisibilityCheckbox.addEventListener("change", function () {
+                    onkelosHidden = onkelosVisibilityCheckbox.checked;
+                    updateOnkelosVisibilityUi();
+                });
+            }
+
             if (autoScrollDirectionCheckbox) {
                 autoScrollDirectionCheckbox.addEventListener("change", function () {
                     autoScrollDirectionDown = autoScrollDirectionCheckbox.checked;
@@ -5054,6 +5079,7 @@
             }
 
             setAutoScrollPanelVisible(autoScrollConfig.showControlPanelByDefault);
+            updateOnkelosVisibilityUi();
             updateAutoScrollUi();
             applyScale();
             clearProgrammaticScrollFlag();
