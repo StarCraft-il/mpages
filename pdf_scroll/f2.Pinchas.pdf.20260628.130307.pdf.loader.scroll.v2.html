@@ -1,331 +1,353 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Loader v2 - Pinchas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <style>
-        /* Custom scrollbar treatment for clean appearance */
-        #pdf-viewport::-webkit-scrollbar {
-            width: 6px;
-        }
-        #pdf-viewport::-webkit-scrollbar-thumb {
-            background-color: rgba(156, 163, 175, 0.5);
-            border-radius: 3px;
-        }
-        canvas {
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            margin-bottom: 12px;
-            width: 100% !important;
-            height: auto !important;
-        }
-        /* Ensure the app container expands properly in native fullscreen mode */
-        #app-container:fullscreen {
-            background-color: #030712;
-            width: 100vw;
-            height: 100vh;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-        }
-        .tmot-control-buttons {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            direction: ltr;
-            flex-wrap: nowrap;
-        }
-        .tmot-control-button {
-            flex: 0 0 auto;
-            min-width: 40px;
-            padding: 8px 4px;
-            border-radius: 6px;
-            background: #374151;
-            font-weight: 700;
-            text-align: center;
-        }
-        .tmot-control-button:active {
-            background: #4b5563;
-        }
-        .tmot-control-value {
-            flex: 1 0 58px;
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 700;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Auto-scroll PDF</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111418;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:0 0 20px 0}
+.scroll-wrapper{width:100%;max-width:500px;margin:0 auto;position:relative;border-radius:28px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.7);background:#1e1e1e;max-height:80vh;overflow-y:auto;scroll-behavior:auto}
+.pdf-container{width:100%;background:#1a1a1a;display:flex;flex-direction:column;align-items:center}
+.pdf-container embed{display:block;width:100%;height:auto;aspect-ratio:1/1.4;min-height:500px;background:#252525;border:none}
+.pdf-fallback{display:none;padding:32px 20px;background:#1e293b;color:#e2e8f0;text-align:center;width:100%}
+.pdf-container.error embed{display:none}
+.pdf-container.error .pdf-fallback{display:block}
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:24px 16px 8px;padding:12px 20px;background:#23272b;backdrop-filter:blur(4px);border-radius:60px;width:fit-content;max-width:92%;margin-left:auto;margin-right:auto;box-shadow:0 4px 16px rgba(0,0,0,0.6)}
+.controls button{background:#2b6ef0;border:none;color:#fff;font-weight:600;font-size:.95rem;padding:10px 22px;border-radius:40px;box-shadow:0 2px 10px rgba(43,110,240,0.3);cursor:pointer;transition:0.15s ease;touch-action:manipulation;min-width:90px;letter-spacing:.3px}
+.controls button:active{transform:scale(.94);background:#1a5adf}
+.controls button.secondary{background:#4a5568;box-shadow:0 2px 8px rgba(74,85,104,0.3)}
+.controls button.secondary:active{background:#3a4556}
+.status{color:#d1d5db;font-size:.9rem;padding:6px 16px;background:#1e293b;border-radius:40px;display:inline-block;font-variant-numeric:tabular-nums;cursor:pointer;user-select:none;border:1px solid #3d4a5c;transition:.1s}
+.status:active{background:#2d3b4f}
+.info-note{margin-top:14px;color:#94a3b8;font-size:.75rem;text-align:center;padding:0 20px;max-width:400px;line-height:1.4}
+.scroll-indicator{position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);color:#f0f4ff;padding:5px 14px;border-radius:40px;font-size:.7rem;letter-spacing:.4px;pointer-events:none;border:1px solid rgba(255,255,255,0.12);opacity:.8;display:flex;align-items:center;gap:6px;font-weight:500;transition:opacity .2s}
+.scroll-indicator::before{content:"⏵";font-size:.8rem;opacity:.7}
+@media(max-width:480px){.controls button{min-width:70px;padding:8px 14px;font-size:.85rem}.pdf-container embed{min-height:400px}.scroll-wrapper{max-height:70vh}}
+</style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col justify-between select-none">
+<body>
 
-    <div id="app-container" class="flex flex-col flex-grow justify-between min-h-screen">
-        
-        <div class="bg-gray-800 border-b border-gray-700 p-4 sticky top-0 z-50 shadow-md space-y-4 rounded-b-lg">
-            
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <input type="file" id="file-selector" accept=".pdf" class="block w-full sm:w-1/2 text-xs text-gray-400
-                    file:mr-3 file:py-2 file:px-3
-                    file:rounded-md file:border-0
-                    file:text-xs file:font-semibold
-                    file:bg-indigo-600 file:text-white
-                    hover:file:bg-indigo-500 cursor-pointer" />
-                    
-                <div class="flex gap-2 w-full sm:w-1/2">
-                    <button id="btn-toggle" class="flex-1 bg-emerald-600 active:bg-emerald-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow">
-                        Start
-                    </button>
-                    <button id="btn-fullscreen" class="flex-1 bg-indigo-600 active:bg-indigo-700 text-white font-bold py-2 px-3 rounded-md text-sm transition-colors shadow flex items-center justify-center gap-1">
-                        Fullscreen
-                    </button>
-                </div>
-            </div>
+<div class="scroll-wrapper" id="scrollWrapper">
+<div class="pdf-container" id="pdfContainer">
+<embed id="pdfEmbed" type="application/pdf" src="">
+<div class="pdf-fallback" id="pdfFallback">
+<p>⚠️ PDF cannot be displayed inline.<br>
+<span style="font-size:.9rem;color:#b0c4de;">
+<a href="#" id="fallbackLink" target="_blank" style="color:#7aa9ff;">Open PDF in new tab</a></span></p>
+</div>
+</div>
+<div class="scroll-indicator" id="scrollIndicator">0%</div>
+</div>
 
-            <div class="bg-gray-900/60 border border-gray-700 rounded-md p-2 text-xs text-gray-300">
-                <span class="font-semibold text-gray-100">PDF pattern:</span>
-                <span class="break-all">f2.*.Pinchas.pdf.*.pdf</span>
-            </div>
+<div class="controls">
+<button id="toggleScrollBtn" class="secondary">⏸ Pause</button>
+<button id="resetScrollBtn">⟳ Reset</button>
+<span class="status" id="speedStatus">1×</span>
+</div>
 
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
-                
-                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">View Height</span>
-                    <div class="tmot-control-buttons" dir="ltr" aria-label="View height">
-                        <button type="button" onclick="adjustHeight(200)" class="tmot-control-button">+200</button>
-                        <button type="button" onclick="adjustHeight(50)" class="tmot-control-button">+50</button>
-                        <span id="val-height" class="tmot-control-value text-indigo-400">400px</span>
-                        <button type="button" onclick="adjustHeight(-50)" class="tmot-control-button">-50</button>
-                        <button type="button" onclick="adjustHeight(-200)" class="tmot-control-button">-200</button>
-                    </div>
-                </div>
+<div class="info-note">
+PDF auto‑scrolls from top to bottom.<br>
+Tap <strong>Pause</strong> to stop, <strong>Reset</strong> to start from top.
+</div>
 
-                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">Speed (px/step)</span>
-                    <div class="tmot-control-buttons" dir="ltr" aria-label="Speed">
-                        <button type="button" onclick="adjustSpeed(5)" class="tmot-control-button">+5</button>
-                        <button type="button" onclick="adjustSpeed(1)" class="tmot-control-button">+1</button>
-                        <span id="val-speed" class="tmot-control-value text-amber-400">1px</span>
-                        <button type="button" onclick="adjustSpeed(-1)" class="tmot-control-button">-1</button>
-                        <button type="button" onclick="adjustSpeed(-5)" class="tmot-control-button">-5</button>
-                    </div>
-                </div>
+<script>
+(function() {
+    "use strict";
 
-                <div class="bg-gray-750 p-2 rounded border border-gray-700 flex flex-col justify-between">
-                    <span class="text-gray-400 font-medium block mb-1">Step Delay</span>
-                    <div class="tmot-control-buttons" dir="ltr" aria-label="Step delay">
-                        <button type="button" onclick="adjustDelay(50)" class="tmot-control-button">+50</button>
-                        <button type="button" onclick="adjustDelay(5)" class="tmot-control-button">+5</button>
-                        <span id="val-delay" class="tmot-control-value text-pink-400">30ms</span>
-                        <button type="button" onclick="adjustDelay(-5)" class="tmot-control-button">-5</button>
-                        <button type="button" onclick="adjustDelay(-50)" class="tmot-control-button">-50</button>
-                    </div>
-                </div>
+    // 📄 SET YOUR PDF URL HERE
+    const PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+    // Replace with your own PDF URL
 
-            </div>
-        </div>
+    // DOM refs
+    const wrapper = document.getElementById('scrollWrapper');
+    const embed = document.getElementById('pdfEmbed');
+    const container = document.getElementById('pdfContainer');
+    const fallbackLink = document.getElementById('fallbackLink');
+    const toggleBtn = document.getElementById('toggleScrollBtn');
+    const resetBtn = document.getElementById('resetScrollBtn');
+    const speedStatus = document.getElementById('speedStatus');
+    const indicator = document.getElementById('scrollIndicator');
 
-        <div class="flex-grow flex items-center justify-center p-2 bg-gray-950">
-            <div id="pdf-viewport" class="w-full max-w-md mx-auto overflow-y-auto bg-gray-900 rounded-lg border-2 border-dashed border-gray-700 p-2 transition-all duration-200">
-                <div id="pdf-render-container" class="w-full">
-                    <p id="placeholder-text" class="text-center text-gray-500 py-12 text-sm px-4">
-                        Please tap the file button above and load a PDF file matching f2.*.Pinchas.pdf.*.pdf to begin auto-scrolling.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+    // State
+    let isScrolling = false;
+    let isPaused = false;
+    let scrollSpeed = 1;
+    let animationFrame = null;
+    let lastTimestamp = 0;
+    let isLoaded = false;
+    let startAttempts = 0;
 
-    <script>
-        // Set up PDF.js Global Worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    // Settings
+    const BASE_SPEED = 1.3;
+    const SPEED_OPTIONS = [0.5, 1, 1.8, 2.8];
 
-        // Configuration States
-        let currentPdf = null;
-        let isScrolling = false;
-        let scrollIntervalId = null;
-
-        let scrollHeight = 400; // in pixels
-        let scrollSpeed = 1;    // pixels moved per interval step
-        let scrollDelay = 30;   // millisecond delay between interval steps
-
-        // DOM elements
-        const appContainer = document.getElementById('app-container');
-        const fileSelector = document.getElementById('file-selector');
-        const btnToggle = document.getElementById('btn-toggle');
-        const btnFullscreen = document.getElementById('btn-fullscreen');
-        const pdfViewport = document.getElementById('pdf-viewport');
-        const pdfRenderContainer = document.getElementById('pdf-render-container');
-        const placeholderText = document.getElementById('placeholder-text');
-
-        // Dynamic State UI Printers
-        function updateUIIndicators() {
-            document.getElementById('val-height').innerText = typeof scrollHeight === 'number' ? `${scrollHeight}px` : scrollHeight;
-            document.getElementById('val-speed').innerText = `${scrollSpeed}px`;
-            document.getElementById('val-delay').innerText = `${scrollDelay}ms`;
-            
-            // Set styles dynamically
-            pdfViewport.style.height = typeof scrollHeight === 'number' ? `${scrollHeight}px` : scrollHeight;
+    // ----- Force PDF display using iframe fallback -----
+    function loadPDF(url) {
+        if (!url || url.trim() === '') {
+            container.classList.add('error');
+            fallbackLink.textContent = 'No PDF URL specified';
+            return;
         }
 
-        // Control Adjusters
-        function adjustHeight(amount) {
-            if (typeof scrollHeight !== 'number') scrollHeight = 400;
-            scrollHeight = Math.max(150, Math.min(scrollHeight + amount, 1200));
-            updateUIIndicators();
-        }
+        // Try embed first
+        embed.src = url;
+        fallbackLink.href = url;
+        container.classList.remove('error');
 
-        function setPresetHeight(preset) {
-            scrollHeight = preset;
-            updateUIIndicators();
-        }
+        // If embed fails, show fallback
+        embed.onerror = function() {
+            container.classList.add('error');
+            console.warn('PDF embed failed. Showing fallback.');
+        };
 
-        function adjustSpeed(amount) {
-            scrollSpeed = Math.max(1, Math.min(scrollSpeed + amount, 20));
-            updateUIIndicators();
-            restartScrollLoopIfNeeded();
-        }
-
-        function adjustDelay(amount) {
-            scrollDelay = Math.max(5, Math.min(scrollDelay + amount, 500));
-            updateUIIndicators();
-            restartScrollLoopIfNeeded();
-        }
-
-        // Auto Scroll Controller
-        function startScrolling() {
-            if (scrollIntervalId) clearInterval(scrollIntervalId);
-            isScrolling = true;
-            btnToggle.innerText = "Pause";
-            btnToggle.classList.replace('bg-emerald-600', 'bg-amber-600');
-            btnToggle.classList.replace('active:bg-emerald-700', 'active:bg-amber-700');
-
-            scrollIntervalId = setInterval(() => {
-                const maxScroll = pdfViewport.scrollHeight - pdfViewport.clientHeight;
-                if (pdfViewport.scrollTop >= maxScroll - 1) {
-                    pdfViewport.scrollTop = 0;
-                } else {
-                    pdfViewport.scrollTop += scrollSpeed;
+        // When embed loads successfully
+        embed.onload = function() {
+            container.classList.remove('error');
+            isLoaded = true;
+            // Start scrolling after a short delay
+            setTimeout(() => {
+                if (!isPaused && wrapper.scrollHeight > wrapper.clientHeight) {
+                    wrapper.scrollTop = 0;
+                    startScroll();
                 }
-            }, scrollDelay);
-        }
+            }, 800);
+        };
 
-        function stopScrolling() {
-            isScrolling = false;
-            if (scrollIntervalId) {
-                clearInterval(scrollIntervalId);
-                scrollIntervalId = null;
-            }
-            btnToggle.innerText = "Start";
-            btnToggle.classList.replace('bg-amber-600', 'bg-emerald-600');
-            btnToggle.classList.replace('active:bg-amber-700', 'active:bg-emerald-700');
-        }
-
-        function restartScrollLoopIfNeeded() {
-            if (isScrolling) {
-                startScrolling();
-            }
-        }
-
-        // Action Toggles
-        btnToggle.addEventListener('click', () => {
-            if (!currentPdf) {
-                alert("Please upload a PDF file first before trying to play.");
-                return;
-            }
-            if (isScrolling) {
-                stopScrolling();
-            } else {
-                startScrolling();
-            }
-        });
-
-        // Native Fullscreen Toggle Logic
-        btnFullscreen.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                appContainer.requestFullscreen().catch(err => {
-                    alert(`Error trying to enable fullscreen mode: ${err.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        });
-
-        // Watch for fullscreen escape changes (e.g. system back buttons) to update UI text
-        document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                btnFullscreen.innerText = "Exit Fullscreen";
-                btnFullscreen.classList.replace('bg-indigo-600', 'bg-rose-600');
-                btnFullscreen.classList.replace('active:bg-indigo-700', 'active:bg-rose-700');
-                
-                // Optional optimization: switch view height to fill layout space when opening fullscreen
-                if (typeof scrollHeight === 'string' && scrollHeight.includes('vh')) {
-                     updateUIIndicators();
+        // Backup: if onload doesn't fire, try to detect content
+        let checkInterval = setInterval(() => {
+            if (wrapper.scrollHeight > wrapper.clientHeight + 50) {
+                clearInterval(checkInterval);
+                isLoaded = true;
+                if (!isPaused) {
+                    wrapper.scrollTop = 0;
+                    startScroll();
                 }
-            } else {
-                btnFullscreen.innerText = "Fullscreen";
-                btnFullscreen.classList.replace('bg-rose-600', 'bg-indigo-600');
-                btnFullscreen.classList.replace('active:bg-rose-700', 'active:bg-indigo-700');
             }
-        });
+        }, 300);
 
-        // Async PDF Document Parsing and Pipeline Generation
-        fileSelector.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file || file.type !== 'application/pdf') {
-                alert("Invalid format detected. Please submit a valid PDF document file structure.");
-                return;
-            }
-
-            stopScrolling();
-            placeholderText.innerText = "Processing document pages. Please wait...";
-            pdfRenderContainer.querySelectorAll('canvas').forEach(canvas => canvas.remove());
-
-            const fileReader = new FileReader();
-            fileReader.onload = async function () {
-                const typedarray = new Uint8Array(this.result);
-
-                try {
-                    currentPdf = await pdfjsLib.getDocument(typedarray).promise;
-                    placeholderText.style.display = 'none';
-                    
-                    for (let pageNum = 1; pageNum <= currentPdf.numPages; pageNum++) {
-                        await renderPdfPage(pageNum);
+        // Fallback: force start after 3 seconds even if detection fails
+        setTimeout(() => {
+            clearInterval(checkInterval);
+            if (!isLoaded && !isPaused) {
+                // Try reloading
+                embed.src = url;
+                setTimeout(() => {
+                    if (wrapper.scrollHeight > wrapper.clientHeight) {
+                        isLoaded = true;
+                        wrapper.scrollTop = 0;
+                        startScroll();
+                    } else {
+                        // If still not loaded, show fallback
+                        container.classList.add('error');
                     }
-                    
-                    pdfViewport.scrollTop = 0;
-                } catch (error) {
-                    console.error(error);
-                    alert("An error occurred while compiling the asset elements of this PDF.");
-                    placeholderText.innerText = "Error loading PDF.";
-                    placeholderText.style.display = 'block';
-                }
-            };
-            fileReader.readAsArrayBuffer(file);
-        });
+                }, 1000);
+            }
+        }, 3500);
+    }
 
-        // Page Renderer Logic Context
-        async function renderPdfPage(pageNum) {
-            const page = await currentPdf.getPage(pageNum);
-            const viewportPrototype = page.getViewport({ scale: 1.0 });
-            const customScale = (pdfViewport.clientWidth - 16) / viewportPrototype.width; 
-            const viewport = page.getViewport({ scale: customScale });
-
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            pdfRenderContainer.appendChild(canvas);
-
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-            await page.render(renderContext).promise;
+    // ----- Scroll engine -----
+    function startScroll() {
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = null;
         }
 
-        // Initialize view metric states
-        updateUIIndicators();
-    </script>
+        if (isPaused) {
+            isScrolling = false;
+            toggleBtn.textContent = '▶ Play';
+            toggleBtn.classList.remove('secondary');
+            indicator.innerHTML = '⏸ PAUSED';
+            indicator.style.opacity = '0.4';
+            return;
+        }
+
+        // Check if at bottom
+        const maxScroll = wrapper.scrollHeight - wrapper.clientHeight;
+        if (wrapper.scrollTop >= maxScroll - 2 && maxScroll > 0) {
+            wrapper.scrollTop = 0;
+        }
+
+        isScrolling = true;
+        toggleBtn.textContent = '⏸ Pause';
+        toggleBtn.classList.add('secondary');
+        indicator.style.opacity = '0.8';
+        lastTimestamp = performance.now();
+        animationFrame = requestAnimationFrame(scrollStep);
+    }
+
+    function scrollStep(timestamp) {
+        if (!isScrolling) {
+            animationFrame = requestAnimationFrame(scrollStep);
+            return;
+        }
+
+        if (!wrapper) {
+            animationFrame = requestAnimationFrame(scrollStep);
+            return;
+        }
+
+        const maxScroll = wrapper.scrollHeight - wrapper.clientHeight;
+        if (maxScroll <= 0) {
+            animationFrame = requestAnimationFrame(scrollStep);
+            return;
+        }
+
+        const currentScroll = wrapper.scrollTop;
+
+        // Stop at bottom
+        if (currentScroll >= maxScroll - 1) {
+            isScrolling = false;
+            toggleBtn.textContent = '▶ Play';
+            toggleBtn.classList.remove('secondary');
+            indicator.innerHTML = '⏸ END';
+            indicator.style.opacity = '0.4';
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            return;
+        }
+
+        const now = performance.now();
+        const deltaMs = Math.min(now - lastTimestamp, 50);
+        lastTimestamp = now;
+
+        const speedFactor = BASE_SPEED * scrollSpeed;
+        let scrollDelta = speedFactor * deltaMs;
+
+        let newScroll = currentScroll + scrollDelta;
+        if (newScroll > maxScroll) newScroll = maxScroll;
+        wrapper.scrollTop = newScroll;
+
+        // Update indicator
+        const percent = maxScroll > 0 ? Math.min(100, (newScroll / maxScroll) * 100) : 0;
+        indicator.textContent = Math.round(percent) + '%';
+        indicator.style.opacity = '0.8';
+
+        animationFrame = requestAnimationFrame(scrollStep);
+    }
+
+    // ----- Toggle pause/play -----
+    function toggleScroll() {
+        if (isScrolling) {
+            // Pause
+            isScrolling = false;
+            isPaused = true;
+            toggleBtn.textContent = '▶ Play';
+            toggleBtn.classList.remove('secondary');
+            indicator.innerHTML = '⏸ PAUSED';
+            indicator.style.opacity = '0.4';
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+        } else {
+            // Play
+            isPaused = false;
+            const maxScroll = wrapper.scrollHeight - wrapper.clientHeight;
+            if (wrapper.scrollTop >= maxScroll - 2 && maxScroll > 0) {
+                wrapper.scrollTop = 0;
+            }
+            startScroll();
+        }
+    }
+
+    // ----- Reset -----
+    function resetScroll() {
+        wrapper.scrollTop = 0;
+        isPaused = false;
+        if (isScrolling) {
+            // Just update indicator
+            indicator.textContent = '0%';
+            return;
+        }
+        startScroll();
+    }
+
+    // ----- Speed cycle -----
+    function cycleSpeed() {
+        let idx = SPEED_OPTIONS.indexOf(scrollSpeed);
+        idx = (idx + 1) % SPEED_OPTIONS.length;
+        scrollSpeed = SPEED_OPTIONS[idx];
+        speedStatus.textContent = scrollSpeed + '×';
+    }
+
+    // ----- Force display with iframe if embed fails -----
+    function forceDisplayWithIframe() {
+        // If after 5 seconds the PDF still isn't showing, try iframe
+        setTimeout(() => {
+            if (!isLoaded && !container.classList.contains('error')) {
+                const iframe = document.createElement('iframe');
+                iframe.src = PDF_URL;
+                iframe.style.width = '100%';
+                iframe.style.height = '600px';
+                iframe.style.border = 'none';
+                iframe.style.background = '#252525';
+                
+                const container = document.getElementById('pdfContainer');
+                const embedEl = document.getElementById('pdfEmbed');
+                embedEl.style.display = 'none';
+                container.appendChild(iframe);
+                
+                isLoaded = true;
+                setTimeout(() => {
+                    if (!isPaused) {
+                        wrapper.scrollTop = 0;
+                        startScroll();
+                    }
+                }, 500);
+            }
+        }, 4000);
+    }
+
+    // ----- Init -----
+    function init() {
+        // Set up wrapper
+        wrapper.style.maxHeight = '80vh';
+        wrapper.style.overflowY = 'auto';
+        wrapper.style.scrollBehavior = 'auto';
+        wrapper.style.position = 'relative';
+
+        // Load PDF
+        loadPDF(PDF_URL);
+        
+        // Force iframe fallback if needed
+        forceDisplayWithIframe();
+
+        // Set initial speed
+        speedStatus.textContent = '1×';
+
+        // Event listeners
+        toggleBtn.addEventListener('click', toggleScroll);
+        resetBtn.addEventListener('click', resetScroll);
+        speedStatus.addEventListener('click', cycleSpeed);
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && isScrolling) {
+                isScrolling = false;
+                isPaused = true;
+                toggleBtn.textContent = '▶ Play';
+                toggleBtn.classList.remove('secondary');
+                indicator.innerHTML = '⏸ PAUSED';
+                indicator.style.opacity = '0.4';
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
+            }
+        });
+    }
+
+    // Start
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+})();
+</script>
 </body>
 </html>
