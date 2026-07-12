@@ -4,22 +4,20 @@ setlocal EnableExtensions
 chcp 65001 >nul
 
 REM Hybrid Batch -> PowerShell: run the PowerShell part embedded below (no .ps1 needed)
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$ps = (Get-Content -Raw -LiteralPath '%~f0') -replace '(?s)^.*?#>\r?\n',''; & ([scriptblock]::Create($ps)) @args" %*
+pwsh -NoProfile -ExecutionPolicy Bypass -Command "$ps = (Get-Content -Raw -LiteralPath '%~f0') -replace '(?s)^.*?#>\r?\n',''; & ([scriptblock]::Create($ps)) @args" %*
 set "RC=%ERRORLEVEL%"
 exit /b %RC%
 #>
 
-param(
-    [Parameter(ValueFromRemainingArguments=$true)]
-    [string[]]$CommitMessageParts
-)
+param( [Parameter(ValueFromRemainingArguments=$true)]  [string[]]$CommitMessageParts)
 
 $ErrorActionPreference = 'Stop'
 
 function Fail($msg) { Write-Host "ERROR: $msg" -ForegroundColor Red; exit 1 }
+
 function Ensure-Git() {
-    $git = (Get-Command git -ErrorAction SilentlyContinue)
-    if (-not $git) { Fail 'git not found in PATH' }
+    $git = (Get-Command git -ErrorAction SilentlyContinue)	
+    if (-not $git) { Fail 'git not found in PATH' }	
 }
 function Ensure-Repo() {
     $inside = git rev-parse --is-inside-work-tree 2>&1
