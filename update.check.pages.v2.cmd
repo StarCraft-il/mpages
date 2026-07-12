@@ -1,4 +1,171 @@
-﻿<!DOCTYPE html>
+@echo off
+setlocal
+set "SELF_PATH=%~f0"
+set "PS_MARKER=:__PS_SCRIPT_BELOW__"
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "$selfPath = [System.Environment]::GetEnvironmentVariable('SELF_PATH');" ^
+  "$marker = [System.Environment]::GetEnvironmentVariable('PS_MARKER');" ^
+  "$content = Get-Content -LiteralPath $selfPath -Raw;" ^
+  "$markerIndex = $content.LastIndexOf($marker);" ^
+  "if ($markerIndex -lt 0) { throw 'PowerShell marker not found.' };" ^
+  "$scriptContent = $content.Substring($markerIndex + $marker.Length);" ^
+  "$tempPath = Join-Path $env:TEMP ('update.check.pages.' + [System.Guid]::NewGuid().ToString('N') + '.ps1');" ^
+  "Set-Content -LiteralPath $tempPath -Value $scriptContent -Encoding UTF8;" ^
+  "try { & $tempPath; exit $LASTEXITCODE } finally { Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue }"
+
+set "EXIT_CODE=%errorlevel%"
+if not defined CHECK_PAGES_NO_PAUSE pause
+exit /b %EXIT_CODE%
+:__PS_SCRIPT_BELOW__
+
+enum LogLevel {
+    Info
+    Warning
+    Error
+}
+
+$script:ExitCode = 0
+$script:RootPath = Split-Path -Parent $env:SELF_PATH
+$script:LogFileName = 'res.{0}.log' -f (Get-Date -Format 'yyyyMMddHHmmss')
+$script:LogFilePath = Join-Path -Path $script:RootPath -ChildPath $script:LogFileName
+
+# Folders listed here appear first, in this exact array order.
+# Each configured folder also includes all of its subfolders.
+$script:TopFolderNames = @(
+    'm1t2', 'pdf_scroll'
+)
+
+# HTML files inside these folders, at any depth, are excluded.
+$script:ExcludedFolderNames = @(
+    '.git'
+    'content'
+)
+
+function Write-Log {
+    param(
+        [LogLevel]$Level,
+        [string]$Message
+    )
+
+    $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $line = '[{0}] [{1}] {2}' -f $timestamp, $Level, $Message
+    Add-Content -LiteralPath $script:LogFilePath -Value $line
+
+    switch ($Level) {
+        ([LogLevel]::Info) {
+            Write-Host $line -ForegroundColor Cyan
+        }
+        ([LogLevel]::Warning) {
+            Write-Host $line -ForegroundColor Yellow
+        }
+        ([LogLevel]::Error) {
+            Write-Host $line -ForegroundColor Red
+        }
+    }
+}
+
+function Get-FolderRank {
+    param(
+        [string]$FolderPath
+    )
+
+    $normalizedFolderPath = $FolderPath.Replace('\', '/').Trim('/')
+
+    if ([string]::IsNullOrWhiteSpace($normalizedFolderPath)) {
+        $normalizedFolderPath = '.'
+    }
+
+    for ($index = 0; $index -lt $script:TopFolderNames.Count; $index++) {
+        $topFolderPath = ([string]$script:TopFolderNames[$index]).Replace('\', '/').Trim('/')
+
+        if ([string]::IsNullOrWhiteSpace($topFolderPath)) {
+            continue
+        }
+
+        $isExactFolder = $normalizedFolderPath.Equals(
+            $topFolderPath,
+            [System.StringComparison]::OrdinalIgnoreCase
+        )
+        $isSubfolder = $normalizedFolderPath.StartsWith(
+            $topFolderPath + '/',
+            [System.StringComparison]::OrdinalIgnoreCase
+        )
+
+        if ($isExactFolder -or $isSubfolder) {
+            return $index
+        }
+    }
+
+    return $script:TopFolderNames.Count
+}
+
+function Test-IsExcludedHtmlFile {
+    param(
+        [string]$RelativePath
+    )
+
+    $pathSegments = @($RelativePath.Replace('\', '/').Split('/'))
+
+    # The final segment is the HTML file name, so inspect directory segments only.
+    for ($segmentIndex = 0; $segmentIndex -lt ($pathSegments.Count - 1); $segmentIndex++) {
+        foreach ($excludedFolderName in $script:ExcludedFolderNames) {
+            if ([string]::Equals(
+                $pathSegments[$segmentIndex],
+                [string]$excludedFolderName,
+                [System.StringComparison]::OrdinalIgnoreCase
+            )) {
+                return $true
+            }
+        }
+    }
+
+    return $false
+}
+
+function Get-HtmlFiles {
+    $rootPrefix = $script:RootPath.TrimEnd('\') + '\'
+
+    $items = Get-ChildItem -Path $script:RootPath -Recurse -File -Filter *.html |
+        ForEach-Object {
+            $relativePath = $_.FullName.Substring($rootPrefix.Length).Replace('\', '/')
+
+            if (-not (Test-IsExcludedHtmlFile -RelativePath $relativePath)) {
+                $lastSlashIndex = $relativePath.LastIndexOf('/')
+                $folderPath = if ($lastSlashIndex -lt 0) {
+                    '.'
+                }
+                else {
+                    $relativePath.Substring(0, $lastSlashIndex)
+                }
+
+                [PSCustomObject]@{
+                    RelativePath = $relativePath
+                    FolderPath = $folderPath
+                    Rank = Get-FolderRank -FolderPath $folderPath
+                }
+            }
+        } |
+        Sort-Object Rank, FolderPath, RelativePath
+
+    return @($items | ForEach-Object { $_.RelativePath })
+}
+
+function New-RandomLinkVersion {
+    param(
+        [System.Collections.Generic.HashSet[int]]$UsedVersions
+    )
+
+    do {
+        $version = Get-Random -Minimum 100000000 -Maximum 1000000000
+    } while (-not $UsedVersions.Add($version))
+
+    return $version
+}
+
+function Get-CheckPagesTemplate {
+@'
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
@@ -15,8 +182,6 @@
             --text: #edf4ff;
             --muted: #9eb0ca;
             --accent: #38bdf8;
-            --top-folder-background: rgba(14, 116, 144, 0.35);
-            --other-folder-background: rgba(18, 28, 45, 0.82);
         }
 
         * {
@@ -174,14 +339,7 @@
             border: 1px solid var(--line);
             border-radius: 18px;
             overflow: hidden;
-        }
-
-        .folder-card-top {
-            background: var(--top-folder-background);
-        }
-
-        .folder-card-other {
-            background: var(--other-folder-background);
+            background: rgba(18, 28, 45, 0.6);
         }
 
         .folder-header {
@@ -271,10 +429,10 @@
             <h1>Check Pages</h1>
             <p>This page was generated by <strong>update.check.pages.cmd</strong>. Configured priority folders are shown first, followed by all remaining folders alphabetically.</p>
             <div class="stats">
-                <div class="stat-card">Generated on: <strong>2026-07-12 11:55:56</strong></div>
-                <div class="stat-card">Html pages: <strong id="fileCount">69</strong></div>
+                <div class="stat-card">Generated on: <strong>__GENERATED_ON__</strong></div>
+                <div class="stat-card">Html pages: <strong id="fileCount">__FILE_COUNT__</strong></div>
                 <div class="stat-card">Folders: <strong id="folderCount">0</strong></div>
-                <div class="stat-card">Log file: <strong>res.20260712115556.log</strong></div>
+                <div class="stat-card">Log file: <strong>__LOG_FILE_NAME__</strong></div>
             </div>
         </section>
 
@@ -285,7 +443,7 @@
                     <input id="txtFilter" class="search-box" type="text" placeholder="Filter html pages by file name or path..." />
                     <div class="toolbar-actions">
                         <button id="btnReloadPage" class="button-action blue" type="button">Reload page</button>
-                        <a class="button-link" href="./index.html?v=498934768">Back to index</a>
+                        <a class="button-link" href="./index.html?v=__INDEX_LINK_VERSION__">Back to index</a>
                     </div>
                 </div>
             </div>
@@ -300,285 +458,8 @@
 
     <script>
         (function () {
-            const allFiles = [
-    {
-        "path":  "m1t2/Devarim.mobile.zoom.step-scroll.v1.html",
-        "version":  102812484
-    },
-    {
-        "path":  "m1t2/Devarim.mobile.zoom.v1.html",
-        "version":  642996274
-    },
-    {
-        "path":  "m1t2/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v1.html",
-        "version":  169794844
-    },
-    {
-        "path":  "m1t2/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v2.html",
-        "version":  817065577
-    },
-    {
-        "path":  "m1t2/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v3.html",
-        "version":  339472646
-    },
-    {
-        "path":  "m1t2/p.f2.Devarim.html",
-        "version":  786424971
-    },
-    {
-        "path":  "pdf_scroll/Devarim.mobile.zoom.step-scroll.v1.html",
-        "version":  987243565
-    },
-    {
-        "path":  "pdf_scroll/Devarim.mobile.zoom.v1.html",
-        "version":  405830998
-    },
-    {
-        "path":  "pdf_scroll/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v1.html",
-        "version":  286484678
-    },
-    {
-        "path":  "pdf_scroll/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v2.html",
-        "version":  176588343
-    },
-    {
-        "path":  "pdf_scroll/f2.Devarim.pdf.20260712.110454.pdf.loader.scroll.v3.html",
-        "version":  567814843
-    },
-    {
-        "path":  "pdf_scroll/f2.z05.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  556639007
-    },
-    {
-        "path":  "pdf_scroll/f2.z052.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  395413158
-    },
-    {
-        "path":  "pdf_scroll/f2.z054.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  180375818
-    },
-    {
-        "path":  "pdf_scroll/f2.z056.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  240146592
-    },
-    {
-        "path":  "pdf_scroll/f2.z06.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  301179454
-    },
-    {
-        "path":  "pdf_scroll/f2.z064.Devarim.pdf.20260712.110454.pdf.viewer.step-scroll.v1.html",
-        "version":  447816332
-    },
-    {
-        "path":  "pdf_scroll/p.f2.Devarim.html",
-        "version":  735591955
-    },
-    {
-        "path":  "check.pages.html",
-        "version":  565674404
-    },
-    {
-        "path":  "eye_scroll.v2.html",
-        "version":  680507387
-    },
-    {
-        "path":  "eye_scroll.v3.html",
-        "version":  462876565
-    },
-    {
-        "path":  "eye_scroll.v4.html",
-        "version":  291403584
-    },
-    {
-        "path":  "eye_scroll.v5.html",
-        "version":  364820049
-    },
-    {
-        "path":  "eye_scroll2.html",
-        "version":  625510437
-    },
-    {
-        "path":  "index.html",
-        "version":  283095638
-    },
-    {
-        "path":  "test_pages.html",
-        "version":  692950604
-    },
-    {
-        "path":  "ai/cp/eye-friendly-smooth-auto-scroll.html",
-        "version":  875958131
-    },
-    {
-        "path":  "ai/cp/mobile-first-auto-scroll-controls.html",
-        "version":  524484020
-    },
-    {
-        "path":  "ai/gm/test1.html",
-        "version":  774217049
-    },
-    {
-        "path":  "ai/gm/test10.html",
-        "version":  331556709
-    },
-    {
-        "path":  "ai/gm/test11.html",
-        "version":  985631407
-    },
-    {
-        "path":  "ai/gm/test12.html",
-        "version":  848576919
-    },
-    {
-        "path":  "ai/gm/test13.html",
-        "version":  650921031
-    },
-    {
-        "path":  "ai/gm/test14.html",
-        "version":  756514271
-    },
-    {
-        "path":  "ai/gm/test15.html",
-        "version":  560705429
-    },
-    {
-        "path":  "ai/gm/test16.html",
-        "version":  128896846
-    },
-    {
-        "path":  "ai/gm/test17.html",
-        "version":  389458348
-    },
-    {
-        "path":  "ai/gm/test18.html",
-        "version":  777667347
-    },
-    {
-        "path":  "ai/gm/test2.html",
-        "version":  859778638
-    },
-    {
-        "path":  "ai/gm/test3.html",
-        "version":  594048906
-    },
-    {
-        "path":  "ai/gm/test4.html",
-        "version":  682626155
-    },
-    {
-        "path":  "ai/gm/test5.html",
-        "version":  474936934
-    },
-    {
-        "path":  "ai/gm/test6.html",
-        "version":  989360509
-    },
-    {
-        "path":  "ai/gm/test7.html",
-        "version":  900888809
-    },
-    {
-        "path":  "ai/gm/test8.html",
-        "version":  703414055
-    },
-    {
-        "path":  "ai/gm/test9.html",
-        "version":  464164858
-    },
-    {
-        "path":  "ai/gm/tic.tac.toe.v1.html",
-        "version":  605309655
-    },
-    {
-        "path":  "ai/gp/auto scroll.claude.html",
-        "version":  421568637
-    },
-    {
-        "path":  "ai/gp/autoscroll.gp.controls.html",
-        "version":  567730144
-    },
-    {
-        "path":  "ai/gp/full.screen.click.html",
-        "version":  904224835
-    },
-    {
-        "path":  "ai/gp/preview.auto.scroll.html",
-        "version":  550639520
-    },
-    {
-        "path":  "ai/sg/sudoku.codex.v1.html",
-        "version":  663572652
-    },
-    {
-        "path":  "ai/sg/sudoku.gemini.v1.html",
-        "version":  363382132
-    },
-    {
-        "path":  "ai/sg/sudoku.v1.html",
-        "version":  906934309
-    },
-    {
-        "path":  "ai/sg/sudoku.v10.html",
-        "version":  556639817
-    },
-    {
-        "path":  "ai/sg/sudoku.v2.html",
-        "version":  384910531
-    },
-    {
-        "path":  "ai/sg/sudoku.v9.html",
-        "version":  888049801
-    },
-    {
-        "path":  "ai/sg/sudoku_game.cp.html",
-        "version":  183340639
-    },
-    {
-        "path":  "ai/sg/sudoku_game.gp.html",
-        "version":  651191903
-    },
-    {
-        "path":  "ai/sg/sudoku_game.gp.v1.html",
-        "version":  362965086
-    },
-    {
-        "path":  "ai/sg/sudoku_game.grok.v1.html",
-        "version":  218246690
-    },
-    {
-        "path":  "ai/test/autoscroll.gp.controls.with.portion.html",
-        "version":  600125280
-    },
-    {
-        "path":  "ai/test/p.f2.Test.html",
-        "version":  147156383
-    },
-    {
-        "path":  "ai/test/p.f2.tmot.new.zoom.html",
-        "version":  324616092
-    },
-    {
-        "path":  "ai/test/p.f2.Zoom.Gesture.html",
-        "version":  584402719
-    },
-    {
-        "path":  "ai/test/p.f2.Zoom.Multiply.html",
-        "version":  665111926
-    },
-    {
-        "path":  "ai/test/p.tmot.zoom.out.test.html",
-        "version":  548318010
-    },
-    {
-        "path":  "ai/test/p.tmot.zoom.test.html",
-        "version":  483088450
-    },
-    {
-        "path":  "home/default.html",
-        "version":  611330192
-    }
-];
-            const topFolderNames = ["m1t2","pdf_scroll"];
+            const allFiles = __FILE_LIST_JSON__;
+            const topFolderNames = __TOP_FOLDER_NAMES_JSON__;
             const txtFilter = document.getElementById('txtFilter');
             const btnReloadPage = document.getElementById('btnReloadPage');
             const filesContainer = document.getElementById('filesContainer');
@@ -656,10 +537,6 @@
                 return topFolderNames.length;
             }
 
-            function isTopFolder(folderPath) {
-                return getFolderRank(folderPath) < topFolderNames.length;
-            }
-
             function groupFiles(files) {
                 const groups = new Map();
 
@@ -719,9 +596,6 @@
                 }
 
                 const html = groupedFiles.map(function (group) {
-                    const folderCardClass = isTopFolder(group.folderPath)
-                        ? 'folder-card folder-card-top'
-                        : 'folder-card folder-card-other';
                     const fileLinksHtml = group.files.map(function (fileEntry) {
                         const filePath = getFilePath(fileEntry);
 
@@ -740,9 +614,7 @@
                     }).join('');
 
                     return [
-                        '<section class="',
-                        folderCardClass,
-                        '">',
+                        '<section class="folder-card">',
                         '<div class="folder-header">',
                         '<div class="folder-title">',
                         escapeHtml(group.folderPath),
@@ -774,3 +646,46 @@
     </script>
 </body>
 </html>
+'@
+}
+
+function Update-CheckPagesFile {
+    $htmlFiles = Get-HtmlFiles
+    $usedVersions = [System.Collections.Generic.HashSet[int]]::new()
+    $htmlFileLinks = @($htmlFiles | ForEach-Object {
+        [PSCustomObject]@{
+            path = $_
+            version = New-RandomLinkVersion -UsedVersions $usedVersions
+        }
+    })
+    $jsonFiles = ConvertTo-Json -InputObject $htmlFileLinks -Depth 4
+    $topFolderNamesJson = ConvertTo-Json -InputObject @($script:TopFolderNames) -Compress
+    $template = Get-CheckPagesTemplate
+    $generatedOn = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $outputPath = Join-Path -Path $script:RootPath -ChildPath 'check.pages.html'
+    $indexLinkVersion = New-RandomLinkVersion -UsedVersions $usedVersions
+
+    $content = $template.
+        Replace('__FILE_LIST_JSON__', $jsonFiles).
+        Replace('__TOP_FOLDER_NAMES_JSON__', $topFolderNamesJson).
+        Replace('__GENERATED_ON__', $generatedOn).
+        Replace('__FILE_COUNT__', [string]$htmlFiles.Count).
+        Replace('__LOG_FILE_NAME__', $script:LogFileName).
+        Replace('__INDEX_LINK_VERSION__', [string]$indexLinkVersion)
+
+    Set-Content -LiteralPath $outputPath -Value $content -Encoding UTF8
+    Write-Log -Level ([LogLevel]::Info) -Message ("Updated check.pages.html with {0} html page(s)." -f $htmlFiles.Count)
+}
+
+try {
+    New-Item -ItemType File -Path $script:LogFilePath -Force | Out-Null
+    Write-Log -Level ([LogLevel]::Info) -Message ('Started update.check.pages.cmd in root: ' + $script:RootPath)
+    Update-CheckPagesFile
+    Write-Log -Level ([LogLevel]::Info) -Message ('Finished successfully.')
+}
+catch {
+    $script:ExitCode = 1
+    Write-Log -Level ([LogLevel]::Error) -Message $_.Exception.Message
+}
+
+exit $script:ExitCode
