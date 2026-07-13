@@ -254,7 +254,7 @@ ul#aliyusTableLinks {
 }
 #parashaContentRow .aliya .a-header {
   font-family: mysbl_64_2 !important;
-  font-size: 70px;
+  font-size: 60px;
   color: red;
   font-weight: bold;
   letter-spacing: 18px;
@@ -326,27 +326,27 @@ ul#aliyusTableLinks {
   background-color: lightsteelblue !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlFirstDayGeneral, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlFirstDayGeneral, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayGeneral {
-  font-size: 20px !important;
-  line-height: 25px !important;
+  font-size: 10px !important;
+  line-height: 15px !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
   padding-right: 0px !important;
   margin-right: 0px !important;
+  font-size: 40px !important;
+  line-height: 45px !important;
+}
+#parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader {
   font-size: 50px !important;
   line-height: 55px !important;
 }
-#parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader {
-  font-size: 60px !important;
-  line-height: 65px !important;
-}
 #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlFirstDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlFirstDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader {
-  font-size: 60px !important;
-  line-height: 65px !important;
+  font-size: 50px !important;
+  line-height: 55px !important;
   background-color: greenyellow !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlLastDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlLastDayFromDayHeader, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
-  font-size: 60px !important;
-  line-height: 65px !important;
+  font-size: 50px !important;
+  line-height: 55px !important;
   background-color: coral !important;
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .header:nth-child(n+2) {
@@ -389,8 +389,8 @@ ul#aliyusTableLinks {
 }
 #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
   letter-spacing: -1px !important;
-  font-size: 60px !important;
-  line-height: 65px !important;
+  font-size: 50px !important;
+  line-height: 55px !important;
   padding-top: 8px;
   padding-bottom: 4px;
   color: darkslategray;
