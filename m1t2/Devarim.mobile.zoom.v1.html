@@ -23,6 +23,8 @@
             --tmot-line-normal: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
             --tmot-line-medium: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
             --tmot-line-reading: calc(1.22 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
+            --tmot-letter-spacing: -1px;
+            --tmot-word-spacing: 4px;
         }
 
         html,
@@ -49,7 +51,7 @@
         div.chapterText {
             font-family: mysbl_64 !important;
             -webkit-transform: scaleX(0.94) !important;
-            letter-spacing: -1px !important;
+            letter-spacing: var(--tmot-letter-spacing) !important;
         }
 
         @media (max-width: 768px) {
@@ -94,15 +96,15 @@
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
                 font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
                 line-height: var(--tmot-line-reading) !important;
-                letter-spacing: -1px !important;
-                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
             }
 
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
                 font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
                 line-height: var(--tmot-line-medium) !important;
-                letter-spacing: -1px !important;
-                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
             }
 
             div.allText {
@@ -179,8 +181,8 @@
                 #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
                     font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
                     line-height: var(--tmot-line-reading) !important;
-                    letter-spacing: -1px !important;
-                    word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+                    letter-spacing: var(--tmot-letter-spacing) !important;
+                    word-spacing: var(--tmot-word-spacing) !important;
                 }
 
             .lastVerse .base-last-verse,
@@ -188,8 +190,8 @@
             .lastVerse .last_pasuk_mikra_2 {
                 font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
                 line-height: var(--tmot-line-reading) !important;
-                letter-spacing: -1px !important;
-                word-spacing: calc(4px * var(--tmot-zoom-multiplier)) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
             }
         }
 
@@ -3123,6 +3125,22 @@
                 <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-100">-100</button>
                 <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-1000">-1000</button>
             </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Letter spacing</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Letter spacing">
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="letterSpacing" data-auto-scroll-delta="1">+1</button>
+                <span id="letterSpacingValue" class="tmot-auto-scroll-value">-1 px</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="letterSpacing" data-auto-scroll-delta="-1">-1</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Word spacing</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Word spacing">
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="wordSpacing" data-auto-scroll-delta="1">+1</button>
+                <span id="wordSpacingValue" class="tmot-auto-scroll-value">4 px</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="wordSpacing" data-auto-scroll-delta="-1">-1</button>
+            </div>
             <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Auto-scroll is preparing.</div>
         </div>
     </div>
@@ -3144,6 +3162,8 @@
             const autoScrollStepButtons = document.querySelectorAll("[data-auto-scroll-control]");
             const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
             const autoScrollIdleDelayValue = document.getElementById("autoScrollIdleDelayValue");
+            const letterSpacingValue = document.getElementById("letterSpacingValue");
+            const wordSpacingValue = document.getElementById("wordSpacingValue");
             const autoScrollStatus = document.getElementById("autoScrollStatus");
 
             let currentScale = 1;
@@ -3165,6 +3185,9 @@
                 idleResumeDelayMs: 1800,
                 minIdleResumeDelayMs: 500,
                 maxIdleResumeDelayMs: 5000,
+                letterSpacingPixels: -1,
+                wordSpacingPixels: 4,
+                minTextSpacingPixels: -5,
                 touchSpeedFactor: 0.22,
                 touchMoveThresholdPixels: 3,
                 programmaticScrollFlagMs: 140
@@ -3190,6 +3213,8 @@
             let programmaticScrollReleaseTimerId = 0;
             let touchAdjustStartSpeed = autoScrollTargetSpeed;
             let onkelosHidden = true;
+            let letterSpacingPixels = normalizeTextSpacing(autoScrollConfig.letterSpacingPixels, -1);
+            let wordSpacingPixels = normalizeTextSpacing(autoScrollConfig.wordSpacingPixels, 4);
 
             function clamp(value, min, max) {
                 return Math.min(max, Math.max(min, value));
@@ -3202,6 +3227,13 @@
                 const absoluteSpeed = Math.abs(speedToUse);
 
                 return clamp(absoluteSpeed, autoScrollConfig.minBaseSpeed, autoScrollConfig.maxBaseSpeed);
+            }
+
+            function normalizeTextSpacing(value, fallbackValue) {
+                const numericValue = Number(value);
+                const valueToUse = Number.isFinite(numericValue) ? numericValue : fallbackValue;
+
+                return Math.max(autoScrollConfig.minTextSpacingPixels, valueToUse);
             }
 
             function getSignedBaseSpeed() {
@@ -3244,6 +3276,15 @@
                 }
 
                 return "0 px/s";
+            }
+
+            function formatTextSpacing(value) {
+                return Math.round(value) + " px";
+            }
+
+            function applyTextSpacing() {
+                root.style.setProperty("--tmot-letter-spacing", formatTextSpacing(letterSpacingPixels));
+                root.style.setProperty("--tmot-word-spacing", formatTextSpacing(wordSpacingPixels));
             }
 
             function setAutoScrollStatus(message) {
@@ -3291,6 +3332,16 @@
                 if (autoScrollIdleDelayValue) {
                     autoScrollIdleDelayValue.textContent = autoScrollIdleDelayMs + " ms";
                 }
+
+                if (letterSpacingValue) {
+                    letterSpacingValue.textContent = formatTextSpacing(letterSpacingPixels);
+                }
+
+                if (wordSpacingValue) {
+                    wordSpacingValue.textContent = formatTextSpacing(wordSpacingPixels);
+                }
+
+                applyTextSpacing();
             }
 
             function clearAutoScrollResumeTimer() {
@@ -3386,6 +3437,20 @@
                     );
                     updateAutoScrollUi();
                     setAutoScrollStatus("Resume delay updated to " + autoScrollIdleDelayMs + " ms.");
+                    return;
+                }
+
+                if (controlName === "letterSpacing") {
+                    letterSpacingPixels = normalizeTextSpacing(letterSpacingPixels + delta, autoScrollConfig.letterSpacingPixels);
+                    updateAutoScrollUi();
+                    setAutoScrollStatus("Letter spacing updated to " + formatTextSpacing(letterSpacingPixels) + ".");
+                    return;
+                }
+
+                if (controlName === "wordSpacing") {
+                    wordSpacingPixels = normalizeTextSpacing(wordSpacingPixels + delta, autoScrollConfig.wordSpacingPixels);
+                    updateAutoScrollUi();
+                    setAutoScrollStatus("Word spacing updated to " + formatTextSpacing(wordSpacingPixels) + ".");
                 }
             }
 
