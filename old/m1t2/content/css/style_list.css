@@ -1,0 +1,301 @@
+﻿@font-face {
+  font-family: "SBL_Hebrew";
+  src: url("fonts/SBL_Hbrw.ttf") format("truetype");
+}
+@font-face {
+  font-family: "SIL";
+  src: url("fonts/SILEOT.ttf") format("truetype");
+}
+@font-face {
+  font-family: "SILSR";
+  src: url("fonts/SILEOTSR.ttf") format("truetype");
+}
+@font-face {
+  font-family: "MVilna";
+  src: url("fonts/Mekorot-Vilna.ttf") format("truetype");
+}
+@font-face {
+  font-family: "tfrank_clm";
+  src: url("fonts/TaameyFrankCLM.ttf") format("truetype");
+}
+@font-face {
+  font-family: "nrkis";
+  src: url("fonts/mft_narkisclassic-regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "KeterAramTsova";
+  src: url("fonts/KeterAramTsova.ttf") format("truetype");
+}
+@font-face {
+  font-family: "DroidSansMono";
+  src: url("fonts/DroidSansMono.ttf") format("truetype");
+}
+@font-face {
+  font-family: "shofar";
+  src: url("fonts/shofarregular.ttf") format("truetype");
+}
+html, body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 22px;
+  line-height: 28px;
+  background-color: #FFFAF0;
+  transform: scaleX(0.9);
+}
+
+ul#aliyusTableLinks {
+  font-size: 200%;
+  line-height: 130%;
+  list-style-position: inside;
+  list-style: hebrew;
+}
+
+#parashaContentRow {
+  display: block;
+  grid-template-columns: repeat(2, auto);
+  column-gap: 40px;
+  row-gap: 20px;
+  align-content: center;
+  justify-content: center;
+  align-items: start;
+  justify-items: center;
+  background-color: #ffffff;
+  background-color: #00ffff;
+  background-color: #009999;
+  background-color: #ff00ff;
+  background-color: #ffff00;
+  background-color: #ff5500;
+  background-color: #000000;
+  background-color: #111111;
+  background-color: #888888;
+  background-color: #aaaaaa;
+  background-color: #bbbbbb;
+  background-color: #cccccc;
+  background-color: #FFFAF0;
+  /*background-color: #FFFAF0;*/
+  /*background-color: #dddddd;*/
+  /*background-color: #eeeeee;*/
+  padding: 20px;
+}
+#parashaContentRow .aliya {
+  list-style: none;
+  padding-top: 40px;
+}
+#parashaContentRow .aliya .header {
+  font-size: 50px;
+  color: red;
+  font-weight: bold;
+}
+#parashaContentRow .aliya .aliyaContainer {
+  list-style: none;
+}
+#parashaContentRow .aliya .aliyaContainer .verse {
+  background-color: #FFFAF0;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t {
+  text-align: justify;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header {
+  font-size: 28px;
+  padding-top: 70px;
+  margin-bottom: 0px;
+  color: navy;
+  font-weight: bold;
+  text-align: right;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .prefix-header {
+  color: #D60A0A;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .prefix-header .riseDesc {
+  color: navy;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .prefix-header .verseLeft {
+  color: navy;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .suffix-header {
+  color: maroon;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .suffix-header .chapterNum {
+  color: blue;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .suffix-header .verseNum {
+  color: blue;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .suffix-header .currVerseInTotal {
+  color: blue;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .header .contentHeader {
+  background-color: lightblue;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk-base, #parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_taj_1, #parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_mikra_1 {
+  font-family: shofar;
+  font-family: "Open Sans Hebrew";
+  font-family: "Segoe UI";
+  font-family: Tahoma;
+  font-family: David;
+  font-family: "Guttman Vilna";
+  font-family: Verdana;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: "MFT NarkisClassic";
+  font-family: SIL;
+  font-family: SILSR;
+  font-family: "Times New Roman";
+  font-family: "Taamey Frank CLM";
+  font-weight: normal;
+  text-align: justify;
+  font-size: 166px;
+  line-height: 214px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 1px;
+  padding-left: 1px;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_mikra_1 {
+  color: #840084;
+  color: #008B00;
+  color: #458B00;
+  color: darkgreen;
+  color: #0000CC;
+  color: #0000F1;
+  color: blue;
+  color: darkblue;
+  color: #1F00CC;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_mikra_2 {
+  color: #008B00;
+  color: #458B00;
+  color: blue;
+  color: darkblue;
+  color: #0000CC;
+  color: #0000F1;
+  color: #1F00CC;
+  color: #840084;
+  color: darkgreen;
+  color: green;
+}
+#parashaContentRow .aliya .aliyaContainer .verse .pasuk2m1t .pasuk_taj_1 {
+  line-height: 180px;
+  color: blue;
+  color: darkblue;
+  color: #0000CC;
+  color: #0000F1;
+  color: #1F00CC;
+  color: #008B00;
+  color: #458B00;
+  color: darkgreen;
+  color: #840084;
+  color: maroon;
+  color: #7C66FF;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0px;
+  }
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    background-color: #FFFAF0;
+  }
+  #torahStatistcsForPortion {
+    display: none;
+  }
+  a:link:after {
+    /*content: " (" attr(href) ") ";*/
+  }
+  ul#aliyusTableLinks {
+    font-size: 300%;
+    line-height: 150%;
+    list-style-position: inside;
+    list-style: hebrew;
+  }
+  div#parashaContentRow {
+    display: block;
+    width: 110%;
+    margin-right: -10%;
+    background-color: #FFFAF0;
+  }
+  div#parashaContentRow .verse .pasuk2m1t {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    page-break-before: avoid;
+    page-break-after: avoid;
+  }
+  div#parashaContentRow .verse .pasuk2m1t .header {
+    page-break-before: avoid;
+    page-break-after: avoid;
+  }
+  div#parashaContentRow .verse .pasuk2m1t .pasuk_mikra_1, div#parashaContentRow .verse .pasuk2m1t .pasuk_mikra_2, div#parashaContentRow .verse .pasuk2m1t .pasuk_taj_1 {
+    /*break-inside: avoid;
+    page-break-inside: avoid;*/
+  }
+  div#parashaContentRow .aliya {
+    page-break-before: auto;
+    page-break-after: auto;
+    break-after: auto;
+    break-before: always;
+    break-inside: auto;
+  }
+  /*
+
+  .pasuk2m1t {
+      break-inside: $page-break-off;
+      page-break-inside: $page-break-off;
+
+      .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+          break-inside: $page-break-off;
+          page-break-inside: $page-break-off;
+      }
+
+      .pasuk_taj_1 {
+          break-inside: $page-break-off;
+          page-break-inside: $page-break-off;
+          page-break-after: $page-break-on;
+      }
+  }
+
+  .aliya.header {
+      page-break-before: $page-break-off;
+      page-break-after: avoid;
+      break-after: avoid-page;
+  }
+
+  div#parashaContentRow {
+      break-inside: $page-break-off;
+      page-break-inside: $page-break-off;
+  }
+
+  div#parashaContentRow1 {
+      /*width: 1100px;
+      margin-right: -180px;
+
+      .verse {
+          /*break-inside: avoid;
+          page-break-inside: avoid;
+          break-after: always;
+          break-before: always;
+          page-break-after: always;
+          page-break-before: always;
+          break-inside: $page-break-off;
+          page-break-before: $page-break-on;
+          page-break-after: $page-break-on;
+          page-break-inside: $page-break-off;
+
+          .pasuk2m1t {
+              break-inside: $page-break-off;
+              page-break-inside: $page-break-off;
+
+              .header {
+                  page-break-before: always;
+                  page-break-after: avoid;
+                  break-after: avoid-page;
+              }
+
+              .pasuk_mikra_1, .pasuk_mikra_2, .pasuk_taj_1 {
+                  break-inside: $page-break-off;
+                  page-break-inside: $page-break-off;
+              }
+          }
+      }
+  }*/
+}

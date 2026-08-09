@@ -1,0 +1,25 @@
+body {
+    direction: rtl;
+}
+
+#parashaContentRow {
+    direction: rtl;
+}
+
+.verse-counts-list > li > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.verse-counts-list .status-error {
+    font-size: 24px;
+    color: red;
+}
+
+.verse-counts-list .status-ok {
+    font-size: 24px;
+    color: green;
+}
+
