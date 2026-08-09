@@ -6,7 +6,7 @@ rem Hybrid Batch + PowerShell launcher
 rem The PowerShell implementation is stored below this marker.
 rem ==========================================================
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+pwsh -NoProfile -ExecutionPolicy Bypass -Command ^
   "$p = '%~f0'; $c = Get-Content -LiteralPath $p; $m = ':POWERSHELL'; $i = [Array]::IndexOf($c, $m); if($i -lt 0){ Write-Error 'PowerShell marker not found.'; exit 1 }; $s = $c[($i + 1)..($c.Length - 1)] -join [Environment]::NewLine; $env:SCRIPT_DIR = '%~dp0'; & ([scriptblock]::Create($s))"
 
 exit /b %errorlevel%
@@ -254,17 +254,17 @@ try {
     $folderSets = @(
         [pscustomobject]@{
             Name            = 'Folder Set #1'
-            SourceRoot      = 'C:\Git!myRepos\mpages\m1t2'
-            SourceContent   = 'C:\Git!myRepos\mpages\m1t2\content'
-            DestinationRoot = 'C:\Git!myRepos\mpages\old\m1t2'
-            DestinationContent = 'C:\Git!myRepos\mpages\old\m1t2\content'
+            SourceRoot      = 'C:\Git\!myRepos\mpages\m1t2'
+            SourceContent   = 'C:\Git\!myRepos\mpages\m1t2\content'
+            DestinationRoot = 'C:\Git\!myRepos\mpages\old\m1t2'
+            DestinationContent = 'C:\Git\!myRepos\mpages\old\m1t2\content'
         },
         [pscustomobject]@{
             Name            = 'Folder Set #2'
-            SourceRoot      = 'C:\Git!myRepos\mpages\pdf\_scroll'
-            SourceContent   = 'C:\Git!myRepos\mpages\pdf\_scroll\content'
-            DestinationRoot = 'C:\Git!myRepos\mpages\old\pdf\_scroll'
-            DestinationContent = 'C:\Git!myRepos\mpages\old\pdf\_scroll\content'
+            SourceRoot      = 'C:\Git\!myRepos\mpages\pdf_scroll'
+            SourceContent   = 'C:\Git\!myRepos\mpages\pdf_scroll\content'
+            DestinationRoot = 'C:\Git\!myRepos\mpages\old\pdf_scroll'
+            DestinationContent = 'C:\Git\!myRepos\mpages\old\pdf_scroll\content'
         }
     )
 

@@ -3,7 +3,7 @@ setlocal
 set "HYBRID_SCRIPT=%~f0"
 where pwsh.exe >nul 2>&1
 if errorlevel 1 (echo ERROR: PowerShell 7 ^(pwsh.exe^) was not found. & pause & exit /b 9009)
-pwsh.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$scriptText = (Get-Content -LiteralPath $env:HYBRID_SCRIPT | Select-Object -Skip 10) -join [Environment]::NewLine; & ([ScriptBlock]::Create($scriptText))"
+pwsh.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "& { param([string]$scriptPath) $scriptText = (Get-Content -LiteralPath $scriptPath | Select-Object -Skip 10) -join [Environment]::NewLine; & ([ScriptBlock]::Create($scriptText)) }" "%~f0"
 set "HYBRID_EXIT_CODE=%ERRORLEVEL%"
 echo.
 pause
@@ -48,10 +48,10 @@ function Get-ConsoleColor {
     param([TDLogLevel]$Level)
 
     switch ($Level) {
-        ([TDLogLevel]::Success) { return [ConsoleColor]::Green }
-        ([TDLogLevel]::Warning) { return [ConsoleColor]::Yellow }
-        ([TDLogLevel]::Error)   { return [ConsoleColor]::Red }
-        default                 { return [ConsoleColor]::Cyan }
+        ([TDLogLevel]::Success) { return [System.ConsoleColor]::Green }
+        ([TDLogLevel]::Warning) { return [System.ConsoleColor]::Yellow }
+        ([TDLogLevel]::Error)   { return [System.ConsoleColor]::Red }
+        default                 { return [System.ConsoleColor]::Cyan }
     }
 }
 
@@ -75,7 +75,9 @@ function Write-TDLog {
 
     try {
         # Uses the asynchronous StreamWriter API without timers or background polling.
-        $script:LogWriter.WriteLineAsync($entry).GetAwaiter().GetResult()
+        #$script:LogWriter.WriteLineAsync($entry).GetAwaiter().GetResult()
+		
+		$null = $script:LogWriter.WriteLineAsync($entry).GetAwaiter().GetResult()
     }
     catch {
         Write-Host "LOGGING ERROR: $($_.Exception.Message)" -ForegroundColor Red
@@ -108,12 +110,12 @@ function Register-Error {
 function Ensure-Directory {
     param([Parameter(Mandatory)][string]$Path)
 
-    if ([Directory]::Exists($Path)) {
+    if ([System.IO.Directory]::Exists($Path)) {
         return $true
     }
 
     try {
-        [Directory]::CreateDirectory($Path) | Out-Null
+        [System.IO.Directory]::CreateDirectory($Path) | Out-Null
         $script:Statistics.DirectoriesCreated++
         Write-TDLog -Level Success -Message "Created directory: $Path"
         return $true
@@ -130,7 +132,7 @@ function Get-RelativeItemPath {
         [Parameter(Mandatory)][string]$ItemPath
     )
 
-    return [Path]::GetRelativePath($BasePath, $ItemPath)
+    return [System.IO.Path]::GetRelativePath($BasePath, $ItemPath)
 }
 
 function Test-IsExcludedContentPath {
@@ -140,8 +142,8 @@ function Test-IsExcludedContentPath {
     )
 
     $relativePath = Get-RelativeItemPath -BasePath $SourceRoot -ItemPath $ItemPath
-    $firstSegment = $relativePath.Split([char[]]@([Path]::DirectorySeparatorChar, [Path]::AltDirectorySeparatorChar), [StringSplitOptions]::RemoveEmptyEntries)[0]
-    return [string]::Equals($firstSegment, 'content', [StringComparison]::OrdinalIgnoreCase)
+    $firstSegment = $relativePath.Split([char[]]@([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar), [System.StringSplitOptions]::RemoveEmptyEntries)[0]
+    return [string]::Equals($firstSegment, 'content', [System.StringComparison]::OrdinalIgnoreCase)
 }
 
 # -----------------------------------------------------------------------------
@@ -155,7 +157,7 @@ function Copy-ContentTree {
 
     Write-TDLog -Level Info -Message "COPY PHASE: $SourceContent -> $DestinationContent"
 
-    if (-not [Directory]::Exists($SourceContent)) {
+    if (-not [System.IO.Directory]::Exists($SourceContent)) {
         Register-Warning -Message "Copy source directory does not exist; phase skipped: $SourceContent"
         return
     }
@@ -201,7 +203,7 @@ function Copy-ContentTree {
         }
 
         try {
-            [File]::Copy($file.FullName, $destinationFile, $true)
+            [System.IO.File]::Copy($file.FullName, $destinationFile, $true)
             $script:Statistics.FilesCopied++
             Write-TDLog -Level Success -Message "Copied: $($file.FullName) -> $destinationFile"
         }
@@ -224,7 +226,7 @@ function Move-NonContentTree {
 
     Write-TDLog -Level Info -Message "MOVE PHASE: $SourceRoot -> $DestinationRoot (excluding content)"
 
-    if (-not [Directory]::Exists($SourceRoot)) {
+    if (-not [System.IO.Directory]::Exists($SourceRoot)) {
         Register-Warning -Message "Move source directory does not exist; phase skipped: $SourceRoot"
         return
     }
@@ -272,12 +274,12 @@ function Move-NonContentTree {
         }
 
         try {
-            if ([File]::Exists($destinationFile)) {
-                [File]::Delete($destinationFile)
+            if ([System.IO.File]::Exists($destinationFile)) {
+                [System.IO.File]::Delete($destinationFile)
                 Write-TDLog -Level Info -Message "Removed existing destination file before overwrite: $destinationFile"
             }
 
-            [File]::Move($file.FullName, $destinationFile)
+            [System.IO.File]::Move($file.FullName, $destinationFile)
             $script:Statistics.FilesMoved++
             Write-TDLog -Level Success -Message "Moved: $($file.FullName) -> $destinationFile"
         }
@@ -311,7 +313,7 @@ function Remove-EmptyNonContentDirectories {
                 continue
             }
 
-            [Directory]::Delete($directory.FullName, $false)
+            [System.IO.Directory]::Delete($directory.FullName, $false)
             Write-TDLog -Level Success -Message "Moved directory structure (removed empty source): $($directory.FullName)"
         }
         catch {
@@ -341,8 +343,8 @@ function Invoke-FolderSet {
 # Main execution and final summary
 # -----------------------------------------------------------------------------
 try {
-    $utf8WithoutBom = [Text.UTF8Encoding]::new($false)
-    $script:LogWriter = [StreamWriter]::new($script:LogFilePath, $false, $utf8WithoutBom)
+    $utf8WithoutBom = [System.Text.UTF8Encoding]::new($false)
+    $script:LogWriter = [System.IO.StreamWriter]::new($script:LogFilePath, $false, $utf8WithoutBom)
     $script:LogWriter.AutoFlush = $true
 }
 catch {
