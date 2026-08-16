@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="he" dir="rtl" id="root-element" class="tmot-hide-onkelos">
 <head>
-    <title>2M1T-Ki Teitzei-mobile-zoom</title>
+    <title>2M1T-Ki Teitzei-mobile-zoom-step-scroll</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -23,8 +23,8 @@
             --tmot-line-normal: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
             --tmot-line-medium: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
             --tmot-line-reading: calc(1.22 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
-            --tmot-letter-spacing: 0px;
-            --tmot-word-spacing: 7px;
+            --tmot-letter-spacing: -1px;
+            --tmot-word-spacing: 4px;
         }
 
         html,
@@ -3202,11 +3202,11 @@
 
             <hr />
     </div>
-    <!-- Added: fixed controls so touch, zoom, and reading flow keep priority. -->
+    <!-- Step-scroll controls: scroll by configured screen height, wait, then continue. -->
     <div class="tmot-auto-scroll-shell" dir="ltr">
-        <button id="autoScrollToggleButton" type="button" class="tmot-auto-scroll-toggle" aria-expanded="false" aria-controls="autoScrollPanel">Auto Scroll</button>
+        <button id="autoScrollToggleButton" type="button" class="tmot-auto-scroll-toggle" aria-expanded="false" aria-controls="autoScrollPanel">Step Scroll</button>
         <div id="autoScrollPanel" class="tmot-auto-scroll-panel" hidden>
-            <h2>Auto Scroll</h2>
+            <h2>Step Scroll</h2>
             <div class="tmot-auto-scroll-row">
                 <label for="autoScrollEnabledCheckbox">Enabled</label>
                 <input id="autoScrollEnabledCheckbox" type="checkbox" />
@@ -3225,42 +3225,52 @@
                 <input id="autoScrollDirectionCheckbox" type="checkbox" />
             </div>
             <div class="tmot-auto-scroll-row">
-                <label>Base speed</label>
+                <label>Screen height</label>
             </div>
-            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Base speed">
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="10">+10</button>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="1">+1</button>
-                <span id="autoScrollSpeedValue" class="tmot-auto-scroll-value">0 px/s</span>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="-1">-1</button>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="speed" data-auto-scroll-delta="-10">-10</button>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Screen height">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="10">+10</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="1">+1</button>
+                <span id="autoScrollStepHeightValue" class="tmot-auto-scroll-value">0%</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-10">-10</button>
             </div>
             <div class="tmot-auto-scroll-row">
-                <label>Resume delay</label>
+                <label>Wait delay</label>
             </div>
-            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Resume delay">
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="1000">+1000</button>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="100">+100</button>
-                <span id="autoScrollIdleDelayValue" class="tmot-auto-scroll-value">0 ms</span>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-100">-100</button>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="idleDelay" data-auto-scroll-delta="-1000">-1000</button>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Wait delay">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="1000">+1000</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="100">+100</button>
+                <span id="autoScrollWaitDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-100">-100</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-1000">-1000</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Scroll duration</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Scroll duration">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="500">+500</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="50">+50</button>
+                <span id="autoScrollAnimationDurationValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-50">-50</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-500">-500</button>
             </div>
             <div class="tmot-auto-scroll-row">
                 <label>Letter spacing</label>
             </div>
             <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Letter spacing">
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="letterSpacing" data-auto-scroll-delta="1">+1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="letterSpacing" data-step-scroll-delta="1">+1</button>
                 <span id="letterSpacingValue" class="tmot-auto-scroll-value">-1 px</span>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="letterSpacing" data-auto-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="letterSpacing" data-step-scroll-delta="-1">-1</button>
             </div>
             <div class="tmot-auto-scroll-row">
                 <label>Word spacing</label>
             </div>
             <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Word spacing">
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="wordSpacing" data-auto-scroll-delta="1">+1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="wordSpacing" data-step-scroll-delta="1">+1</button>
                 <span id="wordSpacingValue" class="tmot-auto-scroll-value">4 px</span>
-                <button type="button" class="tmot-auto-scroll-step-button" data-auto-scroll-control="wordSpacing" data-auto-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="wordSpacing" data-step-scroll-delta="-1">-1</button>
             </div>
-            <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Auto-scroll is preparing.</div>
+            <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Step-scroll is preparing.</div>
         </div>
     </div>
     <script>
@@ -3279,9 +3289,10 @@
             const onkelosVisibilityCheckbox = document.getElementById("onkelosVisibilityCheckbox");
             const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
             const verseTextSpacingSelector = "#parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, .lastVerse .last_pasuk_mikra_1, .lastVerse .last_pasuk_mikra_2";
-            const autoScrollStepButtons = document.querySelectorAll("[data-auto-scroll-control]");
-            const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
-            const autoScrollIdleDelayValue = document.getElementById("autoScrollIdleDelayValue");
+            const autoScrollStepButtons = document.querySelectorAll("[data-step-scroll-control]");
+            const autoScrollStepHeightValue = document.getElementById("autoScrollStepHeightValue");
+            const autoScrollWaitDelayValue = document.getElementById("autoScrollWaitDelayValue");
+            const autoScrollAnimationDurationValue = document.getElementById("autoScrollAnimationDurationValue");
             const letterSpacingValue = document.getElementById("letterSpacingValue");
             const wordSpacingValue = document.getElementById("wordSpacingValue");
             const autoScrollStatus = document.getElementById("autoScrollStatus");
@@ -3292,72 +3303,146 @@
             const minScale = 0.8;
             const maxScale = 2.2;
 
-            // Added: central configuration so Ofer can tune speed, delay, and control visibility.
-            const autoScrollConfig = {
+            const stepScrollConfig = {
                 enabled: true,
                 showControlsButton: true,
                 showControlPanelByDefault: false,
                 startOnLoad: true,
-                baseSpeedPixelsPerSecond: 24,
-                minBaseSpeed: 20,
-                maxBaseSpeed: 120,
-                scrollDown: true,
-                idleResumeDelayMs: 1800,
-                minIdleResumeDelayMs: 500,
-                maxIdleResumeDelayMs: 5000,
-                letterSpacingPixels: 0,
-                wordSpacingPixels: 7,
+                screenHeightPercent: 30,
+                minScreenHeightPercent: 25,
+                maxScreenHeightPercent: 100,
+                waitDelayMs: 4000,
+                minWaitDelayMs: 500,
+                maxWaitDelayMs: 10000,
+                animationDurationMs: 5000,
+                minAnimationDurationMs: 2000,
+                maxAnimationDurationMs: 10000,
+                letterSpacingPixels: -1,
+                wordSpacingPixels: 4,
                 minTextSpacingPixels: -5,
-                touchSpeedFactor: 0.22,
-                touchMoveThresholdPixels: 3,
-                programmaticScrollFlagMs: 140
+                scrollDown: true,
+                manualResumeDelayMs: 1800,
+                programmaticScrollFlagMs: 160
             };
+
+            applyQueryParameters(stepScrollConfig);
 
             let pinchZoomActive = false;
             let singleTouchActive = false;
-            let singleTouchMoved = false;
-            let activeTouchIdentifier = null;
-            let touchAdjustStartY = 0;
-
-            let autoScrollEnabled = autoScrollConfig.enabled;
-            let autoScrollDirectionDown = autoScrollConfig.scrollDown;
-            let autoScrollBaseSpeed = normalizeBaseSpeed(autoScrollConfig.baseSpeedPixelsPerSecond);
-            let autoScrollTargetSpeed = autoScrollDirectionDown ? autoScrollBaseSpeed : -autoScrollBaseSpeed;
-            let autoScrollCurrentSpeed = 0;
-            let autoScrollIdleDelayMs = autoScrollConfig.idleResumeDelayMs;
-            let autoScrollPaused = true;
-            let autoScrollFrameId = 0;
-            let autoScrollLastFrameTime = 0;
-            let autoScrollResumeTimerId = 0;
+            let stepScrollEnabled = stepScrollConfig.enabled;
+            let stepScrollDirectionDown = stepScrollConfig.scrollDown;
+            let stepScrollScreenHeightPercent = normalizeNumber(
+                stepScrollConfig.screenHeightPercent,
+                stepScrollConfig.minScreenHeightPercent,
+                stepScrollConfig.maxScreenHeightPercent,
+                30
+            );
+            let stepScrollWaitDelayMs = normalizeNumber(
+                stepScrollConfig.waitDelayMs,
+                stepScrollConfig.minWaitDelayMs,
+                stepScrollConfig.maxWaitDelayMs,
+                4000
+            );
+            let stepScrollAnimationDurationMs = normalizeNumber(
+                stepScrollConfig.animationDurationMs,
+                stepScrollConfig.minAnimationDurationMs,
+                stepScrollConfig.maxAnimationDurationMs,
+                5000
+            );
+            let stepScrollPaused = true;
+            let stepScrollWaitTimerId = 0;
+            let stepScrollFrameId = 0;
+            let stepScrollAnimationStartTime = 0;
+            let stepScrollStartTop = 0;
+            let stepScrollTargetTop = 0;
             let programmaticScrollActive = false;
             let programmaticScrollReleaseTimerId = 0;
-            let touchAdjustStartSpeed = autoScrollTargetSpeed;
+            let manualResumeTimerId = 0;
             let onkelosHidden = true;
-            let letterSpacingPixels = normalizeTextSpacing(autoScrollConfig.letterSpacingPixels, -1);
-            let wordSpacingPixels = normalizeTextSpacing(autoScrollConfig.wordSpacingPixels, 4);
+            let letterSpacingPixels = normalizeTextSpacing(stepScrollConfig.letterSpacingPixels, -1);
+            let wordSpacingPixels = normalizeTextSpacing(stepScrollConfig.wordSpacingPixels, 4);
+
+            function applyQueryParameters(config) {
+                const searchParams = new URLSearchParams(window.location.search);
+                config.screenHeightPercent = readNumberParameter(searchParams, ["screenHeightPercent", "heightPercent", "stepHeightPercent"], config.screenHeightPercent);
+                config.waitDelayMs = readSecondsParameter(searchParams, ["waitDelaySeconds", "delaySeconds", "waitSeconds", "seconds"], config.waitDelayMs);
+                config.waitDelayMs = readNumberParameter(searchParams, ["waitDelayMs", "delayMs", "waitMs"], config.waitDelayMs);
+                config.animationDurationMs = readNumberParameter(searchParams, ["animationDurationMs", "animationMs", "durationMs"], config.animationDurationMs);
+                config.startOnLoad = readBooleanParameter(searchParams, ["startOnLoad", "start"], config.startOnLoad);
+                config.scrollDown = readBooleanParameter(searchParams, ["scrollDown", "down"], config.scrollDown);
+                config.enabled = readBooleanParameter(searchParams, ["enabled", "auto"], config.enabled);
+            }
+
+            function readNumberParameter(searchParams, names, fallbackValue) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const numericValue = Number(value);
+                    if (Number.isFinite(numericValue)) {
+                        return numericValue;
+                    }
+                }
+
+                return fallbackValue;
+            }
+
+            function readSecondsParameter(searchParams, names, fallbackValueMs) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const numericValue = Number(value);
+                    if (Number.isFinite(numericValue)) {
+                        return numericValue * 1000;
+                    }
+                }
+
+                return fallbackValueMs;
+            }
+
+            function readBooleanParameter(searchParams, names, fallbackValue) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const normalizedValue = value.toLowerCase();
+                    if (normalizedValue === "1" || normalizedValue === "true" || normalizedValue === "yes") {
+                        return true;
+                    }
+
+                    if (normalizedValue === "0" || normalizedValue === "false" || normalizedValue === "no") {
+                        return false;
+                    }
+                }
+
+                return fallbackValue;
+            }
 
             function clamp(value, min, max) {
                 return Math.min(max, Math.max(min, value));
             }
 
-            function normalizeBaseSpeed(speed) {
-                const numericSpeed = Number(speed);
-                const fallbackSpeed = autoScrollConfig.baseSpeedPixelsPerSecond;
-                const speedToUse = Number.isFinite(numericSpeed) ? numericSpeed : fallbackSpeed;
-                const absoluteSpeed = Math.abs(speedToUse);
+            function normalizeNumber(value, min, max, fallbackValue) {
+                const numericValue = Number(value);
+                if (Number.isFinite(numericValue)) {
+                    return clamp(numericValue, min, max);
+                }
 
-                return clamp(absoluteSpeed, autoScrollConfig.minBaseSpeed, autoScrollConfig.maxBaseSpeed);
+                return clamp(fallbackValue, min, max);
             }
 
             function normalizeTextSpacing(value, fallbackValue) {
                 const numericValue = Number(value);
                 const valueToUse = Number.isFinite(numericValue) ? numericValue : fallbackValue;
 
-                return Math.max(autoScrollConfig.minTextSpacingPixels, valueToUse);
-            }
-
-            function getSignedBaseSpeed() {
-                return autoScrollDirectionDown ? autoScrollBaseSpeed : -autoScrollBaseSpeed;
+                return Math.max(stepScrollConfig.minTextSpacingPixels, valueToUse);
             }
 
             function applyScale() {
@@ -3371,31 +3456,12 @@
                 );
             }
 
-            function findTouchByIdentifier(touchList, identifier) {
-                if (identifier === null) {
-                    return null;
-                }
-
-                for (let index = 0; index < touchList.length; index += 1) {
-                    if (touchList[index].identifier === identifier) {
-                        return touchList[index];
-                    }
-                }
-
-                return null;
+            function getMaxScrollTop() {
+                return Math.max(0, scrollingElement.scrollHeight - window.innerHeight);
             }
 
-            function formatSpeed(speed) {
-                const roundedSpeed = Math.round(speed);
-                if (roundedSpeed > 0) {
-                    return roundedSpeed + " px/s down";
-                }
-
-                if (roundedSpeed < 0) {
-                    return Math.abs(roundedSpeed) + " px/s up";
-                }
-
-                return "0 px/s";
+            function getStepPixels() {
+                return Math.max(1, Math.round(window.innerHeight * (stepScrollScreenHeightPercent / 100)));
             }
 
             function formatTextSpacing(value) {
@@ -3422,7 +3488,7 @@
                 });
             }
 
-            function setAutoScrollStatus(message) {
+            function setStepScrollStatus(message) {
                 if (!autoScrollStatus) {
                     return;
                 }
@@ -3430,7 +3496,7 @@
                 autoScrollStatus.textContent = message;
             }
 
-            function setAutoScrollPanelVisible(isVisible) {
+            function setStepScrollPanelVisible(isVisible) {
                 if (!autoScrollPanel || !autoScrollToggleButton) {
                     return;
                 }
@@ -3447,25 +3513,29 @@
                 root.classList.toggle("tmot-hide-onkelos", onkelosHidden);
             }
 
-            function updateAutoScrollUi() {
+            function updateStepScrollUi() {
                 if (autoScrollShell) {
-                    autoScrollShell.hidden = !autoScrollConfig.showControlsButton && !autoScrollConfig.showControlPanelByDefault;
+                    autoScrollShell.hidden = !stepScrollConfig.showControlsButton && !stepScrollConfig.showControlPanelByDefault;
                 }
 
                 if (autoScrollEnabledCheckbox) {
-                    autoScrollEnabledCheckbox.checked = autoScrollEnabled;
+                    autoScrollEnabledCheckbox.checked = stepScrollEnabled;
                 }
 
                 if (autoScrollDirectionCheckbox) {
-                    autoScrollDirectionCheckbox.checked = autoScrollDirectionDown;
+                    autoScrollDirectionCheckbox.checked = stepScrollDirectionDown;
                 }
 
-                if (autoScrollSpeedValue) {
-                    autoScrollSpeedValue.textContent = formatSpeed(getSignedBaseSpeed());
+                if (autoScrollStepHeightValue) {
+                    autoScrollStepHeightValue.textContent = Math.round(stepScrollScreenHeightPercent) + "%";
                 }
 
-                if (autoScrollIdleDelayValue) {
-                    autoScrollIdleDelayValue.textContent = autoScrollIdleDelayMs + " ms";
+                if (autoScrollWaitDelayValue) {
+                    autoScrollWaitDelayValue.textContent = Math.round(stepScrollWaitDelayMs) + " ms";
+                }
+
+                if (autoScrollAnimationDurationValue) {
+                    autoScrollAnimationDurationValue.textContent = Math.round(stepScrollAnimationDurationMs) + " ms";
                 }
 
                 if (letterSpacingValue) {
@@ -3479,23 +3549,87 @@
                 applyTextSpacing();
             }
 
-            function clearAutoScrollResumeTimer() {
-                if (autoScrollResumeTimerId === 0) {
+            function applyStepScrollControlDelta(controlName, delta) {
+                if (!Number.isFinite(delta)) {
                     return;
                 }
 
-                window.clearTimeout(autoScrollResumeTimerId);
-                autoScrollResumeTimerId = 0;
+                if (controlName === "screenHeight") {
+                    stepScrollScreenHeightPercent = normalizeNumber(
+                        stepScrollScreenHeightPercent + delta,
+                        stepScrollConfig.minScreenHeightPercent,
+                        stepScrollConfig.maxScreenHeightPercent,
+                        stepScrollConfig.screenHeightPercent
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Step height updated to " + Math.round(stepScrollScreenHeightPercent) + "% of screen (" + getStepPixels() + " px).");
+                    return;
+                }
+
+                if (controlName === "waitDelay") {
+                    stepScrollWaitDelayMs = normalizeNumber(
+                        stepScrollWaitDelayMs + delta,
+                        stepScrollConfig.minWaitDelayMs,
+                        stepScrollConfig.maxWaitDelayMs,
+                        stepScrollConfig.waitDelayMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Wait delay updated to " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "animationDuration") {
+                    stepScrollAnimationDurationMs = normalizeNumber(
+                        stepScrollAnimationDurationMs + delta,
+                        stepScrollConfig.minAnimationDurationMs,
+                        stepScrollConfig.maxAnimationDurationMs,
+                        stepScrollConfig.animationDurationMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Scroll duration updated to " + Math.round(stepScrollAnimationDurationMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "letterSpacing") {
+                    letterSpacingPixels = normalizeTextSpacing(letterSpacingPixels + delta, stepScrollConfig.letterSpacingPixels);
+                    updateStepScrollUi();
+                    setStepScrollStatus("Letter spacing updated to " + formatTextSpacing(letterSpacingPixels) + ".");
+                    return;
+                }
+
+                if (controlName === "wordSpacing") {
+                    wordSpacingPixels = normalizeTextSpacing(wordSpacingPixels + delta, stepScrollConfig.wordSpacingPixels);
+                    updateStepScrollUi();
+                    setStepScrollStatus("Word spacing updated to " + formatTextSpacing(wordSpacingPixels) + ".");
+                }
             }
 
-            function cancelAutoScrollFrame() {
-                if (autoScrollFrameId === 0) {
+            function clearStepScrollWaitTimer() {
+                if (stepScrollWaitTimerId === 0) {
                     return;
                 }
 
-                window.cancelAnimationFrame(autoScrollFrameId);
-                autoScrollFrameId = 0;
-                autoScrollLastFrameTime = 0;
+                window.clearTimeout(stepScrollWaitTimerId);
+                stepScrollWaitTimerId = 0;
+            }
+
+            function clearManualResumeTimer() {
+                if (manualResumeTimerId === 0) {
+                    return;
+                }
+
+                window.clearTimeout(manualResumeTimerId);
+                manualResumeTimerId = 0;
+            }
+
+            function cancelStepScrollFrame() {
+                if (stepScrollFrameId === 0) {
+                    return;
+                }
+
+                window.cancelAnimationFrame(stepScrollFrameId);
+                stepScrollFrameId = 0;
+                stepScrollAnimationStartTime = 0;
             }
 
             function clearProgrammaticScrollFlag() {
@@ -3517,193 +3651,141 @@
                 programmaticScrollReleaseTimerId = window.setTimeout(function () {
                     programmaticScrollActive = false;
                     programmaticScrollReleaseTimerId = 0;
-                }, autoScrollConfig.programmaticScrollFlagMs);
+                }, stepScrollConfig.programmaticScrollFlagMs);
             }
 
-            function getMaxScrollTop() {
-                return Math.max(0, scrollingElement.scrollHeight - window.innerHeight);
-            }
-
-            function syncBaseSpeed(nextSpeed) {
-                autoScrollBaseSpeed = normalizeBaseSpeed(nextSpeed);
-                autoScrollTargetSpeed = getSignedBaseSpeed();
-                updateAutoScrollUi();
-            }
-
-            function syncSignedBaseSpeed(nextSpeed) {
-                autoScrollDirectionDown = Number(nextSpeed) >= 0;
-                autoScrollBaseSpeed = normalizeBaseSpeed(nextSpeed);
-                autoScrollTargetSpeed = getSignedBaseSpeed();
-                updateAutoScrollUi();
-            }
-
-            function applyAutoScrollControlDelta(controlName, delta) {
-                if (!Number.isFinite(delta)) {
-                    return;
-                }
-
-                if (controlName === "speed") {
-                    syncBaseSpeed(autoScrollBaseSpeed + delta);
-
-                    if (!autoScrollEnabled) {
-                        setAutoScrollStatus("Speed updated while auto-scroll is disabled.");
-                        return;
-                    }
-
-                    if (singleTouchActive || pinchZoomActive) {
-                        setAutoScrollStatus("Speed updated. Auto-scroll will resume after touch or zoom.");
-                        return;
-                    }
-
-                    if (autoScrollPaused) {
-                        scheduleAutoScrollResume("Speed updated. Auto-scroll will resume after idle.");
-                        return;
-                    }
-
-                    setAutoScrollStatus("Auto-scroll speed updated to " + formatSpeed(getSignedBaseSpeed()) + ".");
-                    return;
-                }
-
-                if (controlName === "idleDelay") {
-                    autoScrollIdleDelayMs = clamp(
-                        autoScrollIdleDelayMs + delta,
-                        autoScrollConfig.minIdleResumeDelayMs,
-                        autoScrollConfig.maxIdleResumeDelayMs
-                    );
-                    updateAutoScrollUi();
-                    setAutoScrollStatus("Resume delay updated to " + autoScrollIdleDelayMs + " ms.");
-                    return;
-                }
-
-                if (controlName === "letterSpacing") {
-                    letterSpacingPixels = normalizeTextSpacing(letterSpacingPixels + delta, autoScrollConfig.letterSpacingPixels);
-                    updateAutoScrollUi();
-                    setAutoScrollStatus("Letter spacing updated to " + formatTextSpacing(letterSpacingPixels) + ".");
-                    return;
-                }
-
-                if (controlName === "wordSpacing") {
-                    wordSpacingPixels = normalizeTextSpacing(wordSpacingPixels + delta, autoScrollConfig.wordSpacingPixels);
-                    updateAutoScrollUi();
-                    setAutoScrollStatus("Word spacing updated to " + formatTextSpacing(wordSpacingPixels) + ".");
-                }
-            }
-
-            function setAutoScrollPaused(isPaused, reason) {
-                autoScrollPaused = isPaused;
+            function setStepScrollPaused(isPaused, reason) {
+                stepScrollPaused = isPaused;
 
                 if (isPaused) {
-                    cancelAutoScrollFrame();
-                    autoScrollCurrentSpeed = 0;
+                    clearStepScrollWaitTimer();
+                    cancelStepScrollFrame();
                     if (reason) {
-                        setAutoScrollStatus(reason);
+                        setStepScrollStatus(reason);
                     }
                     return;
-                }
-
-                if (autoScrollFrameId === 0) {
-                    autoScrollLastFrameTime = 0;
-                    autoScrollFrameId = window.requestAnimationFrame(stepAutoScroll);
                 }
 
                 if (reason) {
-                    setAutoScrollStatus(reason);
+                    setStepScrollStatus(reason);
                 }
             }
 
-            function resumeAutoScroll(reason) {
-                clearAutoScrollResumeTimer();
+            function resumeStepScroll(reason) {
+                clearManualResumeTimer();
+                clearStepScrollWaitTimer();
 
-                if (!autoScrollEnabled) {
-                    setAutoScrollPaused(true, "Auto-scroll is disabled.");
-                    return;
-                }
-
-                // Added: touch and pinch always win over auto-scroll, so resume waits for them to end.
-                if (pinchZoomActive || singleTouchActive) {
-                    setAutoScrollPaused(true, "Auto-scroll is waiting for touch or zoom to finish.");
-                    return;
-                }
-
-                autoScrollTargetSpeed = getSignedBaseSpeed();
-                setAutoScrollPaused(false, reason || "Auto-scroll is running.");
-            }
-
-            function scheduleAutoScrollResume(reason) {
-                clearAutoScrollResumeTimer();
-
-                if (!autoScrollEnabled) {
-                    setAutoScrollPaused(true, "Auto-scroll is disabled.");
+                if (!stepScrollEnabled) {
+                    setStepScrollPaused(true, "Step-scroll is disabled.");
                     return;
                 }
 
                 if (pinchZoomActive || singleTouchActive) {
+                    setStepScrollPaused(true, "Step-scroll is waiting for touch or zoom to finish.");
                     return;
                 }
 
-                setAutoScrollStatus(reason || ("Auto-scroll will resume in " + autoScrollIdleDelayMs + " ms."));
-                autoScrollResumeTimerId = window.setTimeout(function () {
-                    resumeAutoScroll("Auto-scroll resumed after idle.");
-                }, autoScrollIdleDelayMs);
+                setStepScrollPaused(false, reason || "Step-scroll is running.");
+                scheduleNextStep(0);
             }
 
-            function adjustAutoScrollSpeedFromTouch(totalDeltaY) {
-                // Added: moving down increases speed, moving up slows it down and can reverse it through the Direction checkbox.
-                const nextSpeed = touchAdjustStartSpeed + (totalDeltaY * autoScrollConfig.touchSpeedFactor);
-                syncSignedBaseSpeed(nextSpeed);
+            function scheduleManualResume(reason) {
+                clearManualResumeTimer();
+                if (!stepScrollEnabled) {
+                    setStepScrollPaused(true, "Step-scroll is disabled.");
+                    return;
+                }
+
+                setStepScrollStatus(reason || ("Step-scroll will resume in " + stepScrollConfig.manualResumeDelayMs + " ms."));
+                manualResumeTimerId = window.setTimeout(function () {
+                    resumeStepScroll("Step-scroll resumed after manual idle.");
+                }, stepScrollConfig.manualResumeDelayMs);
             }
 
-            function stepAutoScroll(timestamp) {
-                if (autoScrollPaused || !autoScrollEnabled) {
-                    cancelAutoScrollFrame();
+            function scheduleNextStep(delayOverrideMs) {
+                clearStepScrollWaitTimer();
+                cancelStepScrollFrame();
+
+                if (stepScrollPaused || !stepScrollEnabled) {
                     return;
                 }
 
-                if (autoScrollLastFrameTime === 0) {
-                    autoScrollLastFrameTime = timestamp;
-                    autoScrollFrameId = window.requestAnimationFrame(stepAutoScroll);
+                const waitMs = typeof delayOverrideMs === "number" ? delayOverrideMs : stepScrollWaitDelayMs;
+                if (waitMs > 0) {
+                    setStepScrollStatus("Waiting " + Math.round(waitMs) + " ms before next " + Math.round(stepScrollScreenHeightPercent) + "% screen step.");
+                }
+
+                stepScrollWaitTimerId = window.setTimeout(function () {
+                    stepScrollWaitTimerId = 0;
+                    startStepScrollAnimation();
+                }, waitMs);
+            }
+
+            function startStepScrollAnimation() {
+                if (stepScrollPaused || !stepScrollEnabled) {
                     return;
                 }
 
-                const deltaMs = Math.min(64, timestamp - autoScrollLastFrameTime);
-                const deltaSeconds = deltaMs / 1000;
-                autoScrollLastFrameTime = timestamp;
-
-                // Added: eased speed keeps touch-driven speed changes smooth and avoids jumps.
-                autoScrollCurrentSpeed += (autoScrollTargetSpeed - autoScrollCurrentSpeed) * 0.12;
-
-                if (Math.abs(autoScrollTargetSpeed - autoScrollCurrentSpeed) < 0.05) {
-                    autoScrollCurrentSpeed = autoScrollTargetSpeed;
-                }
-
-                const distance = autoScrollCurrentSpeed * deltaSeconds;
                 const maxScrollTop = getMaxScrollTop();
-                const currentScrollTop = scrollingElement.scrollTop;
-                const nextScrollTop = clamp(currentScrollTop + distance, 0, maxScrollTop);
+                const directionMultiplier = stepScrollDirectionDown ? 1 : -1;
+                stepScrollStartTop = scrollingElement.scrollTop;
+                stepScrollTargetTop = clamp(stepScrollStartTop + (getStepPixels() * directionMultiplier), 0, maxScrollTop);
 
-                if (Math.abs(nextScrollTop - currentScrollTop) > 0.01) {
-                    markProgrammaticScroll();
-                    scrollingElement.scrollTop = nextScrollTop;
-                    autoScrollFrameId = window.requestAnimationFrame(stepAutoScroll);
+                if (Math.abs(stepScrollTargetTop - stepScrollStartTop) <= 0.5) {
+                    setStepScrollPaused(
+                        true,
+                        stepScrollDirectionDown
+                            ? "Step-scroll reached the end of the page."
+                            : "Step-scroll reached the top of the page."
+                    );
                     return;
                 }
 
-                setAutoScrollPaused(
-                    true,
-                    autoScrollCurrentSpeed >= 0
-                        ? "Auto-scroll reached the end of the page."
-                        : "Auto-scroll reached the top of the page."
-                );
+                stepScrollAnimationStartTime = 0;
+                setStepScrollStatus("Scrolling " + Math.round(stepScrollScreenHeightPercent) + "% of the screen, then waiting " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                stepScrollFrameId = window.requestAnimationFrame(animateStepScroll);
+            }
+
+            function animateStepScroll(timestamp) {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    cancelStepScrollFrame();
+                    return;
+                }
+
+                if (stepScrollAnimationStartTime === 0) {
+                    stepScrollAnimationStartTime = timestamp;
+                }
+
+                const elapsedMs = timestamp - stepScrollAnimationStartTime;
+                const progress = clamp(elapsedMs / stepScrollAnimationDurationMs, 0, 1);
+                const easedProgress = easeInOut(progress);
+                const nextScrollTop = stepScrollStartTop + ((stepScrollTargetTop - stepScrollStartTop) * easedProgress);
+
+                markProgrammaticScroll();
+                scrollingElement.scrollTop = nextScrollTop;
+
+                if (progress < 1) {
+                    stepScrollFrameId = window.requestAnimationFrame(animateStepScroll);
+                    return;
+                }
+
+                stepScrollFrameId = 0;
+                scrollingElement.scrollTop = stepScrollTargetTop;
+                scheduleNextStep(stepScrollWaitDelayMs);
+            }
+
+            function easeInOut(value) {
+                return value < 0.5
+                    ? 2 * value * value
+                    : 1 - Math.pow(-2 * value + 2, 2) / 2;
             }
 
             document.addEventListener("touchstart", function (event) {
                 if (event.touches.length === 2) {
                     pinchZoomActive = true;
                     singleTouchActive = false;
-                    singleTouchMoved = false;
-                    activeTouchIdentifier = null;
-                    clearAutoScrollResumeTimer();
-                    setAutoScrollPaused(true, "Auto-scroll paused during pinch zoom.");
+                    clearManualResumeTimer();
+                    setStepScrollPaused(true, "Step-scroll paused during pinch zoom.");
 
                     initialDistance = getDistance(event.touches[0], event.touches[1]);
                     initialScale = currentScale;
@@ -3714,34 +3796,9 @@
                     return;
                 }
 
-                // Added: a touch-hold pauses immediately without blocking the browser's native scroll.
                 singleTouchActive = true;
-                singleTouchMoved = false;
-                activeTouchIdentifier = event.touches[0].identifier;
-                touchAdjustStartY = event.touches[0].clientY;
-                touchAdjustStartSpeed = getSignedBaseSpeed();
-                clearAutoScrollResumeTimer();
-                setAutoScrollPaused(true, "Auto-scroll paused while your finger is on the screen.");
-            }, { passive: true });
-
-            document.addEventListener("touchmove", function (event) {
-                if (event.touches.length !== 1 || pinchZoomActive) {
-                    return;
-                }
-
-                const activeTouch = findTouchByIdentifier(event.touches, activeTouchIdentifier) || event.touches[0];
-                if (!activeTouch) {
-                    return;
-                }
-
-                const totalDeltaY = activeTouch.clientY - touchAdjustStartY;
-                if (Math.abs(totalDeltaY) < autoScrollConfig.touchMoveThresholdPixels) {
-                    return;
-                }
-
-                singleTouchMoved = true;
-                adjustAutoScrollSpeedFromTouch(totalDeltaY);
-                setAutoScrollStatus("Touch speed set to " + formatSpeed(autoScrollBaseSpeed) + ".");
+                clearManualResumeTimer();
+                setStepScrollPaused(true, "Step-scroll paused while your finger is on the screen.");
             }, { passive: true });
 
             document.addEventListener("touchmove", function (event) {
@@ -3771,19 +3828,13 @@
 
                 if (event.touches.length === 1) {
                     singleTouchActive = true;
-                    singleTouchMoved = false;
-                    activeTouchIdentifier = event.touches[0].identifier;
-                    touchAdjustStartY = event.touches[0].clientY;
-                    touchAdjustStartSpeed = getSignedBaseSpeed();
-                    setAutoScrollPaused(true, "Auto-scroll paused while your finger is on the screen.");
+                    setStepScrollPaused(true, "Step-scroll paused while your finger is on the screen.");
                     return;
                 }
 
                 if (event.touches.length === 0) {
                     singleTouchActive = false;
-                    singleTouchMoved = false;
-                    activeTouchIdentifier = null;
-                    scheduleAutoScrollResume("Auto-scroll will resume after touch idle delay.");
+                    scheduleManualResume("Step-scroll will resume after touch idle delay.");
                 }
             }, { passive: true });
 
@@ -3791,9 +3842,7 @@
                 initialDistance = 0;
                 pinchZoomActive = false;
                 singleTouchActive = false;
-                singleTouchMoved = false;
-                activeTouchIdentifier = null;
-                scheduleAutoScrollResume("Auto-scroll will resume after touch cancel.");
+                scheduleManualResume("Step-scroll will resume after touch cancel.");
             }, { passive: true });
 
             window.addEventListener("scroll", function () {
@@ -3805,29 +3854,36 @@
                     return;
                 }
 
-                setAutoScrollPaused(true, "Auto-scroll paused after manual scroll.");
-                scheduleAutoScrollResume("Auto-scroll will resume after manual scroll idle delay.");
+                setStepScrollPaused(true, "Step-scroll paused after manual scroll.");
+                scheduleManualResume("Step-scroll will resume after manual scroll idle delay.");
+            }, { passive: true });
+
+            window.addEventListener("resize", function () {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                setStepScrollStatus("Screen height changed. Next step will use " + getStepPixels() + " px.");
             }, { passive: true });
 
             if (autoScrollToggleButton) {
-                autoScrollToggleButton.hidden = !autoScrollConfig.showControlsButton;
+                autoScrollToggleButton.hidden = !stepScrollConfig.showControlsButton;
                 autoScrollToggleButton.addEventListener("click", function () {
-                    setAutoScrollPanelVisible(autoScrollPanel.hidden);
+                    setStepScrollPanelVisible(autoScrollPanel.hidden);
                 });
             }
 
             if (autoScrollEnabledCheckbox) {
                 autoScrollEnabledCheckbox.addEventListener("change", function () {
-                    autoScrollEnabled = autoScrollEnabledCheckbox.checked;
-                    updateAutoScrollUi();
+                    stepScrollEnabled = autoScrollEnabledCheckbox.checked;
+                    updateStepScrollUi();
 
-                    if (!autoScrollEnabled) {
-                        clearAutoScrollResumeTimer();
-                        setAutoScrollPaused(true, "Auto-scroll disabled from controls.");
+                    if (!stepScrollEnabled) {
+                        setStepScrollPaused(true, "Step-scroll disabled from controls.");
                         return;
                     }
 
-                    scheduleAutoScrollResume("Auto-scroll enabled. It will resume after idle.");
+                    resumeStepScroll("Step-scroll enabled.");
                 });
             }
 
@@ -3840,34 +3896,23 @@
 
             if (autoScrollDirectionCheckbox) {
                 autoScrollDirectionCheckbox.addEventListener("change", function () {
-                    autoScrollDirectionDown = autoScrollDirectionCheckbox.checked;
-                    autoScrollTargetSpeed = getSignedBaseSpeed();
-                    updateAutoScrollUi();
+                    stepScrollDirectionDown = autoScrollDirectionCheckbox.checked;
+                    updateStepScrollUi();
 
-                    if (!autoScrollEnabled) {
-                        setAutoScrollStatus("Direction updated while auto-scroll is disabled.");
+                    if (!stepScrollEnabled) {
+                        setStepScrollStatus("Direction updated while step-scroll is disabled.");
                         return;
                     }
 
-                    if (singleTouchActive || pinchZoomActive) {
-                        setAutoScrollStatus("Direction updated. Auto-scroll will resume after touch or zoom.");
-                        return;
-                    }
-
-                    if (autoScrollPaused) {
-                        scheduleAutoScrollResume("Direction updated. Auto-scroll will resume after idle.");
-                        return;
-                    }
-
-                    setAutoScrollStatus("Auto-scroll direction updated to " + formatSpeed(getSignedBaseSpeed()) + ".");
+                    resumeStepScroll("Direction updated. Step-scroll restarted.");
                 });
             }
 
             autoScrollStepButtons.forEach(function (button) {
                 button.addEventListener("click", function () {
-                    const controlName = button.getAttribute("data-auto-scroll-control");
-                    const delta = Number(button.getAttribute("data-auto-scroll-delta"));
-                    applyAutoScrollControlDelta(controlName, delta);
+                    const controlName = button.getAttribute("data-step-scroll-control");
+                    const delta = Number(button.getAttribute("data-step-scroll-delta"));
+                    applyStepScrollControlDelta(controlName, delta);
                 });
             });
 
@@ -3886,24 +3931,24 @@
                         return;
                     }
 
-                    scheduleAutoScrollResume("New content detected. Auto-scroll will resume after idle.");
+                    scheduleManualResume("New content detected. Step-scroll will resume after idle.");
                 });
 
                 observer.observe(contentRoot, { childList: true, subtree: true });
             }
 
-            setAutoScrollPanelVisible(autoScrollConfig.showControlPanelByDefault);
+            setStepScrollPanelVisible(stepScrollConfig.showControlPanelByDefault);
             updateOnkelosVisibilityUi();
-            updateAutoScrollUi();
+            updateStepScrollUi();
             applyScale();
             clearProgrammaticScrollFlag();
 
-            if (autoScrollConfig.startOnLoad && autoScrollEnabled) {
-                resumeAutoScroll("Auto-scroll started on page load.");
+            if (stepScrollConfig.startOnLoad && stepScrollEnabled) {
+                resumeStepScroll("Step-scroll started on page load.");
                 return;
             }
 
-            setAutoScrollStatus("Auto-scroll is ready.");
+            setStepScrollStatus("Step-scroll is ready.");
         })();
     </script>
     <script>
