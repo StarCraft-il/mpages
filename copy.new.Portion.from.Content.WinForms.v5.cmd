@@ -37,7 +37,7 @@ enum LogLevel {
     Error
 }
 
-$Portion = 'Shoftim'
+$Portion = 'Ki_Teitzei'
 
 $SourceDirectory = 'C:\Git\allproj\_OneFile\OpenServers_content'
 $M1T2Directory = 'C:\Git\!myRepos\mpages\m1t2'
