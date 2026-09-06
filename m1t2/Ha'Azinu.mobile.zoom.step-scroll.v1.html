@@ -1,0 +1,2821 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl" id="root-element" class="tmot-hide-onkelos">
+<head>
+    <title>2M1T-Ha&#x27;Azinu-mobile-zoom-step-scroll</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta charset="utf-8">
+        <meta http-equiv="content-language" content="he" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="cleartype" content="on">
+    <link href="content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="content/css/style_portion_razor.css" rel="stylesheet" />
+        <link href="content/css/style_flex2.css" rel="stylesheet" />
+        <script src="content/lib/jquery/3.5.1/jquery.js"></script>
+        <script src="content/js/site_flex2.js"></script>
+    <style>
+        :root {
+            --tmot-zoom-multiplier: 1;
+            --tmot-overlay-bg: rgba(0, 0, 0, 0.82);
+            --tmot-overlay-text: #ffffff;
+            --tmot-line-tight: calc(0.88 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-normal: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.06));
+            --tmot-line-medium: calc(1.14 + ((var(--tmot-zoom-multiplier) - 1) * 0.08));
+            --tmot-line-reading: calc(1.22 + ((var(--tmot-zoom-multiplier) - 1) * 0.10));
+            --tmot-letter-spacing: 0px;
+            --tmot-word-spacing: 7px;
+        }
+
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #f4f7f6;
+        }
+
+        #root-element:fullscreen,
+        #root-element:-webkit-full-screen {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            background: #f4f7f6;
+        }
+
+        div.allText {
+        }
+
+        div.chapterText {
+            font-family: mysbl_64 !important;
+            -webkit-transform: scaleX(0.94) !important;
+            letter-spacing: var(--tmot-letter-spacing) !important;
+        }
+
+        #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
+        #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
+        #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1,
+        .lastVerse .last_pasuk_mikra_1,
+        .lastVerse .last_pasuk_mikra_2 {
+            letter-spacing: var(--tmot-letter-spacing) !important;
+            word-spacing: var(--tmot-word-spacing) !important;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                touch-action: pan-y;
+                overscroll-behavior: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #parashaContentRow {
+                padding-right: 8px !important;
+                padding-left: 12px !important;
+                box-sizing: border-box;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+                #parashaContentRow #parashaName {
+                    font-size: calc(1.35rem * var(--tmot-zoom-multiplier)) !important;
+                    line-height: var(--tmot-line-tight);
+                }
+
+            ul#aliyusTableLinks {
+                padding-right: 2px !important;
+                padding-inline-start: 2px !important;
+                font-size: calc(1.25rem * var(--tmot-zoom-multiplier)) !important;
+                line-height: calc(var(--tmot-line-reading) + 0.05) !important;
+            }
+
+            #torahStatistcsForPortion {
+                font-size: calc(0.95rem * var(--tmot-zoom-multiplier));
+                line-height: var(--tmot-line-medium);
+            }
+
+            div.allText,
+            div.allText div.chapterText,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
+                font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
+            }
+
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1 {
+                font-size: calc(36px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-medium) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
+            }
+
+            div.allText {
+                padding-top: 24px !important;
+            }
+
+                div.allText span.shemot,
+                div.allText span.book,
+                div.allText span.godName {
+                    font-size: calc(30px * var(--tmot-zoom-multiplier)) !important;
+                    line-height: var(--tmot-line-normal) !important;
+                }
+
+                div.allText span.small {
+                    font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
+                    line-height: var(--tmot-line-medium) !important;
+                }
+
+            #parashaContentRow .aliya {
+                padding-top: 28px !important;
+            }
+
+                #parashaContentRow .aliya .toStartOfPortion {
+                    display: inline-block;
+                    font-size: calc(1rem * var(--tmot-zoom-multiplier)) !important;
+                    margin-bottom: 6px;
+                }
+
+                #parashaContentRow .aliya .a-header {
+                    display: inline-block;
+                    font-size: calc(38px * var(--tmot-zoom-multiplier)) !important;
+                    letter-spacing: 6px !important;
+                    line-height: var(--tmot-line-tight) !important;
+                }
+
+                .base-header,
+                .lastVerse .header,
+                #parashaContentRow .aliya .verse .pasuk2m1t .header,
+                #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
+                #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
+                    font-size: calc(24px * var(--tmot-zoom-multiplier)) !important;
+                    line-height: var(--tmot-line-medium) !important;
+                    letter-spacing: normal !important;
+                    padding-top: 18px !important;
+                }
+
+                    #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader,
+                    #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader,
+                    #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader {
+                        padding: 2px 2px 2px 2px;
+                        overflow-wrap: anywhere;
+                    }
+
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlAllDaySubHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlAllDaySubHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlAllDaySubHeader {
+                            font-size: calc(18px * var(--tmot-zoom-multiplier)) !important;
+                            line-height: var(--tmot-line-normal) !important;
+                        }
+
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header .contentHeader .hlAllHeader .hlLastDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2 .contentHeader .hlAllHeader .hlLastDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlFirstDayFromDayHeader,
+                        #parashaContentRow .aliya .verse .pasuk2m1t .header-taj .contentHeader .hlAllHeader .hlLastDayFromDayHeader {
+                            font-size: calc(20px * var(--tmot-zoom-multiplier)) !important;
+                            line-height: var(--tmot-line-normal) !important;
+                        }
+
+                #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1 {
+                    font-size: calc(22px * var(--tmot-zoom-multiplier)) !important;
+                    line-height: var(--tmot-line-reading) !important;
+                    letter-spacing: var(--tmot-letter-spacing) !important;
+                    word-spacing: var(--tmot-word-spacing) !important;
+                }
+
+            .lastVerse .base-last-verse,
+            .lastVerse .last_pasuk_mikra_1,
+            .lastVerse .last_pasuk_mikra_2 {
+                font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
+                line-height: var(--tmot-line-reading) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+                word-spacing: var(--tmot-word-spacing) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #parashaContentRow,
+            #parashaContentRow .aliya,
+            #parashaContentRow .verse,
+            #parashaContentRow .pasuk2m1t,
+            #parashaContentRow .contentHeader,
+            #parashaContentRow .lastVerse,
+            div.allText,
+            div.chapterText {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media (max-width: 769px) {
+            .base-pasuk,
+            .lastVerse .base-last-verse,
+            .lastVerse .last_pasuk_mikra_2,
+            .lastVerse .last_pasuk_mikra_1,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
+            #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
+            .base-header,
+            .lastVerse .header,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2,
+            #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
+                margin-left: -8px;
+                margin-right: -12px;
+            }
+        }
+
+        .tmot-hide-onkelos #parashaContentRow div.verse div.pasuk_onkelos_1 {
+            display: none !important;
+        }
+
+        /* Added: touch-friendly auto-scroll controls that stay outside the reading flow. */
+        .tmot-auto-scroll-shell {
+            position: fixed;
+            inset-inline-start: 12px;
+            bottom: 12px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            direction: ltr;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .tmot-auto-scroll-toggle,
+        .tmot-auto-scroll-panel button,
+        .tmot-auto-scroll-panel input {
+            touch-action: manipulation;
+        }
+
+        .tmot-auto-scroll-toggle {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 16px;
+            background: rgba(8, 17, 31, 0.92);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .tmot-auto-scroll-panel {
+            width: min(92vw, 320px);
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(8, 17, 31, 0.94);
+            color: #ffffff;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+        }
+
+            .tmot-auto-scroll-panel[hidden] {
+                display: none !important;
+            }
+
+            .tmot-auto-scroll-panel h2 {
+                margin: 0 0 10px;
+                font-size: 16px;
+                line-height: 1.3;
+            }
+
+        .tmot-auto-scroll-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+            .tmot-auto-scroll-row label {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+        .tmot-auto-scroll-value {
+            min-width: 76px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #d9ecff;
+            white-space: nowrap;
+        }
+
+        .tmot-auto-scroll-button-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 6px;
+            direction: ltr;
+            flex-wrap: nowrap;
+        }
+
+            .tmot-auto-scroll-button-row .tmot-auto-scroll-value {
+                flex: 1 0 76px;
+            }
+
+        .tmot-auto-scroll-step-button {
+            flex: 0 0 auto;
+            min-width: 42px;
+            padding: 9px 6px;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+            .tmot-auto-scroll-step-button:active {
+                background: rgba(125, 211, 252, 0.32);
+            }
+
+        .tmot-auto-scroll-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            line-height: 1.5;
+            color: #e8f3ff;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div id="parashaContentRow">
+        <div id="parashaName"><h1>פרשת הַאֲזִינוּ</h1></div>
+<ul id="aliyusTableLinks">
+        <li><a href="#1_one_header">ראשון - (6)</a></li>
+        <li><a href="#2_two_header">שני - (6)</a></li>
+        <li><a href="#3_three_header">שלישי - (6)</a></li>
+        <li><a href="#4_four_header">רביעי - (10)</a></li>
+        <li><a href="#5_five_header">חמישי - (11)</a></li>
+        <li><a href="#6_six_header">שישי - (4)</a></li>
+        <li><a href="#7_seven_header">שביעי - (9)</a></li>
+</ul>
+    <div id="torahStatistcsForPortion">
+        <span>סה"כ: 52 פסוקים בפרשה. לפי קובץ סטטיסטי: 52 פסוקים.</span>
+    </div>
+
+
+
+<div class="allText">
+    <div>
+        לְשֵׁם יִחוּד  קֻדְשָׁא בְּרִיךְ הוּא וּשְכִינְתֵּהּ
+        <span class="shemot">(יאהדונהי)</span>
+        בִּדְחִילוּ וּרְחִימוּ
+        <span class="shemot">(יאההויהה)</span>
+        וּרְחִימוּ וּדְחִילוּ
+        <span class="shemot">(איההיוהה)</span>
+        לְיַחֲדָא שֵׁם אוֹתיות אות
+        <span class="shemot">יו"ד</span>
+        ואוֹת
+        <span class="shemot">ה"א</span>
+        בּאוֹתיות אות
+        <span class="shemot">וא"ו</span>
+        ואוֹת
+        <span class="shemot">ה"א</span>
+        ,
+        <span class="small">(על ידי שפע הא"ס המשפיע בהם ומייחדם)</span>
+        בְּיִחוּדָא שְׁלִים
+        <span class="godName">(יהוה)</span>
+        בְּשֵׁם כָּל יִשְׂרָאֵל, הֲרֵינִי מוּכָן לִלְמוֹד הַפָּרָשָׁה הַמְתֻקֶּנֶת לְשָׁבוּעַ זֶה בְּיוֹם הַשִּׁשִּׁי בְּשַׁבָּת קוֹדֶשׁ, שְׁנַיִם מִקְרָא וְאֶחָד תַּרְגּוּם, כְּדֵי לַעֲשׂוֹת הֲכָנָה בְּסוֹד הַדִּבּוּר לְצֹרֶךְ שַׁבָּת קוֹדֶשׁ, לְקַיֵּם מָה שֶׁנֶּאֱמַר:
+        <span class="book">"וְהָיָה בַּיּוֹם הַשִּׁשִּׁי וְהֵכִינוּ אֵת אֲשֶׁר יָבִיאוּ"</span>, וּלְשֵׁם מִי שֶׁאָמַר:
+        <span class="book">"לְמַעַן תִּהְיֶה תּוֹרַת יְהֹוָה בְּפִיךָ"</span>. וּכְתִיב:<span class="book">"בְּפִיךָ וּבִלְבָבְךָ לַעֲשׂוֹתוֹ"</span>. וּכְתִיב: <span class="book">"וְלַמְּדָהּ אֶת בְּנֵי יִשְׂרָאֵל שִׂימָהּ בְּפִיהֶם"</span>.
+    </div>
+    <div>
+        וִיהִי רָצוֹן מִלְּפָנֶיךָ יְהֹוָה אֱלֹהַי וֵאלֹהֵי אֲבוֹתַי, שֶׁיְּהֵא חָשׁוּב וּמְקֻבָּל וּמְרֻצֶּה לְפָנֶיךָ לִמּוּדִי זֶה בְּהַפָּרָשָׁה כֻּלָּהּ שְׁנַיִם מִקְרָא וְאֶחָד תַּרְגּוּם, כְּאִלּוּ כִּוַּנְתִּי בְּכָל הַכַּוָּנוֹת הָרְאוּיוֹת לְכַוֵּן, לְתַקֵּן שֹׁרֶשׁ לִמּוּד זֶה בְּמָקוֹם עֶלְיוֹן, לַעֲשׂוֹת נַחַת רוּחַ לְיוֹצְרֵנוּ וְלַעֲשׂוֹת רְצוֹן בּוֹרְאֵנוּ, לַאֲקָמָא שְׁכִינְתָּא מֵעַפְרָא וּלְעִלוּי שְׁכִינַת עֻזֵּנוּ.
+    </div>
+    <div>
+        וִיהִי נֹעַם אֲדֹנָי אֱלֹהֵינוּ עָלֵינוּ. וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנָה עָלֵינוּ, וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנֵהוּ:
+        <span class="small">
+            ה' יתברך ישלים כונתינו ויעלה עלינו כאלו כוננו בכל הכוונות הראויות לכוין, וע"י עקימת שפתינו בתפילות, תהיה כוננה לעלות למעלה לעשות פעולתה.
+        </span>
+    </div>
+    <div>
+        וִיהִי נֹעַם אֲדֹנָי אֱלֹהֵינוּ עָלֵינוּ. וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנָה עָלֵינוּ, וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנֵהוּ:
+        <span class="small">
+            אם חטאנו וגרמנו לסלק אור הקדושה שנמשכה עלינו ע"י מע"ט, הנה אתה האל ברחמיך תכונן ותתקן לאותם מע"ט, ותחזור להמשיך עלינו אור אותה הקדושה.
+        </span>
+    </div>
+</div>
+
+
+
+    <div class="aliya" id="accordion_1_one">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="1_one_header"> ראשון</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_1_32_1_864">
+            <div border="0" class="pasuk2m1t" id="1_one_32_1_864_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_1_864_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/1</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">א&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 1 מתוך 6 פסוקים.
+            </div>
+                <div class="hlAllDaySubHeader">יכוין בקריאת ששה פסוקים אלו שהם כנגד וֵ דמילוי יו&quot;ד דשם ב&quot;ן להשאיר בו הארה מתוספת נשמה משבת שעברה</div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_1_864_m1">הַאֲזִ֥ינוּ הַשָּׁמַ֖יִם וַאֲדַבֵּ֑רָה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְתִשְׁמַ֥ע הָאָ֖רֶץ אִמְרֵי־ פִֽי׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_1_864_m2">הַאֲזִ֥ינוּ הַשָּׁמַ֖יִם וַאֲדַבֵּ֑רָה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְתִשְׁמַ֥ע הָאָ֖רֶץ אִמְרֵי־ פִֽי׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_1_864_t1">אַצִּיתוּ שְׁמַיָּא וַאֲמַלֵּיל וְתִשְׁמַע אַרְעָא מֵימְרֵי פוּמִּי׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_1_864_t1">אַצִיתוּ שְׁמַיָּא וֶאֱמַלֵּל וְתִשְּׁמַע אַרְעָא אִמְרֵי פֻמִּי:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_1_32_2_865">
+            <div border="0" class="pasuk2m1t" id="1_one_32_2_865_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_2_865_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/2</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ב&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 2 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_2_865_m1">יַעֲרֹ֤ף כַּמָּטָר֙ לִקְחִ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;תִּזַּ֥ל כַּטַּ֖ל אִמְרָתִ֑י כִּשְׂעִירִ֣ם עֲלֵי־ דֶ֔שֶׁא&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְכִרְבִיבִ֖ים עֲלֵי־ עֵֽשֶׂב׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_2_865_m2">יַעֲרֹ֤ף כַּמָּטָר֙ לִקְחִ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;תִּזַּ֥ל כַּטַּ֖ל אִמְרָתִ֑י כִּשְׂעִירִ֣ם עֲלֵי־ דֶ֔שֶׁא&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְכִרְבִיבִ֖ים עֲלֵי־ עֵֽשֶׂב׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_2_865_t1">יִבְסַם כְּמִטְרָא אוּלְפָנִי יִתְקַבַּל כְּטַלָּא מֵימְרִי כְּרוּחֵי מִטְרָא דְּנָשְׁבִין עַל דִּתְאָה וְכִרְסִיסֵי מַלְקוֹשָׁא דְּעַל עִשְׂבָּא׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_2_865_t1"><b>יְבַסַּם</b> כְּמִטְרָא אֻלְפָּנִי <b>יִתְקַבַּל</b> כְּטַלָּא מֵימְרִי <b>כְּרוּחֵי</b> מִטְרָא <b>דְנָשְׁבִין</b> עַל דִּתְאָה <b>וְכִרְסִיסֵי מַלְקוֹשָׁא</b> דִּי עַל עִשְׂבָּא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_1_32_3_866">
+            <div border="0" class="pasuk2m1t" id="1_one_32_3_866_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_3_866_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/3</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ג&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 3 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_3_866_m1">כִּ֛י שֵׁ֥ם יְהֹוָ֖ה אֶקְרָ֑א&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;הָב֥וּ גֹ֖דֶל לֵאלֹהֵֽינוּ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_3_866_m2">כִּ֛י שֵׁ֥ם יְהֹוָ֖ה אֶקְרָ֑א&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;הָב֥וּ גֹ֖דֶל לֵאלֹהֵֽינוּ׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_3_866_t1">אֲרֵי בִּשְׁמָא דַּיְהֹוָה אֲנָא מְצַלֵּי הַבוּ רְבוּתָא קֳדָם אֱלָהַנָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_3_866_t1">אֲרֵי בִּשְׁמָא דַיְהֹוָה אֲנָא <b>מְצַלֵּי</b> הָבוּ רְבוּתָא <b>קֳדָם</b> אֱלָהָנָא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_1_32_4_867">
+            <div border="0" class="pasuk2m1t" id="1_one_32_4_867_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_4_867_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/4</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ד&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 4 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_4_867_m1">הַצּוּר֙ תָּמִ֣ים פׇּֽעֳל֔וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֥י כׇל־ דְּרָכָ֖יו מִשְׁפָּ֑ט אֵ֤ל אֱמוּנָה֙ וְאֵ֣ין עָ֔וֶל&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;צַדִּ֥יק וְיָשָׁ֖ר הֽוּא׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_4_867_m2">הַצּוּר֙ תָּמִ֣ים פׇּֽעֳל֔וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֥י כׇל־ דְּרָכָ֖יו מִשְׁפָּ֑ט אֵ֤ל אֱמוּנָה֙ וְאֵ֣ין עָ֔וֶל&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;צַדִּ֥יק וְיָשָׁ֖ר הֽוּא׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_4_867_t1">תַּקִּיפָא דְּשָׁלְמִין עוֹבָדוֹהִי אֲרֵי כָל אוֹרְחָתֵיהּ דִּינָא אֱלָהָא מְהֵימְנָא דְּמִן קֳדָמוֹהִי עַוְלָא לָא נָפֵיק מִן קֳדָם דְּזַכַּאי וְקַשִּׁיט הוּא׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_4_867_t1">תַּקִּיפָא <b>דְּשָׁלְמִין</b> <b>עוֹבָדוֹהִי</b> אֲרֵי כָּל ארְחָתֵיהּ דִּינָא אֱלָהָא מְהֵימְנָא דְּמִן <b>קֳדָמוֹהִי</b> עַוְלָה <b>לָא נָפֵק דְּמִן קֳדָם</b> זַכַּי וְקַשִּׁיט הוּא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_1_32_5_868">
+            <div border="0" class="pasuk2m1t" id="1_one_32_5_868_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_5_868_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/5</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ה&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 5 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_5_868_m1">שִׁחֵ֥ת ל֛וֹ לֹ֖א בָּנָ֣יו מוּמָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;דּ֥וֹר עִקֵּ֖שׁ וּפְתַלְתֹּֽל׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_5_868_m2">שִׁחֵ֥ת ל֛וֹ לֹ֖א בָּנָ֣יו מוּמָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;דּ֥וֹר עִקֵּ֖שׁ וּפְתַלְתֹּֽל׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_5_868_t1">חַבִּילוּ לְהוֹן לָא לֵיהּ בְּנַיָּא דִּפְלַחוּ לְטָעֲוָתָא דָּרָא דְּאַשְׁנִי עוֹבָדוֹהִי וְאִשְׁתַּנַּיוּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_5_868_t1">חַבִּילוּ לְהוֹן לָא לֵיהּ בְּנַיָּא <b>דִּי פְלָחוּ לְטַעֲוָתָא</b> דָּרָא <b>דְאַשְׁנִיּוּ עוֹבָדוֹהִי וְאִשְׁתַּנִּיּוּ</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_1_32_6_869">
+            <div border="0" class="pasuk2m1t" id="1_one_32_6_869_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_1_32_6_869_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-ראשון</span> כמות: <span class="currVerseInTotal">6/6</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ו&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום ראשון, פס' 6 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_1_one_32_6_869_m1"><big>הַ</big> לְיְהֹוָה֙<sup class="footnote-marker">*</sup><i class="footnote">(בספרי תימן <big>הַֽ</big>לְיהֹוָה֙ בתיבה אחת)</i> תִּגְמְלוּ־ זֹ֔את&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עַ֥ם נָבָ֖ל וְלֹ֣א חָכָ֑ם הֲלוֹא־ הוּא֙ אָבִ֣יךָ קָּנֶ֔ךָ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ה֥וּא עָשְׂךָ֖ וַֽיְכֹנְנֶֽךָ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_1_one_32_6_869_m2"><big>הַ</big> לְיְהֹוָה֙<sup class="footnote-marker">*</sup><i class="footnote">(בספרי תימן <big>הַֽ</big>לְיהֹוָה֙ בתיבה אחת)</i> תִּגְמְלוּ־ זֹ֔את&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עַ֥ם נָבָ֖ל וְלֹ֣א חָכָ֑ם הֲלוֹא־ הוּא֙ אָבִ֣יךָ קָּנֶ֔ךָ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ה֥וּא עָשְׂךָ֖ וַֽיְכֹנְנֶֽךָ׃</div>
+                <div class="pasuk_taj_1" id="t_1_one_32_6_869_t1">הָא קֳדָם יְהֹוָה אַתּוּן גָּמְלִין דָּא עַמָּא דְּקַבִּילוּ אוֹרָיְתָא וְלָא חֲכִימוּ הֲלָא הוּא אֲבוּךְ אַתְּ דִּילֵיהּ הוּא עָבְדָךְ וְאַתְקְנָךְ׃</div>
+                <div class="pasuk_onkelos_1" id="o_1_one_32_6_869_t1">הָא <b>קֳדָם</b> יְהֹוָה אַתּוּן גָּמְלִין <b>דָּא</b> עַמָּא <b>דְקַבִּילוּ אוֹרַיְתָא</b> וְלָא חַכִּימוּ הֲלָא הוּא אֲבוּךְ וְאַתְּ דִּי לֵיהּ הוּא עָבְדָךְ וְאַתְקְנָךְ:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_2_two">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="2_two_header"> שני</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_2_32_7_870">
+            <div border="0" class="pasuk2m1t" id="2_two_32_7_870_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_7_870_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/1</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ז&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שני, פס' 1 מתוך 4 פסוקים.
+            </div>
+                <div class="hlAllDaySubHeader">יכוין בקריאת ארבע פסוקים אלו שהם כנגד דֲ דמילוי יו&quot;ד דשם ב&quot;ן להשאיר בו הארה מתוספת הרוח משבת שעברה</div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_7_870_m1">זְכֹר֙ יְמ֣וֹת עוֹלָ֔ם בִּ֖ינוּ שְׁנ֣וֹת דֹּר־ וָדֹ֑ר&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;שְׁאַ֤ל אָבִ֙יךָ֙ וְיַגֵּ֔דְךָ זְקֵנֶ֖יךָ וְיֹ֥אמְרוּ לָֽךְ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_7_870_m2">זְכֹר֙ יְמ֣וֹת עוֹלָ֔ם בִּ֖ינוּ שְׁנ֣וֹת דֹּר־ וָדֹ֑ר&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;שְׁאַ֤ל אָבִ֙יךָ֙ וְיַגֵּ֔דְךָ זְקֵנֶ֖יךָ וְיֹ֥אמְרוּ לָֽךְ׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_7_870_t1">אִדְּכַר יוֹמִין דְּמִן עָלְמָא אִסְתַּכַּל בִּשְׁנֵי דָּר וְדָר שְׁאַל אֲבוּךְ וִיחַוֵּי לָךְ סָבָךְ וְיֵימְרוּן לָךְ׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_7_870_t1">אִדְכַּר יוֹמִין דְּמִן עָלְמָא אִסְתַּכַּל בִּשְׁנֵי דַר וְדָר שְׁאַל אֲבוּךְ וִיחַוִּי לָךְ סָבִיךְ וְיֵימְרוּן לָךְ:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_2_32_8_871">
+            <div border="0" class="pasuk2m1t" id="2_two_32_8_871_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_8_871_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/2</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ח&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שני, פס' 2 מתוך 4 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_8_871_m1">בְּהַנְחֵ֤ל עֶלְיוֹן֙ גּוֹיִ֔ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;בְּהַפְרִיד֖וֹ בְּנֵ֣י אָדָ֑ם יַצֵּב֙ גְּבֻלֹ֣ת עַמִּ֔ים&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;לְמִסְפַּ֖ר בְּנֵ֥י יִשְׂרָאֵֽל׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_8_871_m2">בְּהַנְחֵ֤ל עֶלְיוֹן֙ גּוֹיִ֔ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;בְּהַפְרִיד֖וֹ בְּנֵ֣י אָדָ֑ם יַצֵּב֙ גְּבֻלֹ֣ת עַמִּ֔ים&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;לְמִסְפַּ֖ר בְּנֵ֥י יִשְׂרָאֵֽל׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_8_871_t1">בְּאַחְסָנָא עִלָּאָה עַמְמַיָּא בְּפָרָשׁוּתֵיהּ בְּנֵי אֲנָשָׁא קַיֵּים תְּחוּמֵי עַמְמַיָּא לְמִנְיַן בְּנֵי יִשְׂרָאֵל׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_8_871_t1">בְּאַחֲסָנָא עִלָּאָה עַמְמַיָּא בְּפָרָשׁוּתֵיהּ בְּנֵי אֲנָשָׁא קַיִּים תְּחוּמֵי עַמְמַיָּא לְמִנְיַן בְּנֵי יִשְׂרָאֵל:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_2_32_9_872">
+            <div border="0" class="pasuk2m1t" id="2_two_32_9_872_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_9_872_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/3</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ט&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שני, פס' 3 מתוך 4 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_9_872_m1">כִּ֛י חֵ֥לֶק יְהֹוָ֖ה עַמּ֑וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יַעֲקֹ֖ב חֶ֥בֶל נַחֲלָתֽוֹ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_9_872_m2">כִּ֛י חֵ֥לֶק יְהֹוָ֖ה עַמּ֑וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יַעֲקֹ֖ב חֶ֥בֶל נַחֲלָתֽוֹ׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_9_872_t1">אֲרֵי חוּלָקָא דַּיְהֹוָה עַמֵּיהּ יַעֲקֹב עֲדַב אַחְסָנְתֵיהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_9_872_t1">אֲרֵי חֳלָקָא דַיְהֹוָה עַמֵּיהּ יַעֲקב עֲדַב אַחֲסַנְתֵּיהּ:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_2_32_10_873">
+            <div border="0" class="pasuk2m1t" id="2_two_32_10_873_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_10_873_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/4</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שני, פס' 4 מתוך 4 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_10_873_m1">יִמְצָאֵ֙הוּ֙ בְּאֶ֣רֶץ מִדְבָּ֔ר&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וּבְתֹ֖הוּ יְלֵ֣ל יְשִׁמֹ֑ן יְסֹבְבֶ֙נְהוּ֙ יְב֣וֹנְנֵ֔הוּ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יִצְּרֶ֖נְהוּ כְּאִישׁ֥וֹן עֵינֽוֹ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_10_873_m2">יִמְצָאֵ֙הוּ֙ בְּאֶ֣רֶץ מִדְבָּ֔ר&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וּבְתֹ֖הוּ יְלֵ֣ל יְשִׁמֹ֑ן יְסֹבְבֶ֙נְהוּ֙ יְב֣וֹנְנֵ֔הוּ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יִצְּרֶ֖נְהוּ כְּאִישׁ֥וֹן עֵינֽוֹ׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_10_873_t1">סוֹפֵיק צֻרְכֵּיהוֹן בַּאֲרַע מַדְבְּרָא וּבֵית צַהְוָנָא אֲתַר דְּלֵית מַיָּא אַשְׁרִינוּן סְחוֹר סְחוֹר לִשְׁכִינְתֵיהּ אַלֵּיפִנּוּן פִּתְגָמֵי אוֹרָיְתֵיהּ נְטַרִנּוּן כְּבָבַת עֵינְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_10_873_t1"><b>סַפִּיק צָרְכֵּיהוֹן</b> בְּאַרְעָא מַדְבְּרָא <b>וּבֵית צַחֲוָנָא אֲתֵר דִּי לֵית מַיָּא אַשְׁרִנּוּן</b> סְחוֹר סְחוֹר <b>לְשְׁכִנְתֵּיהּ אַלֵּפִנּוּן פִּתְגָּמֵי אוֹרַיְתָא נְטָרִנּוּן</b> כְּבָבַת <b>עֵינֵיהוֹן</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_2_32_11_874">
+            <div border="0" class="pasuk2m1t" id="2_two_32_11_874_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_11_874_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/5</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;א</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שלישי, פס' 1 מתוך 5 פסוקים.
+            </div>
+                <div class="hlAllDaySubHeader">יכוין בקריאת חמשה פסוקים אלו שהם כנגד הֶ דמילוי הה ראשונה דשם ב&quot;ן להשאיר בו הארה מתוספת נפש משבת שעברה</div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_11_874_m1">כְּנֶ֙שֶׁר֙ יָעִ֣יר קִנּ֔וֹ עַל־ גּוֹזָלָ֖יו יְרַחֵ֑ף&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יִפְרֹ֤שׂ כְּנָפָיו֙ יִקָּחֵ֔הוּ יִשָּׂאֵ֖הוּ עַל־ אֶבְרָתֽוֹ׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_11_874_m2">כְּנֶ֙שֶׁר֙ יָעִ֣יר קִנּ֔וֹ עַל־ גּוֹזָלָ֖יו יְרַחֵ֑ף&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יִפְרֹ֤שׂ כְּנָפָיו֙ יִקָּחֵ֔הוּ יִשָּׂאֵ֖הוּ עַל־ אֶבְרָתֽוֹ׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_11_874_t1">כְּנִשְׁרָא דִּמְחִישׁ לְקִנֵּיהּ עַל בְּנוֹהִי מִתְחָפַף פָּרֵיס גַּדְפוֹהִי מְקַבֵּילְהוֹן מְנַטֵּילְהוֹן עַל תְּקוֹף אֶבְרוֹהִי׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_11_874_t1">כְּנִשְׁרָא <b>דִּמְחִישׁ</b> לְקִנֵּיהּ עַל בְּנוֹהִי מִתְחוֹפֵף פָּרִיס גַּדְפּוֹהִי מְקַבֶּלְהוֹן מְנַטֶּלְהוֹן עַל <b>תְּקוֹף אֱבָרוֹהִי</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_2_32_12_875">
+            <div border="0" class="pasuk2m1t" id="2_two_32_12_875_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_2_32_12_875_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שני</span> כמות: <span class="currVerseInTotal">6/6</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ב</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שלישי, פס' 2 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_2_two_32_12_875_m1">יְהֹוָ֖ה בָּדָ֣ד יַנְחֶ֑נּוּ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאֵ֥ין עִמּ֖וֹ אֵ֥ל נֵכָֽר׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_2_two_32_12_875_m2">יְהֹוָ֖ה בָּדָ֣ד יַנְחֶ֑נּוּ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאֵ֥ין עִמּ֖וֹ אֵ֥ל נֵכָֽר׃</div>
+                <div class="pasuk_taj_1" id="t_2_two_32_12_875_t1">יְהֹוָה בִּלְחוֹדֵיהוֹן עֲתִיד לְאַשְׁרָיוּתְהוֹן בְּעָלְמָא דְּהוּא עֲתִיד לְחַדָּתָא וְלָא יִתְקַיַּים קֳדָמוֹהִי פוּלְחַן טָעֲוָן׃</div>
+                <div class="pasuk_onkelos_1" id="o_2_two_32_12_875_t1">יְהֹוָה בִּלְחוֹדוֹהִי <b>עֲתִיד </b>לְאַשְׁרָיוּתְהוֹן<b> בְּעָלְמָא דְּהוּא עָתִיד לְאִתְחַדָּתָא</b> וְלָא <b>יִתְקַיַּם קֳדָמוֹהִי פָּלְחַן טַעֲוָן</b>:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_3_three">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="3_three_header"> שלישי</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_3_32_13_876">
+            <div border="0" class="pasuk2m1t" id="3_three_32_13_876_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_13_876_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/1</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ג</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שלישי, פס' 3 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_13_876_m1">יַרְכִּבֵ֙הוּ֙ עַל־ <span class="mam-kq"><span class="mam-kq-q">[בָּ֣מֳתֵי]</span> <span class="mam-kq-k">(במותי)</span></span> אָ֔רֶץ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַיֹּאכַ֖ל תְּנוּבֹ֣ת שָׂדָ֑י וַיֵּנִקֵ֤הֽוּ דְבַשׁ֙ מִסֶּ֔לַע&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְשֶׁ֖מֶן מֵחַלְמִ֥ישׁ צֽוּר׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_13_876_m2">יַרְכִּבֵ֙הוּ֙ עַל־ <span class="mam-kq"><span class="mam-kq-q">[בָּ֣מֳתֵי]</span> <span class="mam-kq-k">(במותי)</span></span> אָ֔רֶץ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַיֹּאכַ֖ל תְּנוּבֹ֣ת שָׂדָ֑י וַיֵּנִקֵ֤הֽוּ דְבַשׁ֙ מִסֶּ֔לַע&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְשֶׁ֖מֶן מֵחַלְמִ֥ישׁ צֽוּר׃</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_13_876_t1">אַשְׁרִינוּן עַל תּוּקְפֵי אַרְעָא אוֹכֵילִנּוּן בִּזַּת שָׂנְאֵיהוֹן יְהַב לְהוֹן בִּזַּת שַׁלִּיטֵי קִרְוִין וְנִכְסֵי יָתְבֵי כַּרְכִין תַּקִּיפִין׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_13_876_t1"><b>אַשְׁרִנּוּן עַל תָּקְפֵי אַרְעָא וְאוֹכָלִנּוּן בִּזַּת סָנְאֵיהוֹן וִיהַב לְהוֹן בִּזַּת שַׁלִּיטֵי קִרְוִין וְנִכְסֵי יָתְבֵי כְּרַכִּין תַּקִּיפִין</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_3_32_14_877">
+            <div border="0" class="pasuk2m1t" id="3_three_32_14_877_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_14_877_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/2</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ד</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שלישי, פס' 4 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_14_877_m1">חֶמְאַ֨ת בָּקָ֜ר וַחֲלֵ֣ב צֹ֗אן&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עִם־ חֵ֨לֶב כָּרִ֜ים וְאֵילִ֤ים בְּנֵֽי־ בָשָׁן֙ וְעַתּוּדִ֔ים&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עִם־ חֵ֖לֶב כִּלְי֣וֹת חִטָּ֑ה וְדַם־ עֵנָ֖ב תִּשְׁתֶּה־ חָֽמֶר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_14_877_m2">חֶמְאַ֨ת בָּקָ֜ר וַחֲלֵ֣ב צֹ֗אן&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עִם־ חֵ֨לֶב כָּרִ֜ים וְאֵילִ֤ים בְּנֵֽי־ בָשָׁן֙ וְעַתּוּדִ֔ים&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עִם־ חֵ֖לֶב כִּלְי֣וֹת חִטָּ֑ה וְדַם־ עֵנָ֖ב תִּשְׁתֶּה־ חָֽמֶר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_14_877_t1">יְהַב לְהוֹן בִּזַּת מַלְכֵיהוֹן וְשַׁלִּיטֵיהוֹן עִם עוֹתֶר רַבְרְבֵיהוֹן וְתַקִּיפֵיהוֹן עַמָּא דַּאֲרַעְהוֹן אַחְסָנַתְהוֹן עִם בִּזַּת חֵילֵיהוֹן וּמַשְׁרְיָתְהוֹן וְדַם גִּבָּרֵיהוֹן אִתְאֲשַׁד כְּמַיָּא׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_14_877_t1"><b>יְהַב לְהוֹן בִּזַּת מַלְכֵיהוֹן וְשַׁלִּיטֵיהוֹן עִם עתַר רַבְרְבֵיהוֹן וְתַקִּיפֵיהוֹן עַמָא דְאַרְעֲהוֹן וְאַחֲסַנְתְּהוֹן עִם בִּזַּת חֵילֵיהוֹן וּמַשִּׁרְיָתְהוֹן</b> וְדַם <b>גִבָּרֵיהוֹן יִתָּשַׁד כְּמַיָּא</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_3_32_15_878">
+            <div border="0" class="pasuk2m1t" id="3_three_32_15_878_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_15_878_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/3</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ט&quot;ו</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שלישי, פס' 5 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_15_878_m1">וַיִּשְׁמַ֤ן יְשֻׁרוּן֙ וַיִּבְעָ֔ט שָׁמַ֖נְתָּ עָבִ֣יתָ כָּשִׂ֑יתָ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַיִּטֹּשׁ֙ אֱל֣וֹהַּ עָשָׂ֔הוּ וַיְנַבֵּ֖ל צ֥וּר יְשֻׁעָתֽוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_15_878_m2">וַיִּשְׁמַ֤ן יְשֻׁרוּן֙ וַיִּבְעָ֔ט שָׁמַ֖נְתָּ עָבִ֣יתָ כָּשִׂ֑יתָ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַיִּטֹּשׁ֙ אֱל֣וֹהַּ עָשָׂ֔הוּ וַיְנַבֵּ֖ל צ֥וּר יְשֻׁעָתֽוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_15_878_t1">עֲתַר יִשְׂרָאֵל וּבְעַט אַצְלַח תְּקוֹף קְנָא נִכְסִין שְׁבַק פּוּלְחַן אֱלָהָא דְּעָבְדֵיהּ אַרְגֵּיז קֳדָם תַּקִּיפָא פָרְקֵיהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_15_878_t1">וְעַתַּר <b>יִשְׂרָאֵל</b> וּבְעַט <b>אַצְלַח תְּקוֹף קְנָא נִכְסִין וּשְׁבַק פָּלְחַן</b> אֱלָהָא דְעָבְדֵיהּ <b>וְאַרְגֵּז קֳדָם תַּקִּיפָא דְפָרְקֵיהּ</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_3_32_16_879">
+            <div border="0" class="pasuk2m1t" id="3_three_32_16_879_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_16_879_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/4</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ט&quot;ז</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 1 מתוך 6 פסוקים.
+            </div>
+                <div class="hlAllDaySubHeader">יכוין בקריאת ששה פסוקים אלו שהם כנגד וָ דמילוי וו דשם ב&quot;ן לקנות הארת מתוספת נפש יתרה משבת הבאה</div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_16_879_m1">יַקְנִאֻ֖הוּ בְּזָרִ֑ים בְּתוֹעֵבֹ֖ת יַכְעִיסֻֽהוּ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_16_879_m2">יַקְנִאֻ֖הוּ בְּזָרִ֑ים בְּתוֹעֵבֹ֖ת יַכְעִיסֻֽהוּ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_16_879_t1">אַקְנִיאוּ קֳדָמוֹהִי בְּפוּלְחַן טָעֲוָן בְּתוֹעֵיבָתָא אַרְגִּיזוּ קֳדָמוֹהִי׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_16_879_t1">אַקְנִיאוּ <b>קֳדָמוֹהִי בְּפָלְחַן טַעֲוָן</b> בְּתוֹעֶבְתָּא אַרְגִּיזוּ <b>קֳדָמוֹהִי</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_3_32_17_880">
+            <div border="0" class="pasuk2m1t" id="3_three_32_17_880_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_17_880_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/5</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ז</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 2 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_17_880_m1">יִזְבְּח֗וּ לַשֵּׁדִים֙ לֹ֣א אֱלֹ֔הַּ אֱלֹהִ֖ים לֹ֣א יְדָע֑וּם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;חֲדָשִׁים֙ מִקָּרֹ֣ב בָּ֔אוּ לֹ֥א שְׂעָר֖וּם אֲבֹתֵיכֶֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_17_880_m2">יִזְבְּח֗וּ לַשֵּׁדִים֙ לֹ֣א אֱלֹ֔הַּ אֱלֹהִ֖ים לֹ֣א יְדָע֑וּם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;חֲדָשִׁים֙ מִקָּרֹ֣ב בָּ֔אוּ לֹ֥א שְׂעָר֖וּם אֲבֹתֵיכֶֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_17_880_t1">דַּבַּחוּ לְשֵׁידִין דְּלֵית בְּהוֹן צְרוֹךְ דַּחְלָן דְּלָא יְדַעוּנִין חֲדַתָּן דְּמִקָּרִיב אִתְעֲבִידָא דְּלָא אִתְעַסַּקוּ בְהוֹן אֲבָהָתְכוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_17_880_t1">דַּבָּחוּ לְשֵׁדִין <b>דִּלֵית בְּהוֹן צְרוֹךְ דַּחֲלָן</b> דְּלָא יְדָעֻנּוּן חַדְתָּא דִּי מִקָּרִיב אִתְעֲבִידָא <b>לָא אִתְעַסָּקוּ בְהוֹן</b> אֲבָהָתְכוֹן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_3_32_18_881">
+            <div border="0" class="pasuk2m1t" id="3_three_32_18_881_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_3_32_18_881_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שלישי</span> כמות: <span class="currVerseInTotal">6/6</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ח</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 3 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_3_three_32_18_881_m1">צ֥וּר יְלָדְךָ֖ תֶּ֑שִׁ<small>י</small> וַתִּשְׁכַּ֖ח אֵ֥ל מְחֹלְלֶֽךָ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_3_three_32_18_881_m2">צ֥וּר יְלָדְךָ֖ תֶּ֑שִׁ<small>י</small> וַתִּשְׁכַּ֖ח אֵ֥ל מְחֹלְלֶֽךָ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_3_three_32_18_881_t1">דַּחְלַת תַּקִּיפָא דִּי בְּרָאָךְ אִתְנְשִׁיתָא שְׁבַקְתָּא פּוּלְחַן אֱלָהָא דְּעָבְדָךְ׃</div>
+                <div class="pasuk_onkelos_1" id="o_3_three_32_18_881_t1"><b>דַּחֲלָא תַקִּיפָא</b> דִּבְרָאָךְ אִתְנְשֵׁיתָא <b>שְׁבַקְתָּא פָּלְחַן</b> אֱלָהָא <b>דְעָבְדָךְ</b>:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_4_four">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="4_four_header"> רביעי</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_4_32_19_882">
+            <div border="0" class="pasuk2m1t" id="4_four_32_19_882_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_19_882_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/1</span>, נשאר: <span class="verseLeft">10</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">י&quot;ט</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 4 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_19_882_m1">וַיַּ֥רְא יְהֹוָ֖ה וַיִּנְאָ֑ץ מִכַּ֥עַס בָּנָ֖יו וּבְנֹתָֽיו׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_19_882_m2">וַיַּ֥רְא יְהֹוָ֖ה וַיִּנְאָ֑ץ מִכַּ֥עַס בָּנָ֖יו וּבְנֹתָֽיו׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_19_882_t1">וּגְלֵי קֳדָם יְהֹוָה וּתְקֵיף רוּגְזֵיהּ מִדְּאַרְגִּיזוּ קֳדָמוֹהִי בְּנִין וּבְנָן׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_19_882_t1"><b>וּגֱלִי קֳדָם יְהֹוָה וּתְקֵף רָגְזֵיהּ מִדְאַרְגִּיזוּ קָדָמוֹהִי בְּנִין וּבְנָן</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_20_883">
+            <div border="0" class="pasuk2m1t" id="4_four_32_20_883_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_20_883_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/2</span>, נשאר: <span class="verseLeft">9</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 5 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_20_883_m1">וַיֹּ֗אמֶר אַסְתִּ֤ירָה פָנַי֙ מֵהֶ֔ם אֶרְאֶ֖ה מָ֣ה אַחֲרִיתָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֣י ד֤וֹר תַּהְפֻּכֹת֙ הֵ֔מָּה בָּנִ֖ים לֹא־ אֵמֻ֥ן בָּֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_20_883_m2">וַיֹּ֗אמֶר אַסְתִּ֤ירָה פָנַי֙ מֵהֶ֔ם אֶרְאֶ֖ה מָ֣ה אַחֲרִיתָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֣י ד֤וֹר תַּהְפֻּכֹת֙ הֵ֔מָּה בָּנִ֖ים לֹא־ אֵמֻ֥ן בָּֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_20_883_t1">וַאֲמַר אֲסַלֵּיק שְׁכִינְתִי מִנְּהוֹן גְּלֵי קֳדָמַי מָא יְהֵי בְּסוֹפְהוֹן אֲרֵי דָּרָא דְּאַשְׁנִי אִנּוּן בְּנַיָּא דְּלֵית בְּהוֹן הֵימָנוּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_20_883_t1">וַאֲמַר <b>אֱסַלֵק שְׁכִנְתִּי</b> מִנְּהוֹן <b>גֶּלִי קֳדָמַי</b> מָא יְהֵי בְסוֹפֵיהוֹן אֲרֵי דָרָא <b>דְאַשְׁנִיּוּ</b> אִנּוּן בְּנַיָּא <b>דִּלֵית בְּהוֹן הֵימָנוּ</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_21_884">
+            <div border="0" class="pasuk2m1t" id="4_four_32_21_884_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_21_884_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/3</span>, נשאר: <span class="verseLeft">8</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;א</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום רביעי, פס' 6 מתוך 6 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_21_884_m1">הֵ֚ם קִנְא֣וּנִי בְלֹא־ אֵ֔ל כִּעֲס֖וּנִי בְּהַבְלֵיהֶ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַֽאֲנִי֙ אַקְנִיאֵ֣ם בְּלֹא־ עָ֔ם בְּג֥וֹי נָבָ֖ל אַכְעִיסֵֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_21_884_m2">הֵ֚ם קִנְא֣וּנִי בְלֹא־ אֵ֔ל כִּעֲס֖וּנִי בְּהַבְלֵיהֶ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַֽאֲנִי֙ אַקְנִיאֵ֣ם בְּלֹא־ עָ֔ם בְּג֥וֹי נָבָ֖ל אַכְעִיסֵֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_21_884_t1">אִנּוּן אַקְנִיאוּ קֳדָמַי בְּלָא דַּחְלָא אַרְגִּיזוּ קֳדָמַי בְּטָעֲוָתְהוֹן וַאֲנָא אַקְנֵינוּן בְּלָא עַם בְּעַמָּא טַפְשָׁא אַרְגֵּיזִנּוּן׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_21_884_t1">אִנּוּן אַקְנִיאוּ <b>קֳדָמַי בְּלָא דַחֲלָא</b> אַרְגִּיזוּ <b>קֳדָמַי בְּפָלְחַן</b> <b>טַעֲוָן</b> וַאֲנָא אַקְנִנּוּן בְּלָא עַם בְּעַמָּא <b>טַפְשָׁא</b> אַרְגֵּזִנּוּן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_22_885">
+            <div border="0" class="pasuk2m1t" id="4_four_32_22_885_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_22_885_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/4</span>, נשאר: <span class="verseLeft">7</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ב</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום חמישי, פס' 1 מתוך 5 פסוקים.
+            </div>
+                <div class="hlAllDaySubHeader">יכוין בקריאת חמשה פסוקים אלו שהם כנגד הִ דמילוי הה אחרונה דשם ב&quot;ן לקנות הארת רוח יתרה משבת הבאה</div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_22_885_m1">כִּי־ אֵשׁ֙ קָדְחָ֣ה בְאַפִּ֔י וַתִּיקַ֖ד עַד־ שְׁא֣וֹל תַּחְתִּ֑ית&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַתֹּ֤אכַל אֶ֙רֶץ֙ וִֽיבֻלָ֔הּ וַתְּלַהֵ֖ט מוֹסְדֵ֥י הָרִֽים׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_22_885_m2">כִּי־ אֵשׁ֙ קָדְחָ֣ה בְאַפִּ֔י וַתִּיקַ֖ד עַד־ שְׁא֣וֹל תַּחְתִּ֑ית&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וַתֹּ֤אכַל אֶ֙רֶץ֙ וִֽיבֻלָ֔הּ וַתְּלַהֵ֖ט מוֹסְדֵ֥י הָרִֽים׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_22_885_t1">אֲרֵי קִדּוּם תַּקִּיף כְּאִישָׁא נְפַק מִן קֳדָמַי בִּרְגַז שֵׁיצִי עַד שְׁאוֹל אַרְעָיְתָא אֲסִיף אַרְעָא וַעֲלַלְתַּהּ שֵׁיצִי עַד סְיָפֵי טוּרַיָּא׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_22_885_t1">אֲרֵי <b>קִדּוּם תַּקִּיף</b> כְּאֶשָּׁא נְפַק <b>מִקֳּדָמַי בִּרְגַז וְשֵׁצֵי</b> עַד שְׁאוֹל <b>אֲרָעִית וְאָסֵף</b> אַרְעָא וַעֲלַלְתַּהּ <b>וְשֵׁצִיַּת עַד סְיָפֵי</b> טוּרַיָּא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_23_886">
+            <div border="0" class="pasuk2m1t" id="4_four_32_23_886_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_23_886_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/5</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ג</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום חמישי, פס' 2 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_23_886_m1">אַסְפֶּ֥ה עָלֵ֖ימוֹ רָע֑וֹת חִצַּ֖י אֲכַלֶּה־ בָּֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_23_886_m2">אַסְפֶּ֥ה עָלֵ֖ימוֹ רָע֑וֹת חִצַּ֖י אֲכַלֶּה־ בָּֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_23_886_t1">אֲסִיף עֲלֵיהוֹן בִּישָׁן מַכְתָּשַׁי אֲשֵׁיצֵי בְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_23_886_t1">אָסֵף עֲלֵיהוֹן בִּישִׁין <b>מַכְתָּשַׁי</b> <b>אֱשֵׁצֵי</b> בְהוֹן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_24_887">
+            <div border="0" class="pasuk2m1t" id="4_four_32_24_887_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_24_887_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/6</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ד</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום חמישי, פס' 3 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_24_887_m1">מְזֵ֥י רָעָ֛ב וּלְחֻ֥מֵי רֶ֖שֶׁף וְקֶ֣טֶב מְרִירִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְשֶׁן־ בְּהֵמֹת֙ אֲשַׁלַּח־ בָּ֔ם עִם־ חֲמַ֖ת זֹחֲלֵ֥י עָפָֽר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_24_887_m2">מְזֵ֥י רָעָ֛ב וּלְחֻ֥מֵי רֶ֖שֶׁף וְקֶ֣טֶב מְרִירִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְשֶׁן־ בְּהֵמֹת֙ אֲשַׁלַּח־ בָּ֔ם עִם־ חֲמַ֖ת זֹחֲלֵ֥י עָפָֽר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_24_887_t1">נְפִיחֵי כְפַן וַאֲכִילֵי עוּף וּכְתִישֵׁי רוּחִין בִּישִׁין וְשֶׁן חַיַּת בָּרָא אֲגָרֵי בְּהוֹן עִם חֲמַת תַּנִּינַיָּא דְּזָחֲלִין בְּעַפְרָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_24_887_t1">נִפִיחֵי כָפָן וַאֲכוּלֵי עוּף <b>וּכְתִישֵׁי רוּחִין בִּישָׁן</b> וְשֵׁן חֵיוַת <b>בָּרָא</b> אֱגָרֵי בְּהוֹן עִם חֲמַת <b>תַּנִּינַיָּא דְּזָחֲלִין בְּעַפְרָא</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_25_888">
+            <div border="0" class="pasuk2m1t" id="4_four_32_25_888_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_25_888_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/7</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ה</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום חמישי, פס' 4 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_25_888_m1">מִחוּץ֙ תְּשַׁכֶּל־ חֶ֔רֶב וּמֵחֲדָרִ֖ים אֵימָ֑ה גַּם־ בָּחוּר֙ גַּם־ בְּתוּלָ֔ה יוֹנֵ֖ק עִם־ אִ֥ישׁ שֵׂיבָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_25_888_m2">מִחוּץ֙ תְּשַׁכֶּל־ חֶ֔רֶב וּמֵחֲדָרִ֖ים אֵימָ֑ה גַּם־ בָּחוּר֙ גַּם־ בְּתוּלָ֔ה יוֹנֵ֖ק עִם־ אִ֥ישׁ שֵׂיבָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_25_888_t1">מִבַּרָא תַּתְכֵּיל חַרְבָּא וּמִתַּוָּנַיָּא חַרְגַּת מוֹתָא אַף עוּלֵימֵיהוֹן אַף עוּלֵימָתְהוֹן יָנְקֵיהוֹן עִם סָבֵיהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_25_888_t1">מִבָּרָא תְּתַכֵּל חַרְבָּא וּמִתְּוָנַיָּא <b>חַרְגַּת מוֹתָא</b> אַף עוּלֵמֵיהוֹן אַף עוּלֵמָתְהוֹן יָנְקֵיהוֹן עִם אֱנַשׁ סָבֵיהוֹן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_26_889">
+            <div border="0" class="pasuk2m1t" id="4_four_32_26_889_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_26_889_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/8</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ו</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום חמישי, פס' 5 מתוך 5 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_26_889_m1">אָמַ֖רְתִּי אַפְאֵיהֶ֑ם אַשְׁבִּ֥יתָה מֵאֱנ֖וֹשׁ זִכְרָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_26_889_m2">אָמַ֖רְתִּי אַפְאֵיהֶ֑ם אַשְׁבִּ֥יתָה מֵאֱנ֖וֹשׁ זִכְרָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_26_889_t1">אֲמַרִית יְחוּל רוּגְזִי עֲלֵיהוֹן וַאֲשֵׁיצֵינוּן אֲבַטֵּיל מִן בְּנֵי אֲנָשָׁא דּוּכְרָנְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_26_889_t1">אֲמָרִית <b>אֵחוּל רָגְזִי עֲלֵיהוֹן וֶאֱשֵׁצִנּוּן</b> אֱבַטַּל מִבְּנֵי אֲנָשָׁא דּוּכְרָנֵיהוֹן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_27_890">
+            <div border="0" class="pasuk2m1t" id="4_four_32_27_890_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_27_890_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/9</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ז</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlFirstDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 1 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_27_890_m1">לוּלֵ֗י כַּ֤עַס אוֹיֵב֙ אָג֔וּר פֶּֽן־ יְנַכְּר֖וּ צָרֵ֑ימוֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;פֶּן־ יֹֽאמְרוּ֙ יָדֵ֣נוּ רָ֔מָה וְלֹ֥א יְהֹוָ֖ה פָּעַ֥ל כׇּל־ זֹֽאת׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_27_890_m2">לוּלֵ֗י כַּ֤עַס אוֹיֵב֙ אָג֔וּר פֶּֽן־ יְנַכְּר֖וּ צָרֵ֑ימוֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;פֶּן־ יֹֽאמְרוּ֙ יָדֵ֣נוּ רָ֔מָה וְלֹ֥א יְהֹוָ֖ה פָּעַ֥ל כׇּל־ זֹֽאת׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_27_890_t1">אִלּוּ לָא פוֹן רוּגְזָא דְּשָׂנְאָה כְּנִישׁ דִּלְמָא יִתְרָרַב בְּעֵיל דְּבָבָא דִּלְמָא יֵימְרוּן יְדַנָא תְּקֵיפַת לַנָא וְלָא מִן קֳדָם יְהֹוָה הֲוָת כָּל דָּא׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_27_890_t1">אִלּוּלָפוֹן רָגְזָא דְסָנְאָה כְּנִישׁ דִּילְמָא <b>יִתְרַבְרַב בְּעֵל דְּבָבָא</b> דִּילְמָא יֵימְרוּן יְדָנָא תְקִיפַת <b>לָנָא</b> וְלָא <b>מִן קֳדָם</b> יְהֹוָה הֲוַת כָּל דָּא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_4_32_28_891">
+            <div border="0" class="pasuk2m1t" id="4_four_32_28_891_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_4_32_28_891_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-רביעי</span> כמות: <span class="currVerseInTotal">10/10</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ח</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 2 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_4_four_32_28_891_m1">כִּי־ ג֛וֹי אֹבַ֥ד עֵצ֖וֹת הֵ֑מָּה וְאֵ֥ין בָּהֶ֖ם תְּבוּנָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_4_four_32_28_891_m2">כִּי־ ג֛וֹי אֹבַ֥ד עֵצ֖וֹת הֵ֑מָּה וְאֵ֥ין בָּהֶ֖ם תְּבוּנָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_4_four_32_28_891_t1">אֲרֵי עַם מְאַבְּדֵי עֵיצָה אִנּוּן וְלֵית בְּהוֹן סוּכְלְתָנוּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_4_four_32_28_891_t1">אֲרֵי עַם מְאַבְּדֵי עֵצָה אִנּוּן וְלֵית בְּהוֹן סוּכְלְתָנוּ:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_5_five">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="5_five_header"> חמישי</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_5_32_29_892">
+            <div border="0" class="pasuk2m1t" id="5_five_32_29_892_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_29_892_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/1</span>, נשאר: <span class="verseLeft">11</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">כ&quot;ט</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 3 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_29_892_m1">ל֥וּ חָכְמ֖וּ יַשְׂכִּ֣ילוּ זֹ֑את יָבִ֖ינוּ לְאַחֲרִיתָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_29_892_m2">ל֥וּ חָכְמ֖וּ יַשְׂכִּ֣ילוּ זֹ֑את יָבִ֖ינוּ לְאַחֲרִיתָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_29_892_t1">אִלּוּ חֲכִימוּ אִסְתַּכַּלוּ בְּדָא סַבַּרוּ מָא יְהֵי בְּסוֹפְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_29_892_t1">אִלּוּ חַכִּימוּ אִסְתַּכָּלוּ בְדָא סְבָרוּ <b>מָא יְהֵי</b> בְסוֹפֵיהוֹן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_30_893">
+            <div border="0" class="pasuk2m1t" id="5_five_32_30_893_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_30_893_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/2</span>, נשאר: <span class="verseLeft">10</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 4 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_30_893_m1">אֵיכָ֞ה יִרְדֹּ֤ף אֶחָד֙ אֶ֔לֶף וּשְׁנַ֖יִם יָנִ֣יסוּ רְבָבָ֑ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;אִם־ לֹא֙ כִּֽי־ צוּרָ֣ם מְכָרָ֔ם וַֽיהֹוָ֖ה הִסְגִּירָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_30_893_m2">אֵיכָ֞ה יִרְדֹּ֤ף אֶחָד֙ אֶ֔לֶף וּשְׁנַ֖יִם יָנִ֣יסוּ רְבָבָ֑ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;אִם־ לֹא֙ כִּֽי־ צוּרָ֣ם מְכָרָ֔ם וַֽיהֹוָ֖ה הִסְגִּירָֽם׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_30_893_t1">אֵיכְדֵין יִרְדּוֹף חַד לְאַלְפָא וּתְרֵין יְעָרְקוּן לְרִבּוֹתָא אֱלָהֵין תַּקִּיפְהוֹן מְסַרִנּוּן וַיְהֹוָה אַשְׁלֵימִנּוּן׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_30_893_t1">אֶכְדֵּין יִרְדּוֹף חַד אַלְפָא וּתְרֵין יֶעֱרְקוּן לְרִבּוֹתָא אֶלָּהֵן (אֲרֵי) תַּקִּיפְהוֹן <b>מְסָרִנּוּן</b> וַיְהֹוָה <b>אַשְׁלֵמִנּוּן</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_31_894">
+            <div border="0" class="pasuk2m1t" id="5_five_32_31_894_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_31_894_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/3</span>, נשאר: <span class="verseLeft">9</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;א</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 5 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_31_894_m1">כִּ֛י לֹ֥א כְצוּרֵ֖נוּ צוּרָ֑ם וְאֹיְבֵ֖ינוּ פְּלִילִֽים׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_31_894_m2">כִּ֛י לֹ֥א כְצוּרֵ֖נוּ צוּרָ֑ם וְאֹיְבֵ֖ינוּ פְּלִילִֽים׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_31_894_t1">אֲרֵי לָא כְתוּקְפַנָא תּוּקְפְהוֹן וּבַעֲלֵי דְּבָבַנָא הֲווֹ דַּיָּינַנָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_31_894_t1">אֲרֵי לָא כְתָקְפָּנָא תָּקְפְּהוֹן וּבַעֲלֵי דְבָבָנָא <b>הֲווֹ דַיָּנָנָא</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_32_895">
+            <div border="0" class="pasuk2m1t" id="5_five_32_32_895_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_32_895_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/4</span>, נשאר: <span class="verseLeft">8</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ב</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 6 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_32_895_m1">כִּֽי־ מִגֶּ֤פֶן סְדֹם֙ גַּפְנָ֔ם וּמִשַּׁדְמֹ֖ת עֲמֹרָ֑ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עֲנָבֵ֙מוֹ֙ עִנְּבֵי־ ר֔וֹשׁ אַשְׁכְּלֹ֥ת מְרֹרֹ֖ת לָֽמוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_32_895_m2">כִּֽי־ מִגֶּ֤פֶן סְדֹם֙ גַּפְנָ֔ם וּמִשַּׁדְמֹ֖ת עֲמֹרָ֑ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;עֲנָבֵ֙מוֹ֙ עִנְּבֵי־ ר֔וֹשׁ אַשְׁכְּלֹ֥ת מְרֹרֹ֖ת לָֽמוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_32_895_t1">אֲרֵי כְפוּרְעָנוּת עַמָּא דִּסְדוֹם כָּס פּוּרְעָנוּתְהוֹן וְלָקוּתְהוֹן כְּעַם עֲמוֹרָה מַחָתְהוֹן בִּישָׁן כְּרֵישֵׁי חִוִּין וְתוּשְׁלְמַת עוֹבָדֵיהוֹן כִּמְרָרוּתְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_32_895_t1">אֲרֵי <b>כְפֻרְעֲנוּת עַמָּא</b> דִסְדוֹם <b>פֻּרְעֲנוּתְהוֹן וְלָקוּתְהוֹן כְּעַם</b> עֲמרָה <b>מָחָתְהוֹן בִּישִׁין כְּרֵישֵׁי חֶוְיָן</b> וְתֻשְׁלָמַת <b>עוֹבָדֵיהוֹן כִּמְרָרוּתְהוֹן</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_33_896">
+            <div border="0" class="pasuk2m1t" id="5_five_32_33_896_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_33_896_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/5</span>, נשאר: <span class="verseLeft">7</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ג</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 7 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_33_896_m1">חֲמַ֥ת תַּנִּינִ֖ם יֵינָ֑ם וְרֹ֥אשׁ פְּתָנִ֖ים אַכְזָֽר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_33_896_m2">חֲמַ֥ת תַּנִּינִ֖ם יֵינָ֑ם וְרֹ֥אשׁ פְּתָנִ֖ים אַכְזָֽר׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_33_896_t1">הָא כְמִרַּת תַּנִּינַיָּא כָּס פּוּרְעָנוּתְהוֹן וּכְרֵישׁ פִּתְנֵי חִוִּין אַכְזְרָאִין׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_33_896_t1">הָא <b>כְמָרַת</b> תַּנִּינַיָּא <b>כּס פֻּרְעֲנוּתְהוֹן</b> וּכְרֵישׁ פְּתָנֵי <b>חֶוְיָן</b> אַכְזְרָאִין:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_34_897">
+            <div border="0" class="pasuk2m1t" id="5_five_32_34_897_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_34_897_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/6</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ד</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 8 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_34_897_m1">הֲלֹא־ ה֖וּא כָּמֻ֣ס עִמָּדִ֑י חָת֖וּם בְּאוֹצְרֹתָֽי׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_34_897_m2">הֲלֹא־ ה֖וּא כָּמֻ֣ס עִמָּדִ֑י חָת֖וּם בְּאוֹצְרֹתָֽי׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_34_897_t1">הֲלָא כָל עוֹבָדֵיהוֹן גְּלַן קֳדָמַי גְּנִיזִין לְיוֹם דִּינָא בְּאוֹצְרָי׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_34_897_t1">הֲלָא <b>כָל עוֹבָדֵיהוֹן גְּלָן קֳדָמַי גְּנִיזִין לְיוֹם דִּינָא</b> בְּאוֹצְרָי:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_35_898">
+            <div border="0" class="pasuk2m1t" id="5_five_32_35_898_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_35_898_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/7</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ה</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 9 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_35_898_m1">לִ֤י נָקָם֙ וְשִׁלֵּ֔ם לְעֵ֖ת תָּמ֣וּט רַגְלָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֤י קָרוֹב֙ י֣וֹם אֵידָ֔ם וְחָ֖שׁ עֲתִדֹ֥ת לָֽמוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_35_898_m2">לִ֤י נָקָם֙ וְשִׁלֵּ֔ם לְעֵ֖ת תָּמ֣וּט רַגְלָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֤י קָרוֹב֙ י֣וֹם אֵידָ֔ם וְחָ֖שׁ עֲתִדֹ֥ת לָֽמוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_35_898_t1">קֳדָמַי פּוּרְעָנוּתָא וַאֲנָא אֲשַׁלֵּים לְעִדָּן דְּיִגְלוֹן מֵאֲרַעְהוֹן אֲרֵי קָרִיב יוֹם תְּבָרְהוֹן וּמַבַּע דַּעֲתִיד לְהוֹן׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_35_898_t1"><b>קֳדָמַי</b> פֻּרְעֲנוּתָא וַאֲנָא <b>אֲשַׁלֵּם</b> לְעִדָּן <b>דְּיִגְלוּן מֵאַרְעֲהוֹן</b> אֲרֵי קָרִיב יוֹם <b>תְּבָרְהוֹן וּמַבַּע דְּעָתִיד לְהוֹן</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_36_899">
+            <div border="0" class="pasuk2m1t" id="5_five_32_36_899_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_36_899_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/8</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ו</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 10 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_36_899_m1">כִּֽי־ יָדִ֤ין יְהֹוָה֙ עַמּ֔וֹ וְעַל־ עֲבָדָ֖יו יִתְנֶחָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֤י יִרְאֶה֙ כִּֽי־ אָ֣זְלַת יָ֔ד וְאֶ֖פֶס עָצ֥וּר וְעָזֽוּב׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_36_899_m2">כִּֽי־ יָדִ֤ין יְהֹוָה֙ עַמּ֔וֹ וְעַל־ עֲבָדָ֖יו יִתְנֶחָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֤י יִרְאֶה֙ כִּֽי־ אָ֣זְלַת יָ֔ד וְאֶ֖פֶס עָצ֥וּר וְעָזֽוּב׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_36_899_t1">אֲרֵי יְדִין יְהֹוָה דִּינָא דְּעַמֵּיהּ וּפוּרְעָנוּת עַבְדּוֹהִי צַדִּיקַיָּא יִתְפְּרַע אֲרֵי גְּלֵי קֳדָמוֹהִי דִּבְעִדָּן דְּתִתַּקַּף עֲלֵיהוֹן מַחַת שָׂנְאָה יְהוֹן מְטוּלְטְלִין וּשְׁבִיקִין׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_36_899_t1">אֲרֵי יְדִין יְהֹוָה <b>דִּינָא</b> דְעַמֵּיהּ <b>וּפֻרְעֲנוּת</b> עַבְדוֹהִי <b>צַדִּיקַיָּא יִתְפְּרַע אֲרֵי גֱּלִי קֳדָמוֹהִי דִּבְעִדָּן דִּתִתְקֵף עֲלֵיהוֹן מָחַת סָנְאָה יְהוֹן מִטַּלְטְלִין וּשְׁבִיקִין</b>:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_37_900">
+            <div border="0" class="pasuk2m1t" id="5_five_32_37_900_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_37_900_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/9</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ז</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 11 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_37_900_m1">וְאָמַ֖ר אֵ֣י אֱלֹהֵ֑ימוֹ צ֖וּר חָסָ֥יוּ בֽוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_37_900_m2">וְאָמַ֖ר אֵ֣י אֱלֹהֵ֑ימוֹ צ֖וּר חָסָ֥יוּ בֽוֹ׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_37_900_t1">וְיֵימַר אָן דַּחְלַתְהוֹן תַּקִּיפָא דַּהֲווֹ רְחִיצִין בֵּיהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_37_900_t1">וְיֵימַר אָן <b>דַּחֲלָתְהוֹן תַּקִּיפָא</b> דַּהֲווֹ רְחִיצִין בֵּיהּ:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_38_901">
+            <div border="0" class="pasuk2m1t" id="5_five_32_38_901_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_38_901_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/10</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ח</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 12 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_38_901_m1">אֲשֶׁ֨ר חֵ֤לֶב זְבָחֵ֙ימוֹ֙ יֹאכֵ֔לוּ יִשְׁתּ֖וּ יֵ֣ין נְסִיכָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יָק֙וּמוּ֙ וְיַעְזְרֻכֶ֔ם יְהִ֥י עֲלֵיכֶ֖ם סִתְרָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_38_901_m2">אֲשֶׁ֨ר חֵ֤לֶב זְבָחֵ֙ימוֹ֙ יֹאכֵ֔לוּ יִשְׁתּ֖וּ יֵ֣ין נְסִיכָ֑ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;יָק֙וּמוּ֙ וְיַעְזְרֻכֶ֔ם יְהִ֥י עֲלֵיכֶ֖ם סִתְרָֽה׃&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_38_901_t1">דִּתְרַב נִכְסַתְהוֹן הֲווֹ אָכְלִין שָׁתַן חֲמַר נִסְכֵּיהוֹן יְקוּמוּן כְּעַן וִיסַעֲדוּנְכוֹן יְהוֹן עֲלֵיכוֹן לְמַגִּין׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_38_901_t1">דִּי תְרַב נִכְסָתְהוֹן הֲווֹ אָכְלִין שָׁתָן חֲמַר נִסְכֵּיהוֹן יְקוּמוּן כְּעַן וִיסַעֲדוּנְכוֹן יְהוֹן עֲלֵיכוֹן מָגֵן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_5_32_39_902">
+            <div border="0" class="pasuk2m1t" id="5_five_32_39_902_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_5_32_39_902_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-חמישי</span> כמות: <span class="currVerseInTotal">11/11</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">ל&quot;ט</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 13 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_5_five_32_39_902_m1">רְא֣וּ&thinsp;<b>׀</b> עַתָּ֗ה כִּ֣י אֲנִ֤י אֲנִי֙ ה֔וּא וְאֵ֥ין אֱלֹהִ֖ים עִמָּדִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;אֲנִ֧י אָמִ֣ית וַאֲחַיֶּ֗ה מָחַ֙צְתִּי֙ וַאֲנִ֣י אֶרְפָּ֔א&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאֵ֥ין מִיָּדִ֖י מַצִּֽיל׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_5_five_32_39_902_m2">רְא֣וּ&thinsp;<b>׀</b> עַתָּ֗ה כִּ֣י אֲנִ֤י אֲנִי֙ ה֔וּא וְאֵ֥ין אֱלֹהִ֖ים עִמָּדִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;אֲנִ֧י אָמִ֣ית וַאֲחַיֶּ֗ה מָחַ֙צְתִּי֙ וַאֲנִ֣י אֶרְפָּ֔א&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאֵ֥ין מִיָּדִ֖י מַצִּֽיל׃</div>
+                <div class="pasuk_taj_1" id="t_5_five_32_39_902_t1">חֲזוֹ כְעַן דַּאֲנָא אֲנָא הוּא וְלֵית אֱלָהּ בָּר מִנִּי אֲנָא מְמִית וּמַחֵי מְחֵינָא וְאַף מַסֵּינָא וְלֵית מִן יְדִי מְשֵׁיזֵיב׃</div>
+                <div class="pasuk_onkelos_1" id="o_5_five_32_39_902_t1">חֲזוֹ כְּעַן אֲרֵי אֲנָא אֲנָא הוּא וְלֵית אֱלָהּ בַּר מִנִּי אֲנָא מֵמִית וּמְחַיֵּי מָחֵינָא וְאַף מַסֵּינָא וְלֵית מִן יְדִי מְשֵׁזֵב:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_6_six">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="6_six_header"> שישי</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_6_32_40_903">
+            <div border="0" class="pasuk2m1t" id="6_six_32_40_903_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_6_32_40_903_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שישי</span> כמות: <span class="currVerseInTotal">4/1</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 14 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_6_six_32_40_903_m1">כִּֽי־ אֶשָּׂ֥א אֶל־ שָׁמַ֖יִם יָדִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאָמַ֕רְתִּי חַ֥י אָנֹכִ֖י לְעֹלָֽם׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_6_six_32_40_903_m2">כִּֽי־ אֶשָּׂ֥א אֶל־ שָׁמַ֖יִם יָדִ֑י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְאָמַ֕רְתִּי חַ֥י אָנֹכִ֖י לְעֹלָֽם׃</div>
+                <div class="pasuk_taj_1" id="t_6_six_32_40_903_t1">אֲרֵי אַתְקֵינִית בִּשְׁמַיָּא בֵּית שְׁכִינְתִי וַאֲמַרִית קַיָּם אֲנָא לְעָלְמִין׃</div>
+                <div class="pasuk_onkelos_1" id="o_6_six_32_40_903_t1">אֲרֵי <b>אֲתְקֵנִית</b> בִּשְׁמַיָּא <b>בֵּית שְׁכִנְתִּי</b> וַאֲמָרִית קַיָּם אֲנָא לְעָלְמִין:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_6_32_41_904">
+            <div border="0" class="pasuk2m1t" id="6_six_32_41_904_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_6_32_41_904_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שישי</span> כמות: <span class="currVerseInTotal">4/2</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;א</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 15 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_6_six_32_41_904_m1">אִם־ שַׁנּוֹתִי֙ בְּרַ֣ק חַרְבִּ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְתֹאחֵ֥ז בְּמִשְׁפָּ֖ט יָדִ֑י אָשִׁ֤יב נָקָם֙ לְצָרָ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְלִמְשַׂנְאַ֖י אֲשַׁלֵּֽם׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_6_six_32_41_904_m2">אִם־ שַׁנּוֹתִי֙ בְּרַ֣ק חַרְבִּ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְתֹאחֵ֥ז בְּמִשְׁפָּ֖ט יָדִ֑י אָשִׁ֤יב נָקָם֙ לְצָרָ֔י&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְלִמְשַׂנְאַ֖י אֲשַׁלֵּֽם׃</div>
+                <div class="pasuk_taj_1" id="t_6_six_32_41_904_t1">אִם עַל חַד תְּרֵין כְּחֵיזוּ בַרְקָא מִסּוֹף שְׁמַיָּא וְעַד סוֹף שְׁמַיָּא תִּתְגְּלֵי חַרְבִּי וְתִתַּקַּף בְּדִינָא יְדִי אֲתִיב פּוּרְעָנוּתָא לְשָׁנְאַי וּלְבַעֲלֵי דְּבָבַי אֲשַׁלֵּים׃</div>
+                <div class="pasuk_onkelos_1" id="o_6_six_32_41_904_t1"><b>אִם עַל חַד תְּרֵין כְּחֵזוּ בַרְקָא מִסּוֹף שְׁמַיָּא</b> וְעַד <b>סוֹף שְׁמַיָּא תִּתְגְּלִי</b> חַרְבִּי וְתִתְקֵף בְּדִינָא יְדִי אָתֵב <b>פֻּרְעֲנוּתָא</b> לְסָנְאַי <b>וּלְבַעֲלֵי דְבָבַי</b> אֱשַׁלֵּם:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_6_32_42_905">
+            <div border="0" class="pasuk2m1t" id="6_six_32_42_905_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_6_32_42_905_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שישי</span> כמות: <span class="currVerseInTotal">4/3</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ב</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 16 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_6_six_32_42_905_m1">אַשְׁכִּ֤יר חִצַּי֙ מִדָּ֔ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְחַרְבִּ֖י תֹּאכַ֣ל בָּשָׂ֑ר מִדַּ֤ם חָלָל֙ וְשִׁבְיָ֔ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;מֵרֹ֖אשׁ פַּרְע֥וֹת אוֹיֵֽב׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_6_six_32_42_905_m2">אַשְׁכִּ֤יר חִצַּי֙ מִדָּ֔ם&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְחַרְבִּ֖י תֹּאכַ֣ל בָּשָׂ֑ר מִדַּ֤ם חָלָל֙ וְשִׁבְיָ֔ה&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;מֵרֹ֖אשׁ פַּרְע֥וֹת אוֹיֵֽב׃</div>
+                <div class="pasuk_taj_1" id="t_6_six_32_42_905_t1">אֲרַוֵּי גִּרְרַי מִדְּמָא וְחַרְבִּי תְּקַטֵּיל בְּעַמְמַיָּא מִדַּם קְטִילִין וּשְׁבַן לְאַעְדָּאָה כִּתְרִין מֵרֵישׁ שָׂנְאָה וּבְעֵיל דְּבָבָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_6_six_32_42_905_t1">אֱרַוֵּי גִּירַי מִדְּמָא וְחַרְבִּי <b>תִּקְטוֹל בְּעַמְמַיָּא</b> מִדַּם קְטִילָן וְשִׁבְיָן <b>לְאַעְדָּאָה כִתְרִין מֵרֵישׁ סָנְאָה</b> וּבְעֵל דְּבָבָא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_6_32_43_906">
+            <div border="0" class="pasuk2m1t" id="6_six_32_43_906_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_6_32_43_906_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שישי</span> כמות: <span class="currVerseInTotal">4/4</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ג</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 17 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_6_six_32_43_906_m1">הַרְנִ֤ינוּ גוֹיִם֙ עַמּ֔וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֥י דַם־ עֲבָדָ֖יו יִקּ֑וֹם וְנָקָם֙ יָשִׁ֣יב לְצָרָ֔יו&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְכִפֶּ֥ר אַדְמָת֖וֹ עַמּֽוֹ׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_6_six_32_43_906_m2">הַרְנִ֤ינוּ גוֹיִם֙ עַמּ֔וֹ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;כִּ֥י דַם־ עֲבָדָ֖יו יִקּ֑וֹם וְנָקָם֙ יָשִׁ֣יב לְצָרָ֔יו&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;וְכִפֶּ֥ר אַדְמָת֖וֹ עַמּֽוֹ׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                <div class="pasuk_taj_1" id="t_6_six_32_43_906_t1">שַׁבַּחוּ עַמְמַיָּא עַמֵּיהּ אֲרֵי פּוּרְעָנוּת עַבְדּוֹהִי צַדִּיקַיָּא יִתְפְּרַע וּפוּרְעָנוּתָא יָתִיב לְשָׂנְאוֹהִי וִיכַפַּר עַל אַרְעֵיהּ וְעַל עַמֵּיהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_6_six_32_43_906_t1"><b>שַׁבָּחוּ</b> עַמְמַיָּא עַמֵּיהּ אֲרֵי <b>פֻּרְעֲנוּת</b> עַבְדוֹהִי <b>צַדִּיקַיָּא יִתְפְּרַע וּפֻרְעֲנוּת</b> יָתֵיב לְסָנְאוֹהִי וִיכַפַּר עַל אַרְעֵיהּ וְעַל עַמֵּיהּ:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="aliya" id="accordion_7_seven">
+        <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a><span class="a-header" id="7_seven_header"> שביעי</span>
+<div class="aliyaContainer">
+        <div class="verse" id="v_Verse_7_32_44_907">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_44_907_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_44_907_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/1</span>, נשאר: <span class="verseLeft">9</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ד</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 18 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_44_907_m1">וַיָּבֹ֣א מֹשֶׁ֗ה וַיְדַבֵּ֛ר אֶת־ כׇּל־ דִּבְרֵ֥י הַשִּׁירָֽה־ הַזֹּ֖את בְּאׇזְנֵ֣י הָעָ֑ם ה֖וּא וְהוֹשֵׁ֥עַ בִּן־ נֽוּן׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_44_907_m2">וַיָּבֹ֣א מֹשֶׁ֗ה וַיְדַבֵּ֛ר אֶת־ כׇּל־ דִּבְרֵ֥י הַשִּׁירָֽה־ הַזֹּ֖את בְּאׇזְנֵ֣י הָעָ֑ם ה֖וּא וְהוֹשֵׁ֥עַ בִּן־ נֽוּן׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_44_907_t1">וַאֲתָא מֹשֶׁה וּמַלֵּיל יָת כָּל פִּתְגָמֵי תּוּשְׁבַּחְתָּא הָדָא קֳדָם עַמָּא הוּא וְהוֹשֵׁעַ בַּר נוּן׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_44_907_t1">וַאֲתָא משֶׁה וּמַלִּיל יָת כָּל פִּתְגָּמֵי תֻשְׁבַּחְתָּא הָדָא <b>קֳדָם</b> עַמָּא הוּא וְהוֹשֵׁעַ בַּר נוּן:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_45_908">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_45_908_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_45_908_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/2</span>, נשאר: <span class="verseLeft">8</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ה</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 19 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_45_908_m1">וַיְכַ֣ל מֹשֶׁ֗ה לְדַבֵּ֛ר אֶת־ כׇּל־ הַדְּבָרִ֥ים הָאֵ֖לֶּה אֶל־ כׇּל־ יִשְׂרָאֵֽל׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_45_908_m2">וַיְכַ֣ל מֹשֶׁ֗ה לְדַבֵּ֛ר אֶת־ כׇּל־ הַדְּבָרִ֥ים הָאֵ֖לֶּה אֶל־ כׇּל־ יִשְׂרָאֵֽל׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_45_908_t1">וְשֵׁיצֵי מֹשֶׁה לְמַלָּלָא יָת כָּל פִּתְגָמַיָּא הָאִלֵּין עִם כָּל יִשְׂרָאֵל׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_45_908_t1">וְשֵׁצִי משֶׁה לְמַלָּלָא יָת כָּל פִּתְגָּמַיָּא הָאִלֵּין עִם כָּל יִשְׂרָאֵל:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_46_909">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_46_909_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_46_909_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/3</span>, נשאר: <span class="verseLeft">7</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ו</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 20 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_46_909_m1">וַיֹּ֤אמֶר אֲלֵהֶם֙ שִׂ֣ימוּ לְבַבְכֶ֔ם לְכׇ֨ל־ הַדְּבָרִ֔ים אֲשֶׁ֧ר אָנֹכִ֛י מֵעִ֥יד בָּכֶ֖ם הַיּ֑וֹם אֲשֶׁ֤ר תְּצַוֻּם֙ אֶת־ בְּנֵיכֶ֔ם לִשְׁמֹ֣ר לַעֲשׂ֔וֹת אֶת־ כׇּל־ דִּבְרֵ֖י הַתּוֹרָ֥ה הַזֹּֽאת׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_46_909_m2">וַיֹּ֤אמֶר אֲלֵהֶם֙ שִׂ֣ימוּ לְבַבְכֶ֔ם לְכׇ֨ל־ הַדְּבָרִ֔ים אֲשֶׁ֧ר אָנֹכִ֛י מֵעִ֥יד בָּכֶ֖ם הַיּ֑וֹם אֲשֶׁ֤ר תְּצַוֻּם֙ אֶת־ בְּנֵיכֶ֔ם לִשְׁמֹ֣ר לַעֲשׂ֔וֹת אֶת־ כׇּל־ דִּבְרֵ֖י הַתּוֹרָ֥ה הַזֹּֽאת׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_46_909_t1">וַאֲמַר לְהוֹן שַׁוּוֹ לִבְּכוֹן לְכָל פִּתְגָמַיָּא דַּאֲנָא מַסְהֵיד בְּכוֹן יוֹמָא דֵין דִּתְפַקְּדוּנוּנוּן יָת בְּנֵיכוֹן לְמִטַּר לְמֶעֱבַד יָת כָּל פִּתְגָמֵי אוֹרָיְתָא הָדָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_46_909_t1">וַאֲמַר לְהוֹן שַׁוּוּ לִבְּכוֹן לְכָל פִּתְגָּמַיָּא דִי אֲנָא מַסְהֵד בְּכוֹן יוֹמָא דֵין דִּי תְפַקְּדֻנּוּן יָת בְּנֵיכוֹן לְמִטַּר לְמֶעְבַּד יָת כָּל פִּתְגָּמֵי אוֹרַיְתָא הָדָא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_47_910">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_47_910_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_47_910_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/4</span>, נשאר: <span class="verseLeft">6</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ז</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 21 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_47_910_m1">כִּ֠י לֹֽא־ דָבָ֨ר רֵ֥ק הוּא֙ מִכֶּ֔ם כִּי־ ה֖וּא חַיֵּיכֶ֑ם וּבַדָּבָ֣ר הַזֶּ֗ה תַּאֲרִ֤יכוּ יָמִים֙ עַל־ הָ֣אֲדָמָ֔ה אֲשֶׁ֨ר אַתֶּ֜ם עֹבְרִ֧ים אֶת־ הַיַּרְדֵּ֛ן שָׁ֖מָּה לְרִשְׁתָּֽהּ׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_47_910_m2">כִּ֠י לֹֽא־ דָבָ֨ר רֵ֥ק הוּא֙ מִכֶּ֔ם כִּי־ ה֖וּא חַיֵּיכֶ֑ם וּבַדָּבָ֣ר הַזֶּ֗ה תַּאֲרִ֤יכוּ יָמִים֙ עַל־ הָ֣אֲדָמָ֔ה אֲשֶׁ֨ר אַתֶּ֜ם עֹבְרִ֧ים אֶת־ הַיַּרְדֵּ֛ן שָׁ֖מָּה לְרִשְׁתָּֽהּ׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_47_910_t1">אֲרֵי לָא פִתְגָם רֵיקָן הוּא מִנְּכוֹן אֲרֵי הוּא חַיֵּיכוֹן וּבְפִתְגָמָא הָדֵין תֵּירְכוּן יוֹמִין עַל אַרְעָא דְּאַתּוּן עָבְרִין יָת יַרְדְּנָא לְתַמָּן לְמֵירְתַהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_47_910_t1">אֲרֵי לָא פִתְגָּם רֵקָא הוּא מִנְּכוֹן אֲרֵי הוּא חַיֵּיכוֹן וּבְפִתְגָּמָא הָדֵין תּוֹרְכוּן יוֹמִין עַל אַרְעָא דִּי אַתּוּן עָבְרִין יָת יַרְדְּנָא תַּמָּן לְמֵירְתַהּ:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_48_911">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_48_911_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_48_911_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/5</span>, נשאר: <span class="verseLeft">5</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ח</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 22 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_48_911_m1">וַיְדַבֵּ֤ר יְהֹוָה֙ אֶל־ מֹשֶׁ֔ה בְּעֶ֛צֶם הַיּ֥וֹם הַזֶּ֖ה לֵאמֹֽר׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_48_911_m2">וַיְדַבֵּ֤ר יְהֹוָה֙ אֶל־ מֹשֶׁ֔ה בְּעֶ֛צֶם הַיּ֥וֹם הַזֶּ֖ה לֵאמֹֽר׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_48_911_t1">וּמַלֵּיל יְהֹוָה עִם מֹשֶׁה בִּכְרַן יוֹמָא הָדֵין לְמֵימַר׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_48_911_t1">וּמַלִּיל יְהֹוָה עִם משֶׁה בִּכְרַן יוֹמָא הָדֵין לְמֵימָר:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_49_912">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_49_912_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_49_912_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/6</span>, נשאר: <span class="verseLeft">4</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">מ&quot;ט</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 23 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_49_912_m1">עֲלֵ֡ה אֶל־ הַר֩ הָעֲבָרִ֨ים הַזֶּ֜ה הַר־ נְב֗וֹ אֲשֶׁר֙ בְּאֶ֣רֶץ מוֹאָ֔ב אֲשֶׁ֖ר עַל־ פְּנֵ֣י יְרֵח֑וֹ וּרְאֵה֙ אֶת־ אֶ֣רֶץ כְּנַ֔עַן אֲשֶׁ֨ר אֲנִ֥י נֹתֵ֛ן לִבְנֵ֥י יִשְׂרָאֵ֖ל לַאֲחֻזָּֽה׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_49_912_m2">עֲלֵ֡ה אֶל־ הַר֩ הָעֲבָרִ֨ים הַזֶּ֜ה הַר־ נְב֗וֹ אֲשֶׁר֙ בְּאֶ֣רֶץ מוֹאָ֔ב אֲשֶׁ֖ר עַל־ פְּנֵ֣י יְרֵח֑וֹ וּרְאֵה֙ אֶת־ אֶ֣רֶץ כְּנַ֔עַן אֲשֶׁ֨ר אֲנִ֥י נֹתֵ֛ן לִבְנֵ֥י יִשְׂרָאֵ֖ל לַאֲחֻזָּֽה׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_49_912_t1">סַק לְטוּרָא דְּעִבְרָאֵי הָדֵין לְטוּרָא דִּנְבוֹ דִּבְאַרְעָא דְּמוֹאָב דְּעַל אַפֵּי יְרֵיחוֹ וַחְזִי יָת אַרְעָא דִּכְנַעַן דַּאֲנָא יָהֵיב לִבְנֵי יִשְׂרָאֵל לְאַחְסָנָא׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_49_912_t1">סַק לְטוּרָא דַעֲבָרָאֵי הָדֵין טוּרָא דִנְבוֹ דִּי בְאַרְעָא דְמוֹאָב דִּי עַל אַפֵּי יְרֵחוֹ וַחֲזֵי יָת אַרְעָא דִכְנַעַן דִּי אֲנָא יָהֵב לִבְנֵי יִשְׂרָאֵל לְאַחֲסָנָא:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_50_913">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_50_913_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_50_913_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/7</span>, נשאר: <span class="verseLeft">3</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">נ&#x27;</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 24 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_50_913_m1">וּמֻ֗ת בָּהָר֙ אֲשֶׁ֤ר אַתָּה֙ עֹלֶ֣ה שָׁ֔מָּה וְהֵאָסֵ֖ף אֶל־ עַמֶּ֑יךָ כַּֽאֲשֶׁר־ מֵ֞ת אַהֲרֹ֤ן אָחִ֙יךָ֙ בְּהֹ֣ר הָהָ֔ר וַיֵּאָ֖סֶף אֶל־ עַמָּֽיו׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_50_913_m2">וּמֻ֗ת בָּהָר֙ אֲשֶׁ֤ר אַתָּה֙ עֹלֶ֣ה שָׁ֔מָּה וְהֵאָסֵ֖ף אֶל־ עַמֶּ֑יךָ כַּֽאֲשֶׁר־ מֵ֞ת אַהֲרֹ֤ן אָחִ֙יךָ֙ בְּהֹ֣ר הָהָ֔ר וַיֵּאָ֖סֶף אֶל־ עַמָּֽיו׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_50_913_t1">וּמוּת בְּטוּרָא דְּאַתְּ סָלֵיק לְתַמָּן וְאִתְכְּנֵישׁ לְעַמָּךְ כְּמָא דְּמִית אַהֲרוֹן אֲחוּךְ בְּהוֹר טוּרָא וְאִתְכְּנֵישׁ לְעַמֵּיהּ׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_50_913_t1">וּמוּת בְּטוּרָא דִּי אַתּ סָלֵק לְתַמָּן וְתִתְכְּנֵשׁ לְעַמָּךְ כְּמָא דְמִית אַהֲרן אֲחוּךְ בְּהוֹר טוּרָא וְאִתְכְּנִישׁ לְעַמֵּיהּ:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_51_914">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_51_914_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_51_914_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/8</span>, נשאר: <span class="verseLeft">2</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">נ&quot;א</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 25 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_51_914_m1">עַל֩ אֲשֶׁ֨ר מְעַלְתֶּ֜ם בִּ֗י בְּתוֹךְ֙ בְּנֵ֣י יִשְׂרָאֵ֔ל בְּמֵֽי־ מְרִיבַ֥ת קָדֵ֖שׁ מִדְבַּר־ צִ֑ן עַ֣ל אֲשֶׁ֤ר לֹֽא־ קִדַּשְׁתֶּם֙ אוֹתִ֔י בְּת֖וֹךְ בְּנֵ֥י יִשְׂרָאֵֽל׃</div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_51_914_m2">עַל֩ אֲשֶׁ֨ר מְעַלְתֶּ֜ם בִּ֗י בְּתוֹךְ֙ בְּנֵ֣י יִשְׂרָאֵ֔ל בְּמֵֽי־ מְרִיבַ֥ת קָדֵ֖שׁ מִדְבַּר־ צִ֑ן עַ֣ל אֲשֶׁ֤ר לֹֽא־ קִדַּשְׁתֶּם֙ אוֹתִ֔י בְּת֖וֹךְ בְּנֵ֥י יִשְׂרָאֵֽל׃</div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_51_914_t1">עַל דְּשַׁקַּרְתּוּן בְּמֵימְרִי בְּגוֹ בְּנֵי יִשְׂרָאֵל בְּמֵי מַצּוּת רְקַם מַדְבְּרָא דְּצִין עַל דְּלָא קַדִּישְׁתּוּן יָתִי בְּגוֹ בְּנֵי יִשְׂרָאֵל׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_51_914_t1">עַל דִּי <b>שַׁקַּרְתּוּן בְּמֵימְרִי</b> בְּגוֹ בְּנֵי יִשְׂרָאֵל בְּמֵי מַצּוּת <b>רְקָם</b> מַדְבְּרָא דְצִן עַל דִּי לָא קַדִּשְׁתּוּן יָתִי בְּגוֹ בְּנֵי יִשְׂרָאֵל:</div>
+            </div>
+        </div>
+        <div class="verse" id="v_Verse_7_32_52_915">
+            <div border="0" class="pasuk2m1t" id="7_seven_32_52_915_psk">
+                <div class="headerAndMikra">
+                    <div class="header" id="h_7_32_52_915_verse_accordion_header">
+                        <div class="contentHeader">
+    <div class="prefix-header">
+        עליית: <span class="riseDesc">הַאֲזִינוּ-שביעי</span> כמות: <span class="currVerseInTotal">9/9</span>, נשאר: <span class="verseLeft">1</span>,
+    </div>
+    <div class="suffix-header">
+        פרק: <span class="chapterNum">ל&quot;ב</span>, פסוק: <span class="verseNum">נ&quot;ב</span>.
+    </div>
+        <div class="hlAllHeader">
+            <div class="hlLastDayFromDayHeader">
+                חק לישראל - פרשת הַאֲזִינוּ, יום שישי, פס' 26 מתוך 26 פסוקים.
+            </div>
+        </div>
+</div>
+
+
+                    </div>
+                    <div class="pasuk_mikra_1" id="m1_7_seven_32_52_915_m1">כִּ֥י מִנֶּ֖גֶד תִּרְאֶ֣ה אֶת־ הָאָ֑רֶץ וְשָׁ֙מָּה֙ לֹ֣א תָב֔וֹא אֶל־ הָאָ֕רֶץ אֲשֶׁר־ אֲנִ֥י נֹתֵ֖ן לִבְנֵ֥י יִשְׂרָאֵֽל׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                </div>
+                <div class="pasuk_mikra_2" id="m2_7_seven_32_52_915_m2">כִּ֥י מִנֶּ֖גֶד תִּרְאֶ֣ה אֶת־ הָאָ֑רֶץ וְשָׁ֙מָּה֙ לֹ֣א תָב֔וֹא אֶל־ הָאָ֕רֶץ אֲשֶׁר־ אֲנִ֥י נֹתֵ֖ן לִבְנֵ֥י יִשְׂרָאֵֽל׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+                <div class="pasuk_taj_1" id="t_7_seven_32_52_915_t1">אֲרֵי מִקֳּבֵיל תִּחְזֵי יָת אַרְעָא וּלְתַמָּן לָא תֵיעוֹל לְאַרְעָא דַּאֲנָא יָהֵיב לִבְנֵי יִשְׂרָאֵל׃</div>
+                <div class="pasuk_onkelos_1" id="o_7_seven_32_52_915_t1">אֲרֵי מִקֳּבֵל תֶּחֱזֵי יָת אַרְעָא וּלְתַמָּן לָא תֵעוּל לְאַרְעָא דִּי אֲנָא יָהֵב לִבְנֵי יִשְׂרָאֵל:</div>
+            </div>
+        </div>
+</div>
+
+
+    </div>
+    <div class="lastVerse">
+        <div class="header">ויחזור הפסוק האחרון פעמיים ללא תרגום:</div>
+        <div class="last_pasuk_mikra_1">כִּ֥י מִנֶּ֖גֶד תִּרְאֶ֣ה אֶת־ הָאָ֑רֶץ וְשָׁ֙מָּה֙ לֹ֣א תָב֔וֹא אֶל־ הָאָ֕רֶץ אֲשֶׁר־ אֲנִ֥י נֹתֵ֖ן לִבְנֵ֥י יִשְׂרָאֵֽל׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+        <div class="last_pasuk_mikra_2">כִּ֥י מִנֶּ֖גֶד תִּרְאֶ֣ה אֶת־ הָאָ֑רֶץ וְשָׁ֙מָּה֙ לֹ֣א תָב֔וֹא אֶל־ הָאָ֕רֶץ אֲשֶׁר־ אֲנִ֥י נֹתֵ֖ן לִבְנֵ֥י יִשְׂרָאֵֽל׃&nbsp;<span class="mam-spi-pe">{פ}</span><br></div>
+    </div>
+
+
+<div class="allText">
+    <div class="after-reading-info">לאחר קריאת שניים מקרא ואחד תרגום והפטרת השבוע:</div>
+    <div class="kodesh">
+        <div class="chapterName">פרק צב</div>
+        <div class="chapterText">
+            <span>מִזְמ֥וֹר שִׁ֗יר לְי֣וֹם הַשַּׁבָּֽת:</span>
+            <span>ט֗וֹב לְהֹד֥וֹת לַיהוָ֑ה וּלְזַמֵּ֖ר לְשִׁמְךָ֣ עֶלְיֽוֹן:</span>
+            <span>לְהַגִּ֣יד בַּבֹּ֣קֶר חַסְֽדֶּ֑ךָ וֶ֝אֱמֽוּנָתְךָ֗ בַּלֵּילֽוֹת:</span>
+            <span>עֲ‍ֽלֵי־עָ֭שׂוֹר וַעֲלֵי־נָ֑בֶל עֲלֵ֖י הִגָּי֣וֹן בְּכִנּֽוֹר:</span>
+            <span>כִּ֤י שִׂמַּחְתַּ֣נִי יְהוָ֣ה בְּפָעֳלֶ֑ךָ בְּֽמַעֲשֵׂ֖י יָדֶ֣יךָ אֲרַנֵּֽן:</span>
+            <span>מַה־גָּדְל֣וּ מַעֲשֶׂ֣יךָ יְהוָ֑ה מְ֝אֹ֗ד עָמְק֥וּ מַחְשְׁבֹתֶֽיךָ:</span>
+            <span>אִֽישׁ־בַּ֭עַר לֹ֣א יֵדָ֑ע וּ֝כְסִ֗יל לֹא־יָבִ֥ין אֶת־זֹֽאת:</span>
+            <span>בִּפְרֹ֤חַ רְשָׁעִ֨ים ׀ כְּמ֥וֹ עֵ֗שֶׂב וַ֭יָּצִיצוּ כָּל־פֹּ֣עֲלֵי אָ֑וֶן לְהִשָּֽׁמְדָ֥ם עֲדֵי־עַֽד:</span>
+            <span>וְאַתָּ֥ה מָר֗וֹם לְעֹלָ֥ם יְהוָֽה:</span>
+            <span>כִּ֤י הִנֵּ֪ה אֹיְבֶ֡יךָ ׀ יְֽהוָ֗ה כִּֽי־הִנֵּ֣ה אֹיְבֶ֣יךָ יֹאבֵ֑דוּ יִ֝תְפָּרְד֗וּ כָּל־פֹּ֥עֲלֵי אָֽוֶן:</span>
+            <span>וַתָּ֣רֶם כִּרְאֵ֣ים קַרְנִ֑י בַּ֝לֹּתִ֗י בְּשֶׁ֣מֶן רַעֲנָֽן:</span>
+            <span>וַתַּבֵּ֥ט עֵינִ֗י בְּשׁ֫וּרָ֥י בַּקָּמִ֖ים עָלַ֥י מְרֵעִ֗ים תִּשְׁמַ֥עְנָה אָזְנָֽי:</span>
+            <span>צַ֭דִּיק כַּתָּמָ֣ר יִפְרָ֑ח כְּאֶ֖רֶז בַּלְּבָנ֣וֹן יִשְׂגֶּֽה:</span>
+            <span>שְׁ֭תוּלִים בְּבֵ֣ית יְהוָ֑ה בְּחַצְר֖וֹת אֱלֹהֵ֣ינוּ יַפְרִֽיחוּ:</span>
+            <span>ע֭וֹד יְנוּב֣וּן בְּשֵׂיבָ֑ה דְּשֵׁנִ֖ים וְרַֽעֲנַנִּ֣ים יִהְיֽוּ:</span>
+            <span>לְ֭הַגִּיד כִּֽי־יָשָׁ֣ר יְהוָ֑ה צ֝וּרִ֗י וְֽלֹא־*עלתה **עַוְלָ֥תָה בּֽוֹ:</span>
+        </div>
+        <div class="chapterName">פרק צג</div>
+        <div class="chapterText">
+            <span>יְהוָ֣ה מָלָךְ֮ גֵּא֪וּת לָ֫בֵ֥שׁ לָבֵ֣שׁ יְ֭הוָה עֹ֣ז הִתְאַזָּ֑ר אַף־תִּכּ֥וֹן תֵּ֝בֵ֗ל בַּל־תִּמּֽוֹט:</span>
+            <span>נָכ֣וֹן כִּסְאֲךָ֣ מֵאָ֑ז מֵֽעוֹלָ֣ם אָֽתָּה:</span>
+            <span>נָשְׂא֤וּ נְהָר֨וֹת ׀ יְֽהוָ֗ה נָשְׂא֣וּ נְהָר֣וֹת קוֹלָ֑ם יִשְׂא֖וּ נְהָר֣וֹת דָּכְיָֽם:</span>
+            <span>מִקֹּל֨וֹת ׀ מַ֤יִם רַבִּ֗ים אַדִּירִ֣ים מִשְׁבְּרֵי־יָ֑ם אַדִּ֖יר בַּמָּר֣וֹם יְהוָֽה:</span>
+            <span>עֵֽדֹתֶ֨יךָ ׀ נֶאֶמְנ֬וּ מְאֹ֗ד לְבֵיתְךָ֥ נַאֲוָה־קֹ֑דֶשׁ יְ֝הוָ֗ה לְאֹ֣רֶךְ יָמִֽים:</span>
+        </div>
+        <div class="gemara-after-reading-title">ואחר"כ אומרים:</div>
+        <div class="gemara-after-reading">
+            "אָמַר רַב הוּנָא בַּר יְהוּדָה אָמַר רִבִּי אַמִּי לְעוֹלָם יַשְׁלִים אָדָם פָּרָשִׁיּוֹתָיו עִם הַצִּבּוּר שְׁנַיִם מִקְרָא וְאֶחָד תַּרְגּוּם, וַאֲפִלּוּ "עֲטָרוֹת וְדִיבֹן", שֶׁכָּל הַמַּשְׁלִים פָּרָשִׁיּוֹתָיו עִם הַצִּבּוּר, מַאֲרִיכִין לוֹ יָמָיו וּשְׁנוֹתָיו".
+            <span class="gemara-after-reading-src">(ברכות ח' סע"א)</span>
+        </div>
+    </div>
+</div>
+
+
+
+
+            <hr />
+    </div>
+    <!-- Step-scroll controls: scroll by configured screen height, wait, then continue. -->
+    <div class="tmot-auto-scroll-shell" dir="ltr">
+        <button id="autoScrollToggleButton" type="button" class="tmot-auto-scroll-toggle" aria-expanded="false" aria-controls="autoScrollPanel">Step Scroll</button>
+        <div id="autoScrollPanel" class="tmot-auto-scroll-panel" hidden>
+            <h2>Step Scroll</h2>
+            <div class="tmot-auto-scroll-row">
+                <label for="autoScrollEnabledCheckbox">Enabled</label>
+                <input id="autoScrollEnabledCheckbox" type="checkbox" />
+            </div>
+            <div class="tmot-auto-scroll-row">
+    <label for="mobileFullScreenCheckbox">Full screen</label>
+    <input id="mobileFullScreenCheckbox" type="checkbox" checked />
+</div>
+
+            <div class="tmot-auto-scroll-row">
+                <label for="onkelosVisibilityCheckbox">Hide Onkelos</label>
+                <input id="onkelosVisibilityCheckbox" type="checkbox" checked />
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label for="autoScrollDirectionCheckbox">Direction</label>
+                <input id="autoScrollDirectionCheckbox" type="checkbox" />
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Screen height</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Screen height">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="10">+10</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="1">+1</button>
+                <span id="autoScrollStepHeightValue" class="tmot-auto-scroll-value">0%</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-1">-1</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="screenHeight" data-step-scroll-delta="-10">-10</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Wait delay</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Wait delay">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="1000">+1000</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="100">+100</button>
+                <span id="autoScrollWaitDelayValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-100">-100</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="waitDelay" data-step-scroll-delta="-1000">-1000</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Scroll duration</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Scroll duration">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="500">+500</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="50">+50</button>
+                <span id="autoScrollAnimationDurationValue" class="tmot-auto-scroll-value">0 ms</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-50">-50</button>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="animationDuration" data-step-scroll-delta="-500">-500</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Letter spacing</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Letter spacing">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="letterSpacing" data-step-scroll-delta="1">+1</button>
+                <span id="letterSpacingValue" class="tmot-auto-scroll-value">-1 px</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="letterSpacing" data-step-scroll-delta="-1">-1</button>
+            </div>
+            <div class="tmot-auto-scroll-row">
+                <label>Word spacing</label>
+            </div>
+            <div class="tmot-auto-scroll-button-row" dir="ltr" aria-label="Word spacing">
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="wordSpacing" data-step-scroll-delta="1">+1</button>
+                <span id="wordSpacingValue" class="tmot-auto-scroll-value">4 px</span>
+                <button type="button" class="tmot-auto-scroll-step-button" data-step-scroll-control="wordSpacing" data-step-scroll-delta="-1">-1</button>
+            </div>
+            <div id="autoScrollStatus" class="tmot-auto-scroll-status" aria-live="polite">Step-scroll is preparing.</div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const root = document.getElementById("root-element");
+            if (!root) {
+                return;
+            }
+
+            const scrollingElement = document.scrollingElement || document.documentElement;
+            const contentRoot = document.getElementById("parashaContentRow");
+            const autoScrollShell = document.querySelector(".tmot-auto-scroll-shell");
+            const autoScrollToggleButton = document.getElementById("autoScrollToggleButton");
+            const autoScrollPanel = document.getElementById("autoScrollPanel");
+            const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
+            const onkelosVisibilityCheckbox = document.getElementById("onkelosVisibilityCheckbox");
+            const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
+            const verseTextSpacingSelector = "#parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, .lastVerse .last_pasuk_mikra_1, .lastVerse .last_pasuk_mikra_2";
+            const autoScrollStepButtons = document.querySelectorAll("[data-step-scroll-control]");
+            const autoScrollStepHeightValue = document.getElementById("autoScrollStepHeightValue");
+            const autoScrollWaitDelayValue = document.getElementById("autoScrollWaitDelayValue");
+            const autoScrollAnimationDurationValue = document.getElementById("autoScrollAnimationDurationValue");
+            const letterSpacingValue = document.getElementById("letterSpacingValue");
+            const wordSpacingValue = document.getElementById("wordSpacingValue");
+            const autoScrollStatus = document.getElementById("autoScrollStatus");
+
+            let currentScale = 1;
+            let initialScale = 1;
+            let initialDistance = 0;
+            const minScale = 0.8;
+            const maxScale = 2.2;
+
+            const stepScrollConfig = {
+                enabled: true,
+                showControlsButton: true,
+                showControlPanelByDefault: false,
+                startOnLoad: true,
+                screenHeightPercent: 30,
+                minScreenHeightPercent: 25,
+                maxScreenHeightPercent: 100,
+                waitDelayMs: 4000,
+                minWaitDelayMs: 500,
+                maxWaitDelayMs: 10000,
+                animationDurationMs: 5000,
+                minAnimationDurationMs: 2000,
+                maxAnimationDurationMs: 10000,
+                letterSpacingPixels: 0,
+                wordSpacingPixels: 7,
+                minTextSpacingPixels: -5,
+                scrollDown: true,
+                manualResumeDelayMs: 1800,
+                programmaticScrollFlagMs: 160
+            };
+
+            applyQueryParameters(stepScrollConfig);
+
+            let pinchZoomActive = false;
+            let singleTouchActive = false;
+            let stepScrollEnabled = stepScrollConfig.enabled;
+            let stepScrollDirectionDown = stepScrollConfig.scrollDown;
+            let stepScrollScreenHeightPercent = normalizeNumber(
+                stepScrollConfig.screenHeightPercent,
+                stepScrollConfig.minScreenHeightPercent,
+                stepScrollConfig.maxScreenHeightPercent,
+                30
+            );
+            let stepScrollWaitDelayMs = normalizeNumber(
+                stepScrollConfig.waitDelayMs,
+                stepScrollConfig.minWaitDelayMs,
+                stepScrollConfig.maxWaitDelayMs,
+                4000
+            );
+            let stepScrollAnimationDurationMs = normalizeNumber(
+                stepScrollConfig.animationDurationMs,
+                stepScrollConfig.minAnimationDurationMs,
+                stepScrollConfig.maxAnimationDurationMs,
+                5000
+            );
+            let stepScrollPaused = true;
+            let stepScrollWaitTimerId = 0;
+            let stepScrollFrameId = 0;
+            let stepScrollAnimationStartTime = 0;
+            let stepScrollStartTop = 0;
+            let stepScrollTargetTop = 0;
+            let programmaticScrollActive = false;
+            let programmaticScrollReleaseTimerId = 0;
+            let manualResumeTimerId = 0;
+            let onkelosHidden = true;
+            let letterSpacingPixels = normalizeTextSpacing(stepScrollConfig.letterSpacingPixels, -1);
+            let wordSpacingPixels = normalizeTextSpacing(stepScrollConfig.wordSpacingPixels, 4);
+
+            function applyQueryParameters(config) {
+                const searchParams = new URLSearchParams(window.location.search);
+                config.screenHeightPercent = readNumberParameter(searchParams, ["screenHeightPercent", "heightPercent", "stepHeightPercent"], config.screenHeightPercent);
+                config.waitDelayMs = readSecondsParameter(searchParams, ["waitDelaySeconds", "delaySeconds", "waitSeconds", "seconds"], config.waitDelayMs);
+                config.waitDelayMs = readNumberParameter(searchParams, ["waitDelayMs", "delayMs", "waitMs"], config.waitDelayMs);
+                config.animationDurationMs = readNumberParameter(searchParams, ["animationDurationMs", "animationMs", "durationMs"], config.animationDurationMs);
+                config.startOnLoad = readBooleanParameter(searchParams, ["startOnLoad", "start"], config.startOnLoad);
+                config.scrollDown = readBooleanParameter(searchParams, ["scrollDown", "down"], config.scrollDown);
+                config.enabled = readBooleanParameter(searchParams, ["enabled", "auto"], config.enabled);
+            }
+
+            function readNumberParameter(searchParams, names, fallbackValue) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const numericValue = Number(value);
+                    if (Number.isFinite(numericValue)) {
+                        return numericValue;
+                    }
+                }
+
+                return fallbackValue;
+            }
+
+            function readSecondsParameter(searchParams, names, fallbackValueMs) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const numericValue = Number(value);
+                    if (Number.isFinite(numericValue)) {
+                        return numericValue * 1000;
+                    }
+                }
+
+                return fallbackValueMs;
+            }
+
+            function readBooleanParameter(searchParams, names, fallbackValue) {
+                for (let index = 0; index < names.length; index += 1) {
+                    const value = searchParams.get(names[index]);
+                    if (value === null) {
+                        continue;
+                    }
+
+                    const normalizedValue = value.toLowerCase();
+                    if (normalizedValue === "1" || normalizedValue === "true" || normalizedValue === "yes") {
+                        return true;
+                    }
+
+                    if (normalizedValue === "0" || normalizedValue === "false" || normalizedValue === "no") {
+                        return false;
+                    }
+                }
+
+                return fallbackValue;
+            }
+
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function normalizeNumber(value, min, max, fallbackValue) {
+                const numericValue = Number(value);
+                if (Number.isFinite(numericValue)) {
+                    return clamp(numericValue, min, max);
+                }
+
+                return clamp(fallbackValue, min, max);
+            }
+
+            function normalizeTextSpacing(value, fallbackValue) {
+                const numericValue = Number(value);
+                const valueToUse = Number.isFinite(numericValue) ? numericValue : fallbackValue;
+
+                return Math.max(stepScrollConfig.minTextSpacingPixels, valueToUse);
+            }
+
+            function applyScale() {
+                root.style.setProperty("--tmot-zoom-multiplier", currentScale.toFixed(3));
+            }
+
+            function getDistance(touchA, touchB) {
+                return Math.hypot(
+                    touchA.pageX - touchB.pageX,
+                    touchA.pageY - touchB.pageY
+                );
+            }
+
+            function getMaxScrollTop() {
+                return Math.max(0, scrollingElement.scrollHeight - window.innerHeight);
+            }
+
+            function getStepPixels() {
+                return Math.max(1, Math.round(window.innerHeight * (stepScrollScreenHeightPercent / 100)));
+            }
+
+            function formatTextSpacing(value) {
+                return Math.round(value) + " px";
+            }
+
+            function formatTextSpacingCssValue(value) {
+                return Math.round(value) + "px";
+            }
+
+            function applyTextSpacing() {
+                const letterSpacingCssValue = formatTextSpacingCssValue(letterSpacingPixels);
+                const wordSpacingCssValue = formatTextSpacingCssValue(wordSpacingPixels);
+
+                root.style.setProperty("--tmot-letter-spacing", letterSpacingCssValue);
+                root.style.setProperty("--tmot-word-spacing", wordSpacingCssValue);
+                applyVerseTextSpacing(letterSpacingCssValue, wordSpacingCssValue);
+            }
+
+            function applyVerseTextSpacing(letterSpacingCssValue, wordSpacingCssValue) {
+                document.querySelectorAll(verseTextSpacingSelector).forEach(function (element) {
+                    element.style.setProperty("letter-spacing", letterSpacingCssValue, "important");
+                    element.style.setProperty("word-spacing", wordSpacingCssValue, "important");
+                });
+            }
+
+            function setStepScrollStatus(message) {
+                if (!autoScrollStatus) {
+                    return;
+                }
+
+                autoScrollStatus.textContent = message;
+            }
+
+            function setStepScrollPanelVisible(isVisible) {
+                if (!autoScrollPanel || !autoScrollToggleButton) {
+                    return;
+                }
+
+                autoScrollPanel.hidden = !isVisible;
+                autoScrollToggleButton.setAttribute("aria-expanded", String(isVisible));
+            }
+
+            function updateOnkelosVisibilityUi() {
+                if (onkelosVisibilityCheckbox) {
+                    onkelosVisibilityCheckbox.checked = onkelosHidden;
+                }
+
+                root.classList.toggle("tmot-hide-onkelos", onkelosHidden);
+            }
+
+            function updateStepScrollUi() {
+                if (autoScrollShell) {
+                    autoScrollShell.hidden = !stepScrollConfig.showControlsButton && !stepScrollConfig.showControlPanelByDefault;
+                }
+
+                if (autoScrollEnabledCheckbox) {
+                    autoScrollEnabledCheckbox.checked = stepScrollEnabled;
+                }
+
+                if (autoScrollDirectionCheckbox) {
+                    autoScrollDirectionCheckbox.checked = stepScrollDirectionDown;
+                }
+
+                if (autoScrollStepHeightValue) {
+                    autoScrollStepHeightValue.textContent = Math.round(stepScrollScreenHeightPercent) + "%";
+                }
+
+                if (autoScrollWaitDelayValue) {
+                    autoScrollWaitDelayValue.textContent = Math.round(stepScrollWaitDelayMs) + " ms";
+                }
+
+                if (autoScrollAnimationDurationValue) {
+                    autoScrollAnimationDurationValue.textContent = Math.round(stepScrollAnimationDurationMs) + " ms";
+                }
+
+                if (letterSpacingValue) {
+                    letterSpacingValue.textContent = formatTextSpacing(letterSpacingPixels);
+                }
+
+                if (wordSpacingValue) {
+                    wordSpacingValue.textContent = formatTextSpacing(wordSpacingPixels);
+                }
+
+                applyTextSpacing();
+            }
+
+            function applyStepScrollControlDelta(controlName, delta) {
+                if (!Number.isFinite(delta)) {
+                    return;
+                }
+
+                if (controlName === "screenHeight") {
+                    stepScrollScreenHeightPercent = normalizeNumber(
+                        stepScrollScreenHeightPercent + delta,
+                        stepScrollConfig.minScreenHeightPercent,
+                        stepScrollConfig.maxScreenHeightPercent,
+                        stepScrollConfig.screenHeightPercent
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Step height updated to " + Math.round(stepScrollScreenHeightPercent) + "% of screen (" + getStepPixels() + " px).");
+                    return;
+                }
+
+                if (controlName === "waitDelay") {
+                    stepScrollWaitDelayMs = normalizeNumber(
+                        stepScrollWaitDelayMs + delta,
+                        stepScrollConfig.minWaitDelayMs,
+                        stepScrollConfig.maxWaitDelayMs,
+                        stepScrollConfig.waitDelayMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Wait delay updated to " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "animationDuration") {
+                    stepScrollAnimationDurationMs = normalizeNumber(
+                        stepScrollAnimationDurationMs + delta,
+                        stepScrollConfig.minAnimationDurationMs,
+                        stepScrollConfig.maxAnimationDurationMs,
+                        stepScrollConfig.animationDurationMs
+                    );
+                    updateStepScrollUi();
+                    setStepScrollStatus("Scroll duration updated to " + Math.round(stepScrollAnimationDurationMs) + " ms.");
+                    return;
+                }
+
+                if (controlName === "letterSpacing") {
+                    letterSpacingPixels = normalizeTextSpacing(letterSpacingPixels + delta, stepScrollConfig.letterSpacingPixels);
+                    updateStepScrollUi();
+                    setStepScrollStatus("Letter spacing updated to " + formatTextSpacing(letterSpacingPixels) + ".");
+                    return;
+                }
+
+                if (controlName === "wordSpacing") {
+                    wordSpacingPixels = normalizeTextSpacing(wordSpacingPixels + delta, stepScrollConfig.wordSpacingPixels);
+                    updateStepScrollUi();
+                    setStepScrollStatus("Word spacing updated to " + formatTextSpacing(wordSpacingPixels) + ".");
+                }
+            }
+
+            function clearStepScrollWaitTimer() {
+                if (stepScrollWaitTimerId === 0) {
+                    return;
+                }
+
+                window.clearTimeout(stepScrollWaitTimerId);
+                stepScrollWaitTimerId = 0;
+            }
+
+            function clearManualResumeTimer() {
+                if (manualResumeTimerId === 0) {
+                    return;
+                }
+
+                window.clearTimeout(manualResumeTimerId);
+                manualResumeTimerId = 0;
+            }
+
+            function cancelStepScrollFrame() {
+                if (stepScrollFrameId === 0) {
+                    return;
+                }
+
+                window.cancelAnimationFrame(stepScrollFrameId);
+                stepScrollFrameId = 0;
+                stepScrollAnimationStartTime = 0;
+            }
+
+            function clearProgrammaticScrollFlag() {
+                if (programmaticScrollReleaseTimerId !== 0) {
+                    window.clearTimeout(programmaticScrollReleaseTimerId);
+                    programmaticScrollReleaseTimerId = 0;
+                }
+
+                programmaticScrollActive = false;
+            }
+
+            function markProgrammaticScroll() {
+                programmaticScrollActive = true;
+
+                if (programmaticScrollReleaseTimerId !== 0) {
+                    window.clearTimeout(programmaticScrollReleaseTimerId);
+                }
+
+                programmaticScrollReleaseTimerId = window.setTimeout(function () {
+                    programmaticScrollActive = false;
+                    programmaticScrollReleaseTimerId = 0;
+                }, stepScrollConfig.programmaticScrollFlagMs);
+            }
+
+            function setStepScrollPaused(isPaused, reason) {
+                stepScrollPaused = isPaused;
+
+                if (isPaused) {
+                    clearStepScrollWaitTimer();
+                    cancelStepScrollFrame();
+                    if (reason) {
+                        setStepScrollStatus(reason);
+                    }
+                    return;
+                }
+
+                if (reason) {
+                    setStepScrollStatus(reason);
+                }
+            }
+
+            function resumeStepScroll(reason) {
+                clearManualResumeTimer();
+                clearStepScrollWaitTimer();
+
+                if (!stepScrollEnabled) {
+                    setStepScrollPaused(true, "Step-scroll is disabled.");
+                    return;
+                }
+
+                if (pinchZoomActive || singleTouchActive) {
+                    setStepScrollPaused(true, "Step-scroll is waiting for touch or zoom to finish.");
+                    return;
+                }
+
+                setStepScrollPaused(false, reason || "Step-scroll is running.");
+                scheduleNextStep(0);
+            }
+
+            function scheduleManualResume(reason) {
+                clearManualResumeTimer();
+                if (!stepScrollEnabled) {
+                    setStepScrollPaused(true, "Step-scroll is disabled.");
+                    return;
+                }
+
+                setStepScrollStatus(reason || ("Step-scroll will resume in " + stepScrollConfig.manualResumeDelayMs + " ms."));
+                manualResumeTimerId = window.setTimeout(function () {
+                    resumeStepScroll("Step-scroll resumed after manual idle.");
+                }, stepScrollConfig.manualResumeDelayMs);
+            }
+
+            function scheduleNextStep(delayOverrideMs) {
+                clearStepScrollWaitTimer();
+                cancelStepScrollFrame();
+
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                const waitMs = typeof delayOverrideMs === "number" ? delayOverrideMs : stepScrollWaitDelayMs;
+                if (waitMs > 0) {
+                    setStepScrollStatus("Waiting " + Math.round(waitMs) + " ms before next " + Math.round(stepScrollScreenHeightPercent) + "% screen step.");
+                }
+
+                stepScrollWaitTimerId = window.setTimeout(function () {
+                    stepScrollWaitTimerId = 0;
+                    startStepScrollAnimation();
+                }, waitMs);
+            }
+
+            function startStepScrollAnimation() {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                const maxScrollTop = getMaxScrollTop();
+                const directionMultiplier = stepScrollDirectionDown ? 1 : -1;
+                stepScrollStartTop = scrollingElement.scrollTop;
+                stepScrollTargetTop = clamp(stepScrollStartTop + (getStepPixels() * directionMultiplier), 0, maxScrollTop);
+
+                if (Math.abs(stepScrollTargetTop - stepScrollStartTop) <= 0.5) {
+                    setStepScrollPaused(
+                        true,
+                        stepScrollDirectionDown
+                            ? "Step-scroll reached the end of the page."
+                            : "Step-scroll reached the top of the page."
+                    );
+                    return;
+                }
+
+                stepScrollAnimationStartTime = 0;
+                setStepScrollStatus("Scrolling " + Math.round(stepScrollScreenHeightPercent) + "% of the screen, then waiting " + Math.round(stepScrollWaitDelayMs) + " ms.");
+                stepScrollFrameId = window.requestAnimationFrame(animateStepScroll);
+            }
+
+            function animateStepScroll(timestamp) {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    cancelStepScrollFrame();
+                    return;
+                }
+
+                if (stepScrollAnimationStartTime === 0) {
+                    stepScrollAnimationStartTime = timestamp;
+                }
+
+                const elapsedMs = timestamp - stepScrollAnimationStartTime;
+                const progress = clamp(elapsedMs / stepScrollAnimationDurationMs, 0, 1);
+                const easedProgress = easeInOut(progress);
+                const nextScrollTop = stepScrollStartTop + ((stepScrollTargetTop - stepScrollStartTop) * easedProgress);
+
+                markProgrammaticScroll();
+                scrollingElement.scrollTop = nextScrollTop;
+
+                if (progress < 1) {
+                    stepScrollFrameId = window.requestAnimationFrame(animateStepScroll);
+                    return;
+                }
+
+                stepScrollFrameId = 0;
+                scrollingElement.scrollTop = stepScrollTargetTop;
+                scheduleNextStep(stepScrollWaitDelayMs);
+            }
+
+            function easeInOut(value) {
+                return value < 0.5
+                    ? 2 * value * value
+                    : 1 - Math.pow(-2 * value + 2, 2) / 2;
+            }
+
+            document.addEventListener("touchstart", function (event) {
+                if (event.touches.length === 2) {
+                    pinchZoomActive = true;
+                    singleTouchActive = false;
+                    clearManualResumeTimer();
+                    setStepScrollPaused(true, "Step-scroll paused during pinch zoom.");
+
+                    initialDistance = getDistance(event.touches[0], event.touches[1]);
+                    initialScale = currentScale;
+                    return;
+                }
+
+                if (event.touches.length !== 1) {
+                    return;
+                }
+
+                singleTouchActive = true;
+                clearManualResumeTimer();
+                setStepScrollPaused(true, "Step-scroll paused while your finger is on the screen.");
+            }, { passive: true });
+
+            document.addEventListener("touchmove", function (event) {
+                if (event.touches.length !== 2) {
+                    return;
+                }
+
+                pinchZoomActive = true;
+                event.preventDefault();
+                const currentDistance = getDistance(event.touches[0], event.touches[1]);
+
+                if (initialDistance <= 0) {
+                    initialDistance = currentDistance;
+                    initialScale = currentScale;
+                }
+
+                const ratio = currentDistance / initialDistance;
+                currentScale = clamp(initialScale * ratio, minScale, maxScale);
+                applyScale();
+            }, { passive: false });
+
+            document.addEventListener("touchend", function (event) {
+                if (event.touches.length < 2) {
+                    initialDistance = 0;
+                    pinchZoomActive = false;
+                }
+
+                if (event.touches.length === 1) {
+                    singleTouchActive = true;
+                    setStepScrollPaused(true, "Step-scroll paused while your finger is on the screen.");
+                    return;
+                }
+
+                if (event.touches.length === 0) {
+                    singleTouchActive = false;
+                    scheduleManualResume("Step-scroll will resume after touch idle delay.");
+                }
+            }, { passive: true });
+
+            document.addEventListener("touchcancel", function () {
+                initialDistance = 0;
+                pinchZoomActive = false;
+                singleTouchActive = false;
+                scheduleManualResume("Step-scroll will resume after touch cancel.");
+            }, { passive: true });
+
+            window.addEventListener("scroll", function () {
+                if (programmaticScrollActive) {
+                    return;
+                }
+
+                if (pinchZoomActive || singleTouchActive) {
+                    return;
+                }
+
+                setStepScrollPaused(true, "Step-scroll paused after manual scroll.");
+                scheduleManualResume("Step-scroll will resume after manual scroll idle delay.");
+            }, { passive: true });
+
+            window.addEventListener("resize", function () {
+                if (stepScrollPaused || !stepScrollEnabled) {
+                    return;
+                }
+
+                setStepScrollStatus("Screen height changed. Next step will use " + getStepPixels() + " px.");
+            }, { passive: true });
+
+            if (autoScrollToggleButton) {
+                autoScrollToggleButton.hidden = !stepScrollConfig.showControlsButton;
+                autoScrollToggleButton.addEventListener("click", function () {
+                    setStepScrollPanelVisible(autoScrollPanel.hidden);
+                });
+            }
+
+            if (autoScrollEnabledCheckbox) {
+                autoScrollEnabledCheckbox.addEventListener("change", function () {
+                    stepScrollEnabled = autoScrollEnabledCheckbox.checked;
+                    updateStepScrollUi();
+
+                    if (!stepScrollEnabled) {
+                        setStepScrollPaused(true, "Step-scroll disabled from controls.");
+                        return;
+                    }
+
+                    resumeStepScroll("Step-scroll enabled.");
+                });
+            }
+
+            if (onkelosVisibilityCheckbox) {
+                onkelosVisibilityCheckbox.addEventListener("change", function () {
+                    onkelosHidden = onkelosVisibilityCheckbox.checked;
+                    updateOnkelosVisibilityUi();
+                });
+            }
+
+            if (autoScrollDirectionCheckbox) {
+                autoScrollDirectionCheckbox.addEventListener("change", function () {
+                    stepScrollDirectionDown = autoScrollDirectionCheckbox.checked;
+                    updateStepScrollUi();
+
+                    if (!stepScrollEnabled) {
+                        setStepScrollStatus("Direction updated while step-scroll is disabled.");
+                        return;
+                    }
+
+                    resumeStepScroll("Direction updated. Step-scroll restarted.");
+                });
+            }
+
+            autoScrollStepButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const controlName = button.getAttribute("data-step-scroll-control");
+                    const delta = Number(button.getAttribute("data-step-scroll-delta"));
+                    applyStepScrollControlDelta(controlName, delta);
+                });
+            });
+
+            if (window.MutationObserver && contentRoot) {
+                const observer = new MutationObserver(function (mutations) {
+                    let hasAddedNodes = false;
+
+                    for (let mutationIndex = 0; mutationIndex < mutations.length; mutationIndex += 1) {
+                        if (mutations[mutationIndex].addedNodes.length > 0) {
+                            hasAddedNodes = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasAddedNodes) {
+                        return;
+                    }
+
+                    scheduleManualResume("New content detected. Step-scroll will resume after idle.");
+                });
+
+                observer.observe(contentRoot, { childList: true, subtree: true });
+            }
+
+            setStepScrollPanelVisible(stepScrollConfig.showControlPanelByDefault);
+            updateOnkelosVisibilityUi();
+            updateStepScrollUi();
+            applyScale();
+            clearProgrammaticScrollFlag();
+
+            if (stepScrollConfig.startOnLoad && stepScrollEnabled) {
+                resumeStepScroll("Step-scroll started on page load.");
+                return;
+            }
+
+            setStepScrollStatus("Step-scroll is ready.");
+        })();
+    </script>
+    <script>
+    (function () {
+        const fullScreenCheckbox = document.getElementById("mobileFullScreenCheckbox");
+        const fullScreenTarget = document.documentElement || document.body;
+        const autoScrollStatus = document.getElementById("autoScrollStatus");
+
+        if (!fullScreenCheckbox || !fullScreenTarget) {
+            return;
+        }
+
+        let fullScreenEnabled = true;
+        let fullScreenActivationPending = false;
+        let fullScreenRequestInProgress = false;
+
+        function getFullScreenElement() {
+            return document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                null;
+        }
+
+        function setFullScreenStatus(message) {
+            if (!autoScrollStatus) {
+                return;
+            }
+
+            autoScrollStatus.textContent = message;
+        }
+
+        function isFullScreenSupported() {
+            return Boolean(fullScreenTarget.requestFullscreen || fullScreenTarget.webkitRequestFullscreen);
+        }
+
+        async function openFullScreen() {
+            if (fullScreenTarget.requestFullscreen) {
+                await fullScreenTarget.requestFullscreen();
+                return;
+            }
+
+            if (fullScreenTarget.webkitRequestFullscreen) {
+                await fullScreenTarget.webkitRequestFullscreen();
+                return;
+            }
+
+            throw new Error("Fullscreen is not supported by this browser.");
+        }
+
+        async function closeFullScreen() {
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+                return;
+            }
+
+            if (document.webkitExitFullscreen) {
+                await document.webkitExitFullscreen();
+                return;
+            }
+
+            throw new Error("Exit fullscreen is not supported by this browser.");
+        }
+
+        async function requestFullScreen(messageWhenOpened) {
+            if (!fullScreenEnabled || getFullScreenElement() || fullScreenRequestInProgress) {
+                return;
+            }
+
+            if (!isFullScreenSupported()) {
+                fullScreenActivationPending = false;
+                setFullScreenStatus("Full screen is not supported by this browser.");
+                return;
+            }
+
+            fullScreenRequestInProgress = true;
+
+            try {
+                await openFullScreen();
+                fullScreenActivationPending = false;
+                if (messageWhenOpened) {
+                    setFullScreenStatus(messageWhenOpened);
+                }
+            } catch (error) {
+                fullScreenActivationPending = true;
+                setFullScreenStatus("Full screen will open after the next tap/click.");
+            } finally {
+                fullScreenRequestInProgress = false;
+            }
+        }
+
+        async function closeFullScreenIfNeeded() {
+            fullScreenActivationPending = false;
+            if (!getFullScreenElement()) {
+                return;
+            }
+
+            try {
+                await closeFullScreen();
+                setFullScreenStatus("Full screen disabled.");
+            } catch (error) {
+                setFullScreenStatus("Could not exit full screen from this browser.");
+            }
+        }
+
+        function updateFullScreenCheckbox() {
+            fullScreenCheckbox.checked = fullScreenEnabled;
+        }
+
+        function requestPendingFullScreen(event) {
+            if (!fullScreenEnabled || !fullScreenActivationPending || getFullScreenElement()) {
+                return;
+            }
+
+            if (event.target === fullScreenCheckbox) {
+                return;
+            }
+
+            requestFullScreen("Full screen opened.");
+        }
+
+        fullScreenCheckbox.checked = true;
+
+        fullScreenCheckbox.addEventListener("change", function () {
+            fullScreenEnabled = fullScreenCheckbox.checked;
+            updateFullScreenCheckbox();
+
+            if (fullScreenEnabled) {
+                requestFullScreen("Full screen enabled.");
+                return;
+            }
+
+            closeFullScreenIfNeeded();
+        });
+
+        document.addEventListener("fullscreenchange", updateFullScreenCheckbox);
+        document.addEventListener("webkitfullscreenchange", updateFullScreenCheckbox);
+        document.addEventListener("click", requestPendingFullScreen);
+        document.addEventListener("touchend", requestPendingFullScreen, { passive: true });
+
+        window.addEventListener("load", function () {
+            requestFullScreen("Full screen opened on page load.");
+        });
+    })();
+</script>
+
+</body>
+</html>
