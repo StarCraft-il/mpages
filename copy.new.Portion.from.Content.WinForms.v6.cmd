@@ -27,7 +27,7 @@ exit /b %EXITCODE%
 # ============================================================================
 # Configuration
 # ============================================================================
-# Version: WinForms confirmation dialog v5 - log beside script
+# Version: WinForms portion selector and confirmation dialog v6 - log beside script
 
 enum LogLevel {
     Info
@@ -39,7 +39,7 @@ enum LogLevel {
 
 $portionsList = @("Bereshit", "Noach", "Lech_Lecha", "Vayera", "Chayei_Sara", "Toldot", "Vayetzei", "Vayishlach", "Vayeshev", "Miketz", "Vayigash", "Vayechi", "Shemot", "Vaera", "Bo", "Beshalach", "Yitro", "Mishpatim", "Terumah", "Tetzaveh", "Ki_Tisa", "Vayakhel", "Pekudei", "Vayakhel_Pekudei", "Vayikra", "Tzav", "Shmini", "Tazria", "Metzora", "Achrei_Mot", "Kedoshim", "Emor", "Behar", "Bechukotai", "Tazria_Metzora", "Achrei_Mos_Kedoshim", "Behar_Bechukotai", "Bamidbar", "Nasso", "Beha'alotcha", "Sh'lach", "Korach", "Chukat", "Balak", "Pinchas", "Matot", "Masei", "Chukas_Balak", "Matot_Masei", "Devarim", "Vaetchanan", "Eikev", "Re'eh", "Shoftim", "Ki_Teitzei", "Ki_Tavo", "Nitzavim", "Vayeilech", "Ha'Azinu", "Vezot_Haberakhah", "Nitzavim_Vayeilech")
 
-$Portion = "Bereshit"
+$Portion = $null
 
 $SourceDirectory = 'C:\Git\allproj\_OneFile\OpenServers_content'
 $M1T2Directory = 'C:\Git\!myRepos\mpages\m1t2'
@@ -137,6 +137,174 @@ function Ensure-Directory {
     New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop | Out-Null
 }
 
+function Test-FileContainsPortion {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FileName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$PortionName
+    )
+
+    $escapedPortion = [regex]::Escape($PortionName)
+    return $FileName -match ('(?:^|\.)' + $escapedPortion + '(?=\.|$)')
+}
+
+function Get-ExportTimestamp {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FileName
+    )
+
+    $timestampPattern = '\.(?<Date>\d{8})\.(?<Time>\d{6})(?=\.)'
+    $match = [regex]::Match($FileName, $timestampPattern)
+
+    if (-not $match.Success) {
+        return $null
+    }
+
+    $timestampText = $match.Groups['Date'].Value + $match.Groups['Time'].Value
+    $timestamp = [datetime]::MinValue
+    $parsed = [datetime]::TryParseExact(
+        $timestampText,
+        'yyyyMMddHHmmss',
+        [System.Globalization.CultureInfo]::InvariantCulture,
+        [System.Globalization.DateTimeStyles]::None,
+        [ref]$timestamp
+    )
+
+    if (-not $parsed) {
+        return $null
+    }
+
+    return $timestamp
+}
+
+function Get-RecentPortions {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Directory,
+
+        [Parameter(Mandatory = $true)]
+        [string[]]$PortionNames,
+
+        [Parameter(Mandatory = $true)]
+        [datetime]$Since
+    )
+
+    $latestTimestampByPortion = @{}
+    $files = Get-ChildItem -LiteralPath $Directory -File -ErrorAction Stop
+
+    foreach ($file in $files) {
+        $timestamp = Get-ExportTimestamp -FileName $file.Name
+
+        if ($null -eq $timestamp -or $timestamp -lt $Since) {
+            continue
+        }
+
+        foreach ($portionName in $PortionNames) {
+            if (-not (Test-FileContainsPortion -FileName $file.Name -PortionName $portionName)) {
+                continue
+            }
+
+            if (-not $latestTimestampByPortion.ContainsKey($portionName) -or
+                $timestamp -gt $latestTimestampByPortion[$portionName]) {
+                $latestTimestampByPortion[$portionName] = $timestamp
+            }
+
+            break
+        }
+    }
+
+    $recentPortions = foreach ($portionName in $latestTimestampByPortion.Keys) {
+        [pscustomobject]@{
+            Portion = $portionName
+            Timestamp = $latestTimestampByPortion[$portionName]
+        }
+    }
+
+    return @($recentPortions | Sort-Object Timestamp -Descending)
+}
+
+function Show-PortionSelectionDialog {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$RecentPortions,
+
+        [Parameter(Mandatory = $true)]
+        [datetime]$Since
+    )
+
+    Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop
+    Add-Type -AssemblyName System.Drawing -ErrorAction Stop
+
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = 'Select Portion'
+    $form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
+    $form.ClientSize = New-Object System.Drawing.Size(480, 145)
+    $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
+    $form.MaximizeBox = $false
+    $form.MinimizeBox = $false
+
+    $label = New-Object System.Windows.Forms.Label
+    $label.AutoSize = $true
+    $label.Location = New-Object System.Drawing.Point(15, 15)
+    $label.Text = 'Select a portion exported since {0}:' -f $Since.ToString('yyyy-MM-dd')
+
+    $comboBox = New-Object System.Windows.Forms.ComboBox
+    $comboBox.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
+    $comboBox.Location = New-Object System.Drawing.Point(18, 43)
+    $comboBox.Size = New-Object System.Drawing.Size(444, 28)
+
+    foreach ($recentPortion in $RecentPortions) {
+        $displayText = '{0}  -  {1}' -f `
+            $recentPortion.Portion,
+            $recentPortion.Timestamp.ToString('yyyy-MM-dd HH:mm:ss')
+
+        [void]$comboBox.Items.Add($displayText)
+    }
+
+    $comboBox.SelectedIndex = 0
+
+    $okButton = New-Object System.Windows.Forms.Button
+    $okButton.Text = 'OK'
+    $okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+    $okButton.Location = New-Object System.Drawing.Point(280, 94)
+    $okButton.Size = New-Object System.Drawing.Size(85, 30)
+
+    $cancelButton = New-Object System.Windows.Forms.Button
+    $cancelButton.Text = 'Cancel'
+    $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+    $cancelButton.Location = New-Object System.Drawing.Point(377, 94)
+    $cancelButton.Size = New-Object System.Drawing.Size(85, 30)
+
+    [void]$form.Controls.Add($label)
+    [void]$form.Controls.Add($comboBox)
+    [void]$form.Controls.Add($okButton)
+    [void]$form.Controls.Add($cancelButton)
+    $form.AcceptButton = $okButton
+    $form.CancelButton = $cancelButton
+
+    $selectedPortion = $null
+
+    try {
+        $result = $form.ShowDialog()
+
+        if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+            $selectedPortion = $RecentPortions[$comboBox.SelectedIndex].Portion
+        }
+    }
+    finally {
+        $label.Dispose()
+        $comboBox.Dispose()
+        $okButton.Dispose()
+        $cancelButton.Dispose()
+        $form.Dispose()
+    }
+
+    return $selectedPortion
+}
+
 function Get-NewestPortionTimestamp {
     param(
         [Parameter(Mandatory = $true)]
@@ -146,12 +314,11 @@ function Get-NewestPortionTimestamp {
         [string]$PortionName
     )
 
-    $escapedPortion = [regex]::Escape($PortionName)
     $timestampPattern = '\.(?<Date>\d{8})\.(?<Time>\d{6})\.'
     $candidates = New-Object System.Collections.Generic.List[object]
 
     $files = Get-ChildItem -LiteralPath $Directory -File -ErrorAction Stop |
-        Where-Object { $_.Name -match $escapedPortion }
+        Where-Object { Test-FileContainsPortion -FileName $_.Name -PortionName $PortionName }
 
     foreach ($file in $files) {
         $match = [regex]::Match($file.Name, $timestampPattern)
@@ -221,12 +388,11 @@ function Get-PortionFiles {
         [string]$Timestamp
     )
 
-    $escapedPortion = [regex]::Escape($PortionName)
     $escapedTimestamp = [regex]::Escape($Timestamp)
 
     $files = Get-ChildItem -LiteralPath $Directory -File -ErrorAction Stop |
         Where-Object {
-            $_.Name -match $escapedPortion -and
+            (Test-FileContainsPortion -FileName $_.Name -PortionName $PortionName) -and
             $_.Name -match $escapedTimestamp
         } |
         Sort-Object Name
@@ -421,6 +587,28 @@ try {
     }
 
     $LogFile = Initialize-Log -Directory $LogDirectory
+
+    $recentFilesStartDate = (Get-Date).Date.AddDays(-7)
+    $recentPortions = Get-RecentPortions `
+        -Directory $SourceDirectory `
+        -PortionNames $portionsList `
+        -Since $recentFilesStartDate
+
+    if ($recentPortions.Count -eq 0) {
+        throw ('No portion export files dated on or after {0} were found in "{1}".' -f `
+            $recentFilesStartDate.ToString('yyyy-MM-dd'),
+            $SourceDirectory)
+    }
+
+    $Portion = Show-PortionSelectionDialog `
+        -RecentPortions $recentPortions `
+        -Since $recentFilesStartDate
+
+    if ([string]::IsNullOrWhiteSpace($Portion)) {
+        Write-ConsoleLog -Level Warning -Message 'User cancelled portion selection. No files were copied or moved.'
+        Write-Summary -Status 'Cancelled - nothing was done'
+        exit 0
+    }
 
     Write-ConsoleLog -Level Info -Message ('Starting Portion deployment for "{0}".' -f $Portion)
     Write-ConsoleLog -Level Info -Message ('Source directory: {0}' -f $SourceDirectory)
