@@ -4,9 +4,9 @@
 
 - After running Portion files generate with: `TwoMikraOneTaj.exe` app in folder: `c:\Git\allproj\_OneFile\OpenServers_content\`
 - Move file to `old` folder by running file: `move.Portion.to.Old.folders.v1.cmd`
-- Update file: `copy.new.Portion.from.Content.WinForms.v5.cmd`,
-	Setting Portion Name, line 40: `$Portion = 'NEW_PORTION_NAME'`
-- Copy new Portion files from folder: `c:\Git\allproj\_OneFile\OpenServers_content\` by running file: `copy.new.Portion.from.Content.WinForms.v5.cmd`
+- Copy new Portion files from folder: `c:\Git\allproj\_OneFile\OpenServers_content\` 
+	By running file: `copy.new.Portion.from.Content.WinForms.v6.cmd`
+	And select Portion from Combo-box
 - Run script file: `update.check.pages.v4.cmd` to generate new `check.pages.html` file
 
 ## In short:
