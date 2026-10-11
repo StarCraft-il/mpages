@@ -37,7 +37,11 @@ enum LogLevel {
     Error
 }
 
-$portionsList = @("Bereshit", "Noach", "Lech_Lecha", "Vayera", "Chayei_Sara", "Toldot", "Vayetzei", "Vayishlach", "Vayeshev", "Miketz", "Vayigash", "Vayechi", "Shemot", "Vaera", "Bo", "Beshalach", "Yitro", "Mishpatim", "Terumah", "Tetzaveh", "Ki_Tisa", "Vayakhel", "Pekudei", "Vayakhel_Pekudei", "Vayikra", "Tzav", "Shmini", "Tazria", "Metzora", "Achrei_Mot", "Kedoshim", "Emor", "Behar", "Bechukotai", "Tazria_Metzora", "Achrei_Mos_Kedoshim", "Behar_Bechukotai", "Bamidbar", "Nasso", "Beha'alotcha", "Sh'lach", "Korach", "Chukat", "Balak", "Pinchas", "Matot", "Masei", "Chukas_Balak", "Matot_Masei", "Devarim", "Vaetchanan", "Eikev", "Re'eh", "Shoftim", "Ki_Teitzei", "Ki_Tavo", "Nitzavim", "Vayeilech", "Ha'Azinu", "Vezot_Haberakhah", "Nitzavim_Vayeilech")
+$portionsList = @("Bereshit", "Noach", "Lech_Lecha", "Vayera", "Chayei_Sara", "Toldot", "Vayetzei", "Vayishlach", "Vayeshev", "Miketz", "Vayigash", "Vayechi", 
+				"Shemot", "Vaera", "Bo", "Beshalach", "Yitro", "Mishpatim", "Terumah", "Tetzaveh", "Ki_Tisa", "Vayakhel", "Pekudei", "Vayakhel_Pekudei", 
+				"Vayikra", "Tzav", "Shmini", "Tazria", "Metzora", "Achrei_Mot", "Kedoshim", "Emor", "Behar", "Bechukotai", "Tazria_Metzora", "Achrei_Mos_Kedoshim", "Behar_Bechukotai", 
+				"Bamidbar", "Nasso", "Beha'alotcha", "Sh'lach", "Korach", "Chukat", "Balak", "Pinchas", "Matot", "Masei", "Chukas_Balak", "Matot_Masei", 
+				"Devarim", "Vaetchanan", "Eikev", "Re'eh", "Shoftim", "Ki_Teitzei", "Ki_Tavo", "Nitzavim", "Vayeilech", "Ha'Azinu", "Vezot_Haberakhah", "Nitzavim_Vayeilech")
 
 $Portion = $null
 
