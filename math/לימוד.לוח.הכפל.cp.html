@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>לוח הכפל אדפטיבי</title>
+    <style>
+        :root {
+            --p: #2563eb;
+            --g: #16a34a;
+            --r: #dc2626;
+            --bg: #f5f7fb
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial,sans-serif;
+            background: var(--bg);
+            color: #111
+        }
+
+        header {
+            background: var(--p);
+            color: #fff;
+            padding: 14px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold
+        }
+
+        .screen {
+            display: none;
+            padding: 12px
+        }
+
+            .screen.active {
+                display: block
+            }
+
+        .grid {
+            display: grid;
+            gap: 10px
+        }
+
+        .main-menu {
+            grid-template-columns: 1fr 1fr
+        }
+
+        button, input, select {
+            font-size: 18px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            padding: 12px
+        }
+
+        button {
+            background: var(--p);
+            color: #fff;
+            border: 0;
+            cursor: pointer
+        }
+
+            button.secondary {
+                background: #64748b
+            }
+
+            button.danger {
+                background: var(--r)
+            }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08)
+        }
+
+        .question {
+            font-size: 56px;
+            text-align: center;
+            font-weight: bold;
+            direction: ltr;
+            padding: 16px
+        }
+
+        .center {
+            text-align: center
+        }
+
+        .success {
+            animation: ok .4s;
+            background: #dcfce7
+        }
+
+        .fail {
+            animation: bad .4s;
+            background: #fee2e2
+        }
+
+        @keyframes ok {
+            from {
+                transform: scale(.98)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        @keyframes bad {
+            0%,100% {
+                transform: translateX(0)
+            }
+
+            25% {
+                transform: translateX(-4px)
+            }
+
+            75% {
+                transform: translateX(4px)
+            }
+        }
+
+        .row {
+            display: flex;
+            gap: 8px
+        }
+
+            .row > * {
+                flex: 1
+            }
+
+        .stat {
+            padding: 8px;
+            border-bottom: 1px solid #eee
+        }
+
+        canvas {
+            width: 100%;
+            height: 220px;
+            background: #fff;
+            border-radius: 12px
+        }
+
+        label {
+            display: block;
+            margin: 4px 0
+        }
+
+        input[type=number] {
+            width: 100%
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #e0f2fe;
+            border-radius: 999px;
+            margin: 4px
+        }
+
+        .progress {
+            height: 14px;
+            background: #ddd;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+            .progress div {
+                height: 100%;
+                background: var(--g)
+            }
+
+        @media(min-width:700px) {
+            .container {
+                max-width: 900px;
+                margin: auto
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>מערכת למידה אדפטיבית ללוח הכפל</header>
+
+    <div class="container">
+
+        <section id="home" class="screen active">
+            <div class="grid main-menu">
+                <button onclick="ui.show('practice')">תרגול</button>
+                <button onclick="ui.show('test')">מבחן</button>
+                <button onclick="ui.show('stats')">סטטיסטיקות</button>
+                <button onclick="ui.show('achievements')">הישגים</button>
+                <button onclick="ui.show('settings')">הגדרות</button>
+            </div>
+        </section>
+
+        <section id="practice" class="screen">
+            <div class="card">
+                <div id="score">ניקוד: 0</div>
+                <div id="streak">רצף: 0</div>
+                <div id="question" class="question">4 × 6 = ?</div>
+                <input id="answer" type="number" inputmode="numeric" placeholder="התשובה">
+                <div class="row">
+                    <button onclick="practice.submit()">בדיקה</button>
+                    <button class="secondary" onclick="practice.skip()">דילוג</button>
+                </div>
+                <div class="row" style="margin-top:8px">
+                    <button onclick="practice.showHint()">רמז</button>
+                    <button class="secondary" onclick="ui.show('home')">חזרה</button>
+                </div>
+                <div id="hint" style="margin-top:8px"></div>
+                <div id="feedback"></div>
+            </div>
+        </section>
+
+        <section id="test" class="screen">
+            <div class="card">
+                <h3>מבחן</h3>
+                <select id="testQuestions">
+                    <option>10</option>
+                    <option>20</option>
+                    <option>30</option>
+                    <option>50</option>
+                </select>
+                <button onclick="testEngine.start()">התחל מבחן</button>
+                <div id="testArea"></div>
+            </div>
+        </section>
+
+        <section id="stats" class="screen">
+            <div class="card">
+                <div id="generalStats"></div>
+                <canvas id="successChart" width="600" height="220"></canvas>
+                <canvas id="timeChart" width="600" height="220"></canvas>
+                <canvas id="digitChart" width="600" height="220"></canvas>
+                <button onclick="stats.render()">רענון</button>
+                <button class="secondary" onclick="ui.show('home')">חזרה</button>
+            </div>
+        </section>
+
+        <section id="achievements" class="screen">
+            <div class="card">
+                <div id="achievementList"></div>
+                <button class="secondary" onclick="ui.show('home')">חזרה</button>
+            </div>
+        </section>
+
+        <section id="settings" class="screen">
+            <div class="card">
+                <h3>טווח</h3>
+                <select id="rangeSelect">
+                    <option value="5">1-5</option>
+                    <option value="10">1-10</option>
+                    <option value="12" selected>1-12</option>
+                    <option value="20">1-20</option>
+                </select>
+
+                <h3>טווח מותאם</h3>
+                <input id="customMin" type="number" placeholder="מינימום">
+                <input id="customMax" type="number" placeholder="מקסימום">
+
+                <h3>בחירה ידנית</h3>
+                <div id="manualNumbers"></div>
+
+                <h3>מצב תרגול</h3>
+                <select id="practiceMode">
+                    <option value="random">אקראי</option>
+                    <option value="weak">חולשות</option>
+                    <option value="mistakes">טעויות</option>
+                    <option value="slow">איטי</option>
+                </select>
+
+                <button onclick="settings.save()">שמור</button>
+                <button class="danger" onclick="storage.reset()">איפוס נתונים</button>
+                <button class="secondary" onclick="ui.show('home')">חזרה</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        class StorageManager {
+            constructor() { this.key = 'adaptive-multiplication-v1' }
+            load() {
+                let d = localStorage.getItem(this.key);
+                if (d) return JSON.parse(d);
+                return {
+                    score: 0, streak: 0, maxStreak: 0,
+                    settings: { range: 12, numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], mode: 'random' },
+                    questions: {},
+                    history: [],
+                    tests: [],
+                    achievements: []
+                }
+            }
+            save(data) { localStorage.setItem(this.key, JSON.stringify(data)) }
+            reset() { localStorage.removeItem(this.key); location.reload() }
+        }
+
+        class QuestionEngine {
+            generate() {
+                let s = app.settings;
+                let nums = s.numbers?.length ? s.numbers : [...Array(s.range).keys()].map(x => x + 1);
+                let a = nums[Math.floor(Math.random() * nums.length)];
+                let b = nums[Math.floor(Math.random() * nums.length)];
+                return { a, b, key: a + "x" + b, answer: a * b }
+            }
+        }
+
+        class AdaptiveEngine {
+            difficulty(stat) {
+                if (!stat) return 1;
+                let err = stat.wrongCount / (stat.attempts || 1);
+                let time = stat.averageTime || 1;
+                let age = (Date.now() - (stat.lastPracticeDate || 0)) / 86400000;
+                return err * 5 + time / 3 + age;
+            }
+            pick() {
+                let keys = Object.keys(app.questions);
+                if (!keys.length || app.settings.mode === "random") return qEngine.generate();
+
+                if (app.settings.mode === "mistakes") {
+                    let bad = keys.filter(k => app.questions[k].wrongCount > 0);
+                    if (bad.length) {
+                        let k = bad[Math.floor(Math.random() * bad.length)];
+                        let [a, b] = k.split("x").map(Number);
+                        return { a, b, key: k, answer: a * b };
+                    }
+                }
+
+                let sorted = keys.sort((a, b) => this.difficulty(app.questions[b]) - this.difficulty(app.questions[a]));
+                let k = sorted[0];
+                let [a, b] = k.split("x").map(Number);
+                return { a, b, key: k, answer: a * b };
+            }
+        }
+
+        class HintEngine {
+            get(q, lvl) {
+                if (lvl === 1) return `חשוב על ${(q.a - 1)}×${q.b} ואז הוסף ${q.b}`;
+                if (lvl === 2) return `${q.a}×${q.b}= ${(q.a - 1)}×${q.b} + 1×${q.b}`;
+                if (lvl === 3) return Array(q.a).fill(q.b).join(" + ");
+                if (lvl === 4) {
+                    let html = "<div>";
+                    for (let r = 0; r < q.a; r++) {
+                        html += "<div>";
+                        for (let c = 0; c < q.b; c++)html += "⬛";
+                        html += "</div>";
+                    }
+                    return html + "</div>";
+                }
+                return `${q.a} × ${q.b} = ${q.answer}`;
+            }
+        }
+
+        class StatisticsManager {
+            render() {
+                let h = app.history;
+                let correct = h.filter(x => x.correct).length;
+                let pct = h.length ? Math.round(correct * 100 / h.length) : 0;
+                let avg = h.length ? (h.reduce((a, b) => a + b.time, 0) / h.length).toFixed(2) : 0;
+
+                document.getElementById("generalStats").innerHTML = `
+<div class=stat>אחוז הצלחה: ${pct}%</div>
+<div class=stat>זמן ממוצע: ${avg} שניות</div>
+<div class=stat>הצלחות: ${correct}</div>
+<div class=stat>טעויות: ${h.length - correct}</div>
+<div class=stat>רצף מקסימלי: ${app.maxStreak}</div>`;
+
+                this.draw(document.getElementById("successChart"), h.map(x => x.correct ? 100 : 0), "ירוק");
+                this.draw(document.getElementById("timeChart"), h.map(x => x.time), "כחול");
+                this.drawDigits();
+            }
+            draw(canvas, data, color) {
+                let c = canvas.getContext("2d");
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                if (!data.length) return;
+                let max = Math.max(...data, 1);
+                c.beginPath();
+                data.forEach((v, i) => {
+                    let x = i * (canvas.width / (Math.max(data.length - 1, 1)));
+                    let y = canvas.height - (v / max) * 180 - 20;
+                    i ? c.lineTo(x, y) : c.moveTo(x, y);
+                });
+                c.strokeStyle = color === "ירוק" ? "green" : "blue";
+                c.lineWidth = 3;
+                c.stroke();
+            }
+            drawDigits() {
+                let cvs = document.getElementById("digitChart");
+                let c = cvs.getContext("2d");
+                c.clearRect(0, 0, cvs.width, cvs.height);
+                for (let i = 1; i <= 12; i++) {
+                    let rel = app.history.filter(x => x.a === i || x.b === i);
+                    let suc = rel.filter(x => x.correct).length;
+                    let p = rel.length ? (suc / rel.length) : 0;
+                    c.fillStyle = "#2563eb";
+                    c.fillRect((i - 1) * 45 + 10, cvs.height - (p * 180) - 20, 30, p * 180);
+                    c.fillText(i, (i - 1) * 45 + 18, cvs.height - 5);
+                }
+            }
+        }
+
+        class AchievementManager {
+            constructor() {
+                this.list = [
+                    { id: 's10', name: '10 הצלחות רצופות', check: () => app.maxStreak >= 10 },
+                    { id: 's20', name: '20 הצלחות רצופות', check: () => app.maxStreak >= 20 },
+                    { id: 's50', name: '50 הצלחות רצופות', check: () => app.maxStreak >= 50 },
+                    { id: 'master', name: 'שליטה בספרה', check: () => Object.values(app.questions).some(x => x.correctCount >= 20) },
+                    { id: 'speed', name: 'שיפור מהירות', check: () => app.history.length > 20 }
+                ];
+            }
+            update() {
+                this.list.forEach(a => {
+                    if (a.check() && !app.achievements.includes(a.id))
+                        app.achievements.push(a.id);
+                });
+                storage.save(app);
+            }
+            render() {
+                let h = "";
+                this.list.forEach(a => {
+                    let ok = app.achievements.includes(a.id);
+                    h += `<div class="badge">${ok ? "🏆" : "⭕"} ${a.name}</div>`;
+                });
+                document.getElementById("achievementList").innerHTML = h;
+            }
+        }
+
+        class PracticeEngine {
+            constructor() { this.current = null; this.startTime = 0; this.errors = 0; this.review = [] }
+            next() {
+                if (this.review.length && Math.random() < 0.25) {
+                    this.current = this.review.shift();
+                } else {
+                    this.current = adaptive.pick();
+                }
+                this.errors = 0;
+                document.getElementById("hint").innerHTML = "";
+                document.getElementById("feedback").innerHTML = "";
+                document.getElementById("answer").value = "";
+                document.getElementById("question").textContent = `${this.current.a} × ${this.current.b} = ?`;
+                this.startTime = Date.now();
+                setTimeout(() => document.getElementById("answer").focus(), 50);
+            }
+            submit() {
+                let val = Number(document.getElementById("answer").value);
+                if (val === this.current.answer) { this.correct(); return }
+                this.errors++;
+                document.getElementById("feedback").innerHTML = "נסה שוב, אתה מתקדם מצוין!";
+                if (this.errors >= 2) document.getElementById("hint").innerHTML = hint.get(this.current, Math.min(this.errors - 1, 5));
+                if (this.errors >= 5) {
+                    document.getElementById("feedback").innerHTML = "התשובה הוצגה לחיזוק.";
+                    this.record(false);
+                    this.review.push(this.current, this.current);
+                    setTimeout(() => this.next(), 1200);
+                }
+            }
+            correct() {
+                this.record(true);
+                let c = document.querySelector("#practice .card");
+                c.classList.add("success");
+                setTimeout(() => c.classList.remove("success"), 300);
+                setTimeout(() => this.next(), 700);
+            }
+            skip() { this.next() }
+            showHint() { document.getElementById("hint").innerHTML = hint.get(this.current, 1) }
+            record(correct) {
+                let rt = (Date.now() - this.startTime) / 1000;
+                let q = app.questions[this.current.key] || {
+                    correctCount: 0, wrongCount: 0, averageTime: 0,
+                    attempts: 0, difficultyScore: 0, lastPracticeDate: 0, minTime: 999, maxTime: 0
+                };
+
+                q.attempts++;
+                if (correct) q.correctCount++;
+                else q.wrongCount++;
+
+                q.averageTime = ((q.averageTime * (q.attempts - 1)) + rt) / q.attempts;
+                q.minTime = Math.min(q.minTime, rt);
+                q.maxTime = Math.max(q.maxTime, rt);
+                q.lastPracticeDate = Date.now();
+                q.difficultyScore = (q.wrongCount / (q.attempts || 1)) * 5 + q.averageTime;
+
+                app.questions[this.current.key] = q;
+
+                app.history.push({
+                    date: Date.now(),
+                    a: this.current.a, b: this.current.b,
+                    correct, time: rt
+                });
+
+                if (correct) {
+                    app.score++;
+                    app.streak++;
+                    app.maxStreak = Math.max(app.maxStreak, app.streak);
+                } else {
+                    app.streak = 0;
+                }
+
+                document.getElementById("score").textContent = "ניקוד: " + app.score;
+                document.getElementById("streak").textContent = "רצף: " + app.streak;
+
+                achievement.update();
+                storage.save(app);
+            }
+        }
+
+        class TestEngine {
+            start() {
+                this.qs = [];
+                this.index = 0;
+                this.correct = 0;
+                this.times = [];
+                let n = Number(document.getElementById("testQuestions").value);
+                for (let i = 0; i < n; i++)this.qs.push(qEngine.generate());
+                this.renderQuestion();
+            }
+            renderQuestion() {
+                if (this.index >= this.qs.length) { this.finish(); return }
+                let q = this.qs[this.index];
+                this.testStart = Date.now();
+                document.getElementById("testArea").innerHTML = `
+<div class="question">${q.a} × ${q.b} = ?</div>
+<input id="testAnswer" type="number">
+<button onclick="testEngine.answer()">אישור</button>`;
+            }
+            answer() {
+                let q = this.qs[this.index];
+                let v = Number(document.getElementById("testAnswer").value);
+                if (v === q.answer) this.correct++;
+                this.times.push((Date.now() - this.testStart) / 1000);
+                this.index++;
+                this.renderQuestion();
+            }
+            finish() {
+                let score = Math.round((this.correct / this.qs.length) * 100);
+                let avg = (this.times.reduce((a, b) => a + b, 0) / this.times.length).toFixed(2);
+                let prev = app.tests.at(-1);
+                let cmp = prev ? score - prev.score : 0;
+                app.tests.push({ score, date: Date.now() });
+                storage.save(app);
+                document.getElementById("testArea").innerHTML = `
+<h3>סיכום</h3>
+<div>ציון: ${score}</div>
+<div>הצלחה: ${score}%</div>
+<div>זמן ממוצע: ${avg}</div>
+<div>טעויות: ${this.qs.length - this.correct}</div>
+<div>שינוי מהמבחן הקודם: ${cmp > 0 ? '+' : ''}${cmp}</div>`;
+            }
+        }
+
+        class UIManager {
+            show(id) {
+                document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                if (id === "stats") stats.render();
+                if (id === "achievements") achievement.render();
+                if (id === "practice" && !practice.current) practice.next();
+            }
+        }
+
+        const storage = new StorageManager();
+        let app = storage.load();
+
+        const qEngine = new QuestionEngine();
+        const adaptive = new AdaptiveEngine();
+        const hint = new HintEngine();
+        const practice = new PracticeEngine();
+        const testEngine = new TestEngine();
+        const stats = new StatisticsManager();
+        const achievement = new AchievementManager();
+        const ui = new UIManager();
+
+        const settings = {
+            save() {
+                let nums = [];
+                document.querySelectorAll(".numchk").forEach(x => {
+                    if (x.checked) nums.push(Number(x.value));
+                });
+                app.settings.range = Number(document.getElementById("rangeSelect").value);
+                app.settings.mode = document.getElementById("practiceMode").value;
+
+                let min = Number(document.getElementById("customMin").value);
+                let max = Number(document.getElementById("customMax").value);
+
+                if (min && max && max >= min) {
+                    nums = [];
+                    for (let i = min; i <= max; i++)nums.push(i);
+                }
+                if (nums.length) app.settings.numbers = nums;
+
+                storage.save(app);
+                alert("נשמר");
+            }
+        };
+
+        function buildManual() {
+            let h = "";
+            for (let i = 2; i <= 12; i++) {
+                h += `<label><input class="numchk" type="checkbox" value="${i}" ${app.settings.numbers.includes(i) ? 'checked' : ''}> ${i}</label>`;
+            }
+            document.getElementById("manualNumbers").innerHTML = h;
+        }
+        buildManual();
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Enter" && document.getElementById("practice").classList.contains("active"))
+                practice.submit();
+        });
+
+        document.getElementById("score").textContent = "ניקוד: " + app.score;
+        document.getElementById("streak").textContent = "רצף: " + app.streak;
+        achievement.update();
+    </script>
+</body>
+</html>
