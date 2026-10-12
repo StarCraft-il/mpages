@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12685f">
+  <meta name="description" content="תרגול לוח הכפל בעברית, עם למידה מותאמת, רמזים ומעקב התקדמות מקומי.">
+  <title>כופלים קדימה · לוח הכפל</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f7f4; --surface: #fff; --ink: #172f35; --muted: #52676b;
+      --brand: #12685f; --brand-dark: #084b44; --mint: #e3f3eb;
+      --line: #d6e0dc; --yellow: #f3dc7e; --red: #a03232; --red-bg: #fff0ee;
+      --shadow: 0 8px 28px #173d3110; --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: Arial, "Segoe UI", sans-serif; line-height: 1.6; }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button, .button { min-height: 48px; padding: 11px 18px; border: 1px solid var(--line); border-radius: 13px; background: white; color: var(--ink); font-weight: 700; touch-action: manipulation; }
+    button:hover { border-color: var(--brand); }
+    button:disabled { opacity: .55; cursor: default; }
+    :focus-visible { outline: 3px solid #245fce; outline-offset: 4px; }
+    a { color: var(--brand-dark); }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.2; letter-spacing: -.7px; }
+    h2 { font-size: 1.35rem; line-height: 1.4; }
+    h3 { font-size: 1.06rem; }
+    small, .small { font-size: .84rem; }
+    .muted { color: var(--muted); }
+    .number, [dir="ltr"] { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+    .number { display: inline-block; }
+    .skip { position: fixed; top: -100px; right: 16px; z-index: 100; background: white; padding: 12px; }
+    .skip:focus { top: 8px; }
+    .shell { width: min(1120px, 100%); margin: auto; padding: 0 18px; }
+    header { background: #ffffffee; border-bottom: 1px solid var(--line); }
+    .header-inner { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; border: 0; background: none; padding: 5px 0; text-align: right; }
+    .brand-mark { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 14px; background: var(--brand); color: var(--yellow); font-size: 2rem; line-height: 1; }
+    .brand strong { display: block; font-size: 1.16rem; }
+    .brand small { font-size: .72rem; font-weight: 400; color: var(--muted); }
+    .local-badge { color: var(--brand-dark); font-size: .74rem; background: var(--mint); padding: 7px 10px; border-radius: 30px; white-space: nowrap; }
+    main { padding-top: 26px !important; padding-bottom: 125px !important; min-height: 80vh; }
+    .heading { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .eyebrow { color: var(--brand); font-size: .8rem; font-weight: 700; margin-bottom: 7px; }
+    .heading p { margin-top: 9px; }
+    .panel { background: var(--surface); padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .stack { display: grid; gap: 18px; }
+    .grid { display: grid; gap: 14px; }
+    .two, .three { grid-template-columns: 1fr; }
+    .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .between { justify-content: space-between; }
+    .primary { background: var(--brand); color: white; border-color: var(--brand); }
+    .primary:hover { background: var(--brand-dark); }
+    .secondary { background: var(--mint); color: var(--brand-dark); border-color: #b2d3c4; }
+    .danger { color: var(--red); border-color: #d9a7a7; }
+    .wide { width: 100%; }
+    .hero { background: var(--brand); color: white; position: relative; overflow: hidden; border: 0; padding: 28px; }
+    .hero h2 { font-size: 1.8rem; margin: 9px 0; max-width: 360px; }
+    .hero p { color: #e4f1eb; max-width: 420px; }
+    .hero .primary { background: var(--yellow); color: #27342d; border: none; margin-top: 22px; }
+    .hero-tag { font-size: .77rem; border: 1px solid #a4c4b8; border-radius: 30px; padding: 4px 11px; display: inline-block; }
+    .hero-equation { color: #c7e5d8; font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 800; margin-top: 25px; letter-spacing: 2px; text-align: left; }
+    .hero-equation span { color: var(--yellow); }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .kpi { min-width: 0; background: white; padding: 16px 8px; text-align: center; border: 1px solid var(--line); border-radius: 18px; }
+    .kpi strong { display: block; font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.3; }
+    .kpi span:not(.number) { color: var(--muted); font-size: .76rem; }
+    .section-title { margin: 8px 0 14px; }
+    .mode-card { display: flex; gap: 14px; align-items: start; width: 100%; text-align: right; padding: 20px; border-radius: 18px; background: white; }
+    .mode-card small { display: block; font-weight: 400; margin-top: 4px; color: var(--muted); }
+    .mode-card .symbol { width: 44px; height: 44px; flex: 0 0 44px; background: var(--mint); color: var(--brand); display: grid; place-items: center; border-radius: 14px; font-size: 1.4rem; }
+    .mode-card .arrow { margin-inline-start: auto; color: var(--brand); font-size: 1.4rem; }
+    progress { width: 100%; height: 10px; border: 0; border-radius: 20px; overflow: hidden; background: #e5ece8; accent-color: var(--brand); }
+    progress::-webkit-progress-bar { background: #e5ece8; }
+    progress::-webkit-progress-value { background: var(--brand); border-radius: 20px; }
+    progress::-moz-progress-bar { background: var(--brand); }
+    .goal-number { font-size: 2.7rem; font-weight: 800; line-height: 1.3; margin: 14px 0; }
+    nav { position: fixed; z-index: 20; bottom: 0; inset-inline: 0; background: #fffffff5; border-top: 1px solid var(--line); padding: 6px 5px calc(6px + env(safe-area-inset-bottom)); display: flex; justify-content: center; backdrop-filter: blur(12px); }
+    nav button { flex: 1; max-width: 170px; display: grid; place-items: center; gap: 1px; border: 0; background: transparent; min-height: 59px; padding: 5px 2px; font-size: .67rem; color: var(--muted); }
+    nav button.active { background: var(--mint); color: var(--brand-dark); }
+    nav svg { width: 22px; height: 22px; }
+    fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+    legend { font-weight: 700; margin-bottom: 12px; }
+    label { display: block; font-weight: 700; font-size: .92rem; }
+    input:not([type="checkbox"]), select, textarea { width: 100%; min-height: 48px; border: 1px solid #aebfba; border-radius: 11px; padding: 10px 12px; background: white; color: var(--ink); margin-top: 7px; }
+    input[type="number"] { text-align: center; direction: ltr; unicode-bidi: isolate; }
+    textarea { resize: vertical; min-height: 112px; }
+    .check { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
+    .check input { width: 21px; height: 21px; accent-color: var(--brand); flex-shrink: 0; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .span-all { grid-column: 1 / -1; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+    .chip { min-width: 46px; min-height: 46px; padding: 7px 12px; }
+    .chip[aria-pressed="true"] { color: white; background: var(--brand); border-color: var(--brand); }
+    .note { background: #f0f5f1; border-radius: 12px; padding: 12px 14px; color: #405b51; font-size: .88rem; }
+    .error { background: var(--red-bg); color: var(--red); border: 1px solid #ebc1b8; border-radius: 12px; padding: 12px; }
+    .status { border-radius: 12px; background: var(--mint); color: var(--brand-dark); padding: 12px; }
+    #storage-warning { margin: 12px 18px 0; }
+    .session { max-width: 720px; margin: auto; }
+    .session-head { margin-bottom: 16px; }
+    .session-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .pill { font-size: .78rem; padding: 5px 10px; border-radius: 20px; background: var(--mint); color: var(--brand-dark); display: inline-block; }
+    .question-card { text-align: center; border-radius: 26px; background: white; border: 1px solid var(--line); padding: 25px 20px; box-shadow: var(--shadow); }
+    .question-card.good { animation: success .5s ease; border-color: var(--brand); }
+    .equation { font-size: clamp(2.7rem, 10vw, 4.8rem); font-weight: 800; line-height: 1.4; margin: 14px 0 20px; letter-spacing: 1px; white-space: nowrap; }
+    .answer-options { max-width: 420px; margin: 0 auto; }
+    .answer-options legend { width: 100%; text-align: center; }
+    .answer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .answer-choice { min-height: 88px; min-width: 0; padding: 12px 8px; border-width: 2px; font-size: clamp(1.65rem, 7vw, 2.2rem); }
+    .answer-choice .choice-status { display: block; min-height: 1.4em; font-size: .76rem; line-height: 1.4; }
+    .answer-choice.selected { background: var(--mint); border-color: var(--brand); }
+    .answer-choice.correct { background: var(--brand); border-color: var(--brand); color: white; }
+    .answer-choice.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+    .answer-choice:disabled { opacity: 1; cursor: default; }
+    .feedback { margin-top: 14px; font-weight: 700; min-height: 29px; }
+    .feedback.wrong { color: var(--red); }
+    .feedback.correct { color: var(--brand); }
+    .hint-box { margin-top: 16px; text-align: right; background: #fff9e3; border: 1px solid #e6d592; padding: 18px; border-radius: 18px; overflow: hidden; }
+    .hint-box p + p { margin-top: 9px; }
+    .hint-math { font-size: 1.15rem; font-weight: 700; text-align: left; overflow-wrap: anywhere; }
+    .dots { display: grid; gap: 4px; max-width: 340px; margin: 15px auto; }
+    .dot { aspect-ratio: 1; background: #187369; border-radius: 3px; }
+    .timer-strip { display: flex; justify-content: center; gap: 20px; margin-top: 17px; font-size: .84rem; color: var(--muted); }
+    .score-card { text-align: center; background: var(--brand); color: white; padding: 28px; border-radius: 22px; }
+    .score-value { font-size: 4.4rem; line-height: 1.2; font-weight: 800; color: var(--yellow); }
+    .table-wrap { max-width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; text-align: right; white-space: nowrap; font-size: .88rem; }
+    caption { padding: 12px; text-align: right; font-weight: 700; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    th { background: #eff4f0; font-size: .8rem; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .rank { display: flex; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .rank:last-child { border: 0; }
+    .chart { width: 100%; height: auto; display: block; direction: ltr; }
+    .chart text { fill: #52676b; font-family: Arial, sans-serif; font-size: 11px; }
+    .chart-panel h3 { margin-bottom: 12px; }
+    .bar-chart { display: flex; flex-direction: column; gap: 9px; }
+    .bar-row { display: grid; grid-template-columns: 30px 1fr 50px; align-items: center; gap: 9px; font-size: .85rem; }
+    .track { height: 10px; border-radius: 10px; background: #e7eeea; overflow: hidden; direction: ltr; }
+    .fill { height: 100%; background: var(--brand); border-radius: inherit; }
+    .medal { text-align: center; padding: 24px 16px; }
+    .medal-symbol { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: #f0f2ed; margin: 0 auto 14px; font-size: 2.15rem; }
+    .medal.unlocked .medal-symbol { background: #fff1b6; }
+    .medal.unlocked { border-color: #c9ab42; }
+    .medal p { min-height: 50px; margin: 7px 0 14px; }
+    details { margin-top: 14px; }
+    summary { cursor: pointer; padding: 10px 0; font-weight: 700; }
+    dialog { width: min(450px, calc(100% - 32px)); border: 1px solid var(--line); border-radius: 22px; padding: 26px; color: var(--ink); }
+    dialog::backdrop { background: #122d38a6; }
+    dialog p { margin: 12px 0 22px; }
+    #toast { position: fixed; z-index: 100; bottom: 95px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 30px); background: #183e36; color: white; padding: 12px 20px; border-radius: 16px; box-shadow: var(--shadow); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @keyframes success { 50% { transform: scale(1.018); box-shadow: 0 0 0 6px #cdebdc; } }
+    @media (min-width: 640px) {
+      .shell { padding-inline: 30px; }
+      .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      nav button { font-size: .82rem; }
+      .panel { padding: 26px; }
+      .hero-grid { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+      .hero-equation { margin-top: 28px; }
+    }
+    @media (min-width: 950px) {
+      main { padding-top: 38px !important; }
+      .hero { padding: 32px; }
+      .hero h2 { font-size: 2.2rem; }
+      .mode-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">דילוג לתוכן</a>
+  <header>
+    <div class="shell header-inner">
+      <button class="brand" data-nav="home" aria-label="כופלים קדימה, למסך הבית">
+        <span class="brand-mark" aria-hidden="true">×</span>
+        <span><strong>כופלים קדימה</strong><small>עוד תרגיל. עוד הצלחה.</small></span>
+      </button>
+      <span class="local-badge" id="local-badge">● נשמר במכשיר</span>
+    </div>
+  </header>
+  <div id="storage-warning" class="error" role="alert" hidden></div>
+  <main id="main" class="shell" tabindex="-1"></main>
+  <nav aria-label="ניווט ראשי" id="nav"></nav>
+  <div id="toast" role="status" hidden></div>
+  <dialog id="confirm-dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title"></h2><p id="dialog-text"></p>
+    <div class="row"><button id="dialog-confirm" class="danger">אישור</button><button id="dialog-cancel">ביטול</button></div>
+  </dialog>
+  <noscript><p class="error">יש להפעיל JavaScript בדפדפן כדי לתרגל.</p></noscript>
+  <script>
+    'use strict';
+    (() => {
+      // Configuration and shared helpers. All factors are positive integers up to 20.
+      const KEY = 'multiplication-forward-v1';
+      const VERSION = 1;
+      const DAY = 86400000;
+      const MAX_FACTOR = 20;
+      const MAX_ATTEMPTS = 5;
+      const ANSWER_CHOICE_COUNT = 4;
+      const CHOICE_DEBOUNCE_MS = 400;
+      const ANSWER_FORMAT = 'multiple-choice-v1';
+      const MAX_SESSIONS = 300;
+      const MAX_EVENTS = 2500;
+      const DEFAULTS = {
+        count: 15, target: 8, min: 1, max: 12, cap: 12, difficulty: 'adaptive',
+        pool: 'range', digit: 7, groupA: [6, 7, 8], groupB: [6, 7, 8],
+        specifics: '6 × 7\n7 × 8\n8 × 9', commutative: true, unique: true, goal: 20
+      };
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+      const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+      const sum = (items, getter = x => x) => items.reduce((total, item) => total + getter(item), 0);
+      const average = values => values.length ? sum(values) / values.length : 0;
+      const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
+      const num = (value, digits = 0) => Number(value).toLocaleString('en-US', { maximumFractionDigits: digits });
+      const n = (value, digits = 0) => `<bdi class="number" dir="ltr">${num(value, digits)}</bdi>`;
+      const pct = value => `<bdi class="number" dir="ltr">${num(value)}%</bdi>`;
+      const seconds = ms => `${n(ms / 1000, 1)} שנ׳`;
+      const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const factKey = q => `${Math.min(q.a, q.b)}x${Math.max(q.a, q.b)}`;
+      const equation = q => `<bdi dir="ltr">${q.a} × ${q.b}</bdi>`;
+      const percent = (part, total) => total ? 100 * part / total : 0;
+      const localDay = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const dateLabel = timestamp => new Date(timestamp).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const normalizeDigits = value => value.replace(/[٠-٩۰-۹]/g, c => String(c.charCodeAt(0) - (c <= '٩' ? 1632 : 1776)));
+
+      // Storage Manager: save every attempt, retain an active session, handle unavailable storage.
+      const StorageManager = {
+        warning: '', writable: true,
+        fresh() {
+          return { version: VERSION, settings: { ...DEFAULTS }, facts: {}, sessions: [], events: [],
+            days: {}, achievements: {}, streak: 0, bestStreak: 0, points: 0, active: null };
+        },
+        load() {
+          try {
+            const raw = localStorage.getItem(KEY);
+            if (!raw) return this.fresh();
+            const data = JSON.parse(raw);
+            if (data.version !== VERSION || !data.facts || !Array.isArray(data.sessions) ||
+              !Array.isArray(data.events) || !data.days || !data.achievements ||
+              !Number.isFinite(data.points) || !Number.isFinite(data.bestStreak)) throw new Error('Invalid data');
+            data.settings = { ...DEFAULTS, ...data.settings };
+            return data;
+          } catch {
+            this.writable = false;
+            this.warning = 'לא ניתן לקרוא את השמירה. אפשר לתרגל זמנית, אך ההתקדמות לא תישמר. הנתונים הקודמים לא יידרסו; אפשר לאפס דרך ההגדרות.';
+            return this.fresh();
+          }
+        },
+        save() {
+          if (!this.writable) return false;
+          try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+          catch {
+            this.warning = 'הדפדפן חסם שמירה או שהאחסון מלא. התרגול ממשיך בזיכרון בלבד; ניתן לייצא גיבוי בהגדרות.';
+            UIRenderer.storageNotice();
+            return false;
+          }
+        },
+        export() {
+          SessionClock.sync();
+          const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }));
+          const link = document.createElement('a');
+          link.href = url; link.download = `multiplication-backup-${localDay()}.json`; link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+      };
+      let state = StorageManager.load();
+      let screen = 'home';
+      let configMode = 'mixed';
+      let draft = null;
+      let toastTimer = null;
+      let transitionTimer = null;
+
+      // Adaptive Learning Engine: canonical facts share knowledge across a × b and b × a.
+      const AdaptiveLearningEngine = {
+        stat(q) { return state.facts[factKey(q)]; },
+        score(q) {
+          const s = this.stat(q);
+          if (!s || !s.questions) return 42;
+          const errorRate = 1 - s.firstCorrect / s.questions;
+          const response = clamp((s.totalMs / s.questions) / (s.targetMs / s.questions), 0, 2) / 2;
+          const attempts = clamp((s.attempts / s.questions - 1) / 4, 0, 1);
+          const age = clamp((Date.now() - s.lastAt) / (7 * DAY), 0, 1);
+          return Math.round(100 * (.45 * errorRate + .30 * response + .15 * attempts + .10 * age));
+        },
+        hard(q) { const s = this.stat(q); return Boolean(s && (s.needsWork || (s.questions && this.score(q) >= 48))); },
+        slow(q) { const s = this.stat(q); return Boolean(s && s.questions && s.totalMs > s.targetMs); },
+        errors(q) { return (this.stat(q)?.wrong || 0) > 0; },
+        weight(q, settings) {
+          const s = this.stat(q);
+          const due = s && s.nextDue <= Date.now() ? 2 : 1;
+          return (1 + this.score(q) / 12 + (s ? 0 : 2)) * due * (settings.difficulty === 'challenge' ? 1 + q.a * q.b / 150 : 1);
+        },
+        choose(pool, settings, random = false) {
+          const weights = pool.map(q => random ? 1 : this.weight(q, settings));
+          let pick = Math.random() * sum(weights);
+          for (let i = 0; i < pool.length; i++) { pick -= weights[i]; if (pick <= 0) return { ...pool[i] }; }
+          return { ...pool[pool.length - 1] };
+        },
+        schedule(s, strong) {
+          s.level = strong ? Math.min(7, s.level + 1) : 0;
+          s.needsWork = !strong;
+          s.nextDue = Date.now() + (strong ? [0, 1, 3, 7, 14, 30, 60, 90][s.level] * DAY : 5 * 60000);
+          s.difficulty = this.score({ a: s.a, b: s.b });
+        }
+      };
+
+      // Question Engine: validate selections, build pools and prevent duplicate new questions.
+      const QuestionEngine = {
+        pairId(q, settings) { return settings.commutative ? factKey(q) : `${q.a}x${q.b}`; },
+        shuffle(values) {
+          const shuffled = [...values];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          return shuffled;
+        },
+        createChoices(q) {
+          // Nearby multiples and small counting errors make plausible, distinct distractors.
+          const correct = q.a * q.b;
+          const distractors = new Set();
+          const add = value => {
+            if (Number.isInteger(value) && value > 0 && value <= MAX_FACTOR * MAX_FACTOR && value !== correct)
+              distractors.add(value);
+          };
+          [q.a, q.b, 1, 2].forEach(offset => { add(correct - offset); add(correct + offset); });
+          for (let offset = 1; distractors.size < ANSWER_CHOICE_COUNT - 1; offset++) {
+            add(correct - offset); add(correct + offset);
+          }
+          return this.shuffle([correct, ...this.shuffle([...distractors]).slice(0, ANSWER_CHOICE_COUNT - 1)]);
+        },
+        parseSpecific(text, settings) {
+          const lines = text.trim().split(/[\n;,]+/).map(x => x.trim()).filter(Boolean);
+          if (!lines.length) throw new Error('יש להזין לפחות תרגיל אחד.');
+          return lines.map(line => {
+            const match = normalizeDigits(line).match(/^(\d{1,2})\s*[x×*]\s*(\d{1,2})$/i);
+            if (!match) throw new Error(`תרגיל לא תקין: ${line}. יש להשתמש בפורמט 6 × 7.`);
+            const [a, b] = match.slice(1).map(Number);
+            if ([a, b].some(v => v < settings.min || v > settings.max || v > settings.cap))
+              throw new Error('כל גורמי התרגילים המפורשים חייבים להיכלל בטווח ובהגבלה שנבחרו.');
+            return { a, b };
+          });
+        },
+        pool(settings, mode) {
+          const values = range(settings.min, settings.max);
+          let a = values, b = values, pool;
+          const source = mode === 'digit' || mode === 'testDigit' ? 'digit' : settings.pool;
+          if (source === 'digit') {
+            if (!values.includes(settings.digit)) throw new Error('הספרה שנבחרה אינה בטווח. יש לעדכן את הטווח או הספרה.');
+            a = [settings.digit];
+          }
+          if (source === 'group' || source === 'custom') {
+            a = settings.groupA.filter(v => values.includes(v));
+            b = source === 'group' ? settings.groupB.filter(v => values.includes(v)) : values;
+            if (!a.length || !b.length) throw new Error('יש לבחור לפחות מספר אחד בכל קבוצה מתוך הטווח הפעיל.');
+          }
+          pool = source === 'specific' ? this.parseSpecific(settings.specifics, settings) : a.flatMap(x => b.map(y => ({ a: x, b: y })));
+          const filter = mode === 'weak' || mode === 'testWeak' ? 'hard' : source;
+          if (['hard', 'slow', 'errors'].includes(filter)) pool = pool.filter(q => AdaptiveLearningEngine[filter](q));
+          if (settings.difficulty === 'easy') pool = pool.filter(q => Math.min(q.a, q.b) <= 5 || [10].includes(q.a) || [10].includes(q.b));
+          if (settings.difficulty === 'challenge' || mode === 'advanced') pool = pool.filter(q => q.a >= 6 && q.b >= 6);
+          const seen = new Set();
+          pool = pool.filter(q => { const key = this.pairId(q, settings); if (seen.has(key)) return false; seen.add(key); return true; });
+          if (!pool.length) throw new Error('אין תרגילים מתאימים לבחירה. הרחיבו את הטווח או שנו את הסינון. אם אין עדיין חולשות, התחילו בתרגול מעורב.');
+          return pool;
+        },
+        nextBase(session) {
+          const available = session.pool.filter(q => !session.settings.unique || !session.used.includes(this.pairId(q, session.settings)));
+          let q;
+          if (session.mode === 'testWeak') {
+            q = { ...available.sort((x, y) => AdaptiveLearningEngine.score(y) - AdaptiveLearningEngine.score(x))[0] };
+          } else {
+            const options = available.length > 1 ? available.filter(x => this.pairId(x, session.settings) !== session.lastId) : available;
+            q = AdaptiveLearningEngine.choose(options.length ? options : available, session.settings, session.settings.pool === 'random');
+          }
+          session.used.push(this.pairId(q, session.settings));
+          session.baseShown++;
+          if (session.settings.commutative && session.settings.pool !== 'digit' && !['digit', 'testDigit'].includes(session.mode) && Math.random() < .5) {
+            // Swap only if the resulting orientation is also allowed by the chosen pool.
+            const source = session.settings.pool;
+            const allowed = ['range', 'random', 'hard', 'slow', 'errors'].includes(source) ||
+              (source === 'group' && session.settings.groupA.includes(q.b) && session.settings.groupB.includes(q.a)) ||
+              (source === 'custom' && session.settings.groupA.includes(q.b));
+            if (allowed) [q.a, q.b] = [q.b, q.a];
+          }
+          return { ...q, kind: 'base' };
+        }
+      };
+
+      // Hint Engine: progressively reveal structure before revealing the answer.
+      const HintEngine = {
+        special(a, b) {
+          const value = a === 2 || b === 2 ? 2 : a === 5 || b === 5 ? 5 : a === 9 || b === 9 ? 9 : a === 10 || b === 10 ? 10 : a === 11 || b === 11 ? 11 : 0;
+          const other = a === value ? b : a;
+          if (value === 2) return `כפל ב־${n(2)} הוא חיבור המספר לעצמו: ${n(other)} ועוד ${n(other)}.`;
+          if (value === 5) return `כפולות של ${n(5)} מסתיימות ב־${n(0)} או ב־${n(5)}. אפשר לחשב כפל ב־${n(10)} ואז לקחת חצי.`;
+          if (value === 9) return `חשבו ${equation({ a: 10, b: other })} והחסירו ${n(other)}. לבדיקה: מחברים שוב את ספרות התוצאה עד ספרה אחת — היא תהיה ${n(9)}.`;
+          if (value === 10) return `בכפל מספר שלם חיובי ב־${n(10)}, מוסיפים אפס מימין למספר.`;
+          if (value === 11) return other < 10 ? `בכפל ${n(other)} ב־${n(11)}, הספרה חוזרת פעמיים. אפשר גם לחשב עשר פעמים ועוד פעם אחת.` : `כפל ב־${n(11)} הוא כפל ב־${n(10)} ועוד המספר עצמו. דפוס הספרה החוזרת מתאים רק למספר חד־ספרתי.`;
+          return '';
+        },
+        render(q, level) {
+          const { a, b } = q;
+          const part = a > 5 ? 5 : a > 1 ? a - 1 : 0;
+          let content = '';
+          if (level === 1) content = `<p>${this.special(a, b) || (a === 1 ? 'קבוצה אחת מכילה בדיוק את מספר הפריטים שבקבוצה.' : `נסו לחשב ${equation({ a: part, b })}, ואז להוסיף עוד ${n(a - part)} קבוצות של ${n(b)}.`)}</p>`;
+          if (level === 2) content = `<p>מפרקים לשני תרגילים קטנים יותר:</p><p class="hint-math" dir="ltr">${a} × ${b} = ${part} × ${b} + ${a - part} × ${b}</p>`;
+          if (level === 3) content = `<p>כפל הוא חיבור חוזר: ${n(a)} קבוצות של ${n(b)}.</p><p class="hint-math" dir="ltr">${Array(a).fill(b).join(' + ')}</p><p>הרמז הבא מציג את הקבוצות בציור.</p>`;
+          if (level === 4) content = `<p>כאן ${n(a)} שורות, ובכל שורה ${n(b)} ריבועים. אפשר לספור שורה אחר שורה.</p><div class="dots" dir="ltr" role="img" aria-label="${a} קבוצות של ${b} ריבועים" style="grid-template-columns:repeat(${b},1fr)">${Array(a * b).fill('<span class="dot" aria-hidden="true"></span>').join('')}</div>`;
+          if (level === 5) content = `<p class="hint-math" dir="ltr">${a} × ${b} = ${a * b}</p><p>${n(a)} קבוצות של ${n(b)} נותנות יחד ${n(a * b)}.</p><p class="hint-math" dir="ltr">${part} × ${b} + ${a - part} × ${b} = ${part * b} + ${(a - part) * b} = ${a * b}</p><p>${this.special(a, b)}</p><p>התרגיל סומן לחיזוק ויחזור בהמשך. בכל חזרה מתחילים שוב בלי רמז.</p>`;
+          return `<h3>${level === 5 ? 'בואו נבין את הפתרון' : `רמז ${n(level)} מתוך ${n(4)}`}</h3>${content}`;
+        }
+      };
+
+      // Statistics Manager: attempts and completed questions are distinct measures.
+      const StatisticsManager = {
+        ensure(q) {
+          const key = factKey(q);
+          if (!state.facts[key]) {
+            const [a, b] = key.split('x').map(Number);
+            state.facts[key] = { a, b, correct: 0, wrong: 0, questions: 0, firstCorrect: 0,
+              attempts: 0, totalMs: 0, targetMs: 0, minMs: null, maxMs: 0, fast: 0, slow: 0,
+              reveals: 0, lastAt: 0, level: 0, nextDue: 0, needsWork: false, difficulty: 42 };
+          }
+          return state.facts[key];
+        },
+        attempt(q, answer, correct, elapsed) {
+          const s = this.ensure(q);
+          s[correct ? 'correct' : 'wrong']++;
+          s.lastAt = Date.now();
+          if (!correct) { s.needsWork = true; s.nextDue = Date.now(); state.streak = 0; }
+          const current = state.active.current;
+          state.events.push({ a: q.a, b: q.b, answer, correct, shownAt: current.shownAt,
+            answeredAt: new Date().toISOString(), reactionMs: elapsed,
+            attemptMs: elapsed - current.lastAttemptMs, totalReactionMs: Date.now() - Date.parse(current.shownAt) });
+          current.lastAttemptMs = elapsed;
+          state.events = state.events.slice(-MAX_EVENTS);
+        },
+        complete(q, result, settings) {
+          const s = this.ensure(q);
+          s.questions++; s.firstCorrect += result.first ? 1 : 0;
+          s.attempts += result.attempts; s.totalMs += result.ms; s.targetMs += settings.target * 1000;
+          s.minMs = s.minMs === null ? result.ms : Math.min(s.minMs, result.ms);
+          s.maxMs = Math.max(s.maxMs, result.ms);
+          const fast = result.first && result.ms <= settings.target * 1000;
+          if (fast) s.fast++;
+          if (result.ms > settings.target * 1000) s.slow++;
+          if (result.revealed) s.reveals++;
+          s.lastAt = Date.now();
+          AdaptiveLearningEngine.schedule(s, fast);
+          state.streak = result.first ? state.streak + 1 : 0;
+          state.bestStreak = Math.max(state.bestStreak, state.streak);
+          const points = result.first ? (fast ? 15 : 10) : result.correct ? 5 : 0;
+          state.points += points;
+          const day = state.days[localDay()] ||= { questions: 0, firstCorrect: 0, totalMs: 0 };
+          day.questions++; day.firstCorrect += result.first ? 1 : 0; day.totalMs += result.ms;
+          return points;
+        },
+        overall() {
+          const facts = Object.values(state.facts);
+          const questions = sum(facts, s => s.questions);
+          return { questions, accuracy: percent(sum(facts, s => s.firstCorrect), questions),
+            averageMs: questions ? sum(facts, s => s.totalMs) / questions : 0,
+            correct: sum(facts, s => s.correct), wrong: sum(facts, s => s.wrong) };
+        },
+        byDigit() {
+          return range(1, MAX_FACTOR).map(digit => {
+            const facts = Object.values(state.facts).filter(s => s.a === digit || s.b === digit);
+            const count = sum(facts, s => s.questions);
+            return { digit, count, accuracy: percent(sum(facts, s => s.firstCorrect), count),
+              ms: count ? sum(facts, s => s.totalMs) / count : 0 };
+          });
+        },
+        daysStreak() {
+          const date = new Date();
+          if (!state.days[localDay(date)]) date.setDate(date.getDate() - 1);
+          let count = 0;
+          while (state.days[localDay(date)]) { count++; date.setDate(date.getDate() - 1); }
+          return count;
+        },
+        trend() {
+          const rows = state.sessions.filter(s => !s.partial);
+          if (rows.length < 6) return null;
+          const previous = average(rows.slice(-6, -3).map(s => s.score));
+          const recent = average(rows.slice(-3).map(s => s.score));
+          return { previous, recent, improvement: previous > 0 ? (recent - previous) / previous * 100 : null };
+        }
+      };
+
+      // Achievement Manager: unlock once; retain the earned date permanently.
+      const AchievementManager = {
+        definitions: [
+          { id: 'streak10', symbol: '✦', title: 'עשר על עשר', description: '10 הצלחות רצופות בניסיון ראשון, ללא רמז.', goal: 10 },
+          { id: 'streak20', symbol: '★', title: 'רצף מנצח', description: '20 הצלחות רצופות בניסיון ראשון, ללא רמז.', goal: 20 },
+          { id: 'master', symbol: '♛', title: 'אלופי הספרה', description: '3 הצלחות מהירות ברצף בכל מכפלות ספרה אחת, מ־1 עד 12.', goal: 12 },
+          { id: 'fast', symbol: 'ϟ', title: 'מהירות עם דיוק', description: '10 הצלחות בניסיון ראשון, בפחות מ־3 שניות כל אחת.', goal: 10 },
+          { id: 'week', symbol: '☀', title: 'שבוע של התמדה', description: 'לפחות שאלה אחת בכל יום, במשך 7 ימים רצופים.', goal: 7 },
+          { id: 'improve', symbol: '↗', title: 'עולים שלב', description: 'שיפור יחסי של 20% בדיוק, בשלושת הסשנים האחרונים לעומת שלושת הקודמים.', goal: 20 }
+        ],
+        progress() {
+          const mastery = range(1, 12).map(a => range(1, 12).filter(b => (state.facts[factKey({ a, b })]?.level || 0) >= 3).length);
+          return { streak10: state.bestStreak, streak20: state.bestStreak, master: Math.max(...mastery),
+            fast: sum(Object.values(state.facts), s => s.speedWins || 0), week: StatisticsManager.daysStreak(),
+            improve: Math.max(0, StatisticsManager.trend()?.improvement || 0) };
+        },
+        evaluate() {
+          const progress = this.progress();
+          this.definitions.forEach(item => {
+            if (!state.achievements[item.id] && progress[item.id] >= item.goal) {
+              state.achievements[item.id] = Date.now(); UIRenderer.toast(`הישג חדש: ${item.title}!`);
+            }
+          });
+        }
+      };
+
+      // A performance clock excludes hidden-tab time and time spent reading feedback.
+      const SessionClock = {
+        started: 0, running: false,
+        start() { this.started = performance.now(); this.running = true; },
+        value() { return (state.active?.current?.elapsed || 0) + (this.running ? performance.now() - this.started : 0); },
+        sync() {
+          if (this.running && state.active?.current) { state.active.current.elapsed = this.value(); this.started = performance.now(); }
+        },
+        pause() { this.sync(); this.running = false; },
+        stop() { this.running = false; }
+      };
+
+      // Retry Engine: five attempts in practice; one attempt and no hints in a test.
+      const RetryEngine = {
+        submit(raw) {
+          const session = state.active, current = session?.current;
+          if (!current || current.result || session.paused) return;
+          const answer = Number(raw);
+          if (!current.choices.includes(answer)) return;
+          // Ignore accidental double taps without recording a second attempt.
+          const selectedAt = Date.now();
+          if (current.lastChoiceAt && selectedAt - current.lastChoiceAt < CHOICE_DEBOUNCE_MS) return;
+          current.lastChoiceAt = selectedAt;
+          const correct = answer === current.a * current.b;
+          SessionClock.sync();
+          current.attempts++; current.answers.push(answer);
+          StatisticsManager.attempt(current, answer, correct, current.elapsed);
+          if (correct || session.test || current.attempts >= MAX_ATTEMPTS) {
+            this.resolve(correct, !correct && !session.test);
+          } else {
+            if (current.attempts >= 2) current.hint = Math.max(current.hint, current.attempts - 1);
+            current.message = current.attempts === 1 ? 'כמעט! נסו שוב, יש זמן לחשוב.' : 'כל ניסיון עוזר ללמוד. הרמז יכול לעזור.';
+            StorageManager.save(); UIRenderer.question(false);
+          }
+        },
+        hint() {
+          const session = state.active, current = session?.current;
+          if (!current || current.result || session.test || session.paused) return;
+          current.hint = Math.min(5, current.hint + 1);
+          state.streak = 0;
+          if (current.hint === 5) this.resolve(false, true);
+          else { current.message = ''; StorageManager.save(); UIRenderer.question(false); }
+        },
+        resolve(correct, revealed) {
+          const session = state.active, current = session.current;
+          SessionClock.pause();
+          const result = { a: current.a, b: current.b, kind: current.kind, correct, revealed,
+            first: correct && current.attempts === 1 && current.hint === 0,
+            attempts: current.attempts, hint: current.hint, answers: [...current.answers], ms: current.elapsed,
+            shownAt: current.shownAt, answeredAt: new Date().toISOString(),
+            totalReactionMs: Date.now() - Date.parse(current.shownAt) };
+          current.result = result;
+          if (revealed) current.hint = 5;
+          session.results.push(result); session.completed++;
+          session.points += StatisticsManager.complete(current, result, session.settings);
+          if (result.first && result.ms < 3000) {
+            const s = StatisticsManager.ensure(current); s.speedWins = (s.speedWins || 0) + 1;
+          }
+          const needsReview = !result.first || result.ms > session.settings.target * 1000;
+          if (!session.test && needsReview && current.kind === 'base') SessionEngine.reinforce(current);
+          AchievementManager.evaluate(); StorageManager.save();
+          UIRenderer.question(false);
+          if (!revealed) SessionEngine.autoNext();
+        }
+      };
+
+      // Test Engine: compare only completed tests with the same configuration and pool.
+      const TestEngine = {
+        signature(session) {
+          return JSON.stringify({ mode: session.mode, pool: session.pool.map(q => QuestionEngine.pairId(q, session.settings)).sort(),
+            count: session.baseGoal, difficulty: session.settings.difficulty, target: session.settings.target,
+            unique: session.settings.unique, commutative: session.settings.commutative,
+            answerFormat: session.answerFormat || ANSWER_FORMAT });
+        },
+        previous(session) { return [...state.sessions].reverse().find(s => s.test && !s.partial && s.signature === session.signature && s.id !== session.id); },
+        comparison(session) {
+          const previous = this.previous(session);
+          if (!previous) return '<p class="note">זהו המבחן הראשון שהושלם בהגדרות האלה. לאחר המבחן הבא תופיע השוואה אישית.</p>';
+          const delta = session.score - previous.score;
+          const speed = previous.averageMs > 0 ? (previous.averageMs - session.averageMs) / previous.averageMs * 100 : 0;
+          const rating = delta >= 20 ? 'קפיצה מצוינת' : delta > 0 || (delta === 0 && speed > 5) ? 'שיפור יפה' : delta === 0 ? 'שומרים על הרמה' : 'עוד תרגול קטן, וממשיכים';
+          return `<div class="note"><strong>${rating}</strong><p>לעומת המבחן המקביל מ־<bdi dir="ltr">${dateLabel(previous.at)}</bdi>: שינוי בציון <bdi dir="ltr">${delta > 0 ? '+' : ''}${num(delta, 1)}</bdi> נקודות; שינוי במהירות <bdi dir="ltr">${speed > 0 ? '+' : ''}${num(speed)}%</bdi> (חיובי = מהיר יותר).</p></div>`;
+        }
+      };
+
+      // Session Engine: new questions + finite reviews after 3 and 10 intervening questions + final review.
+      const SessionEngine = {
+        start(settings, mode) {
+          const pool = QuestionEngine.pool(settings, mode);
+          clearTimeout(transitionTimer);
+          state.streak = 0;
+          const session = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, settings: { ...settings },
+            mode, test: mode.startsWith('test'), answerFormat: ANSWER_FORMAT, pool, used: [], baseShown: 0,
+            baseGoal: settings.unique ? Math.min(settings.count, pool.length) : settings.count,
+            completed: 0, results: [], pending: [], finalReviews: [], reinforced: [], current: null,
+            startedAt: Date.now(), points: 0, paused: false, lastId: '' };
+          session.signature = TestEngine.signature(session);
+          state.active = session; state.settings = { ...settings }; screen = 'session';
+          this.next();
+        },
+        prepareAnswerOptions() {
+          const session = state.active, current = session.current;
+          // Upgrade an unfinished session from the earlier free-answer version without losing progress.
+          if (!session.answerFormat) {
+            session.answerFormat = session.results.length || current.attempts ? 'mixed-answer-formats-v1' : ANSWER_FORMAT;
+            session.signature = TestEngine.signature(session);
+          }
+          const choices = current.choices;
+          const valid = Array.isArray(choices) && choices.length === ANSWER_CHOICE_COUNT &&
+            new Set(choices).size === ANSWER_CHOICE_COUNT && choices.includes(current.a * current.b) &&
+            choices.every(value => Number.isInteger(value) && value > 0 && value <= MAX_FACTOR * MAX_FACTOR);
+          if (!valid) current.choices = QuestionEngine.createChoices(current);
+        },
+        reinforce(q) {
+          const session = state.active, key = factKey(q);
+          if (session.reinforced.includes(key)) return;
+          session.reinforced.push(key);
+          [3, 10].forEach(delay => session.pending.push({ a: q.a, b: q.b, due: session.completed + delay, kind: `review${delay}` }));
+          session.finalReviews.push({ a: q.a, b: q.b, kind: 'final' });
+        },
+        next() {
+          clearTimeout(transitionTimer); SessionClock.stop();
+          const session = state.active;
+          if (!session) return;
+          let question;
+          session.pending.sort((a, b) => a.due - b.due);
+          if (session.pending.length && session.pending[0].due <= session.completed) question = session.pending.shift();
+          else if (session.baseShown < session.baseGoal) question = QuestionEngine.nextBase(session);
+          else if (session.pending.length) {
+            // Fill the spacing gap using previously presented facts; these do not schedule more reviews.
+            const seen = session.pool.filter(q => session.used.includes(QuestionEngine.pairId(q, session.settings)));
+            const choices = seen.filter(q => factKey(q) !== factKey(session.current || { a: 0, b: 0 }));
+            question = { ...AdaptiveLearningEngine.choose(choices.length ? choices : seen, session.settings), kind: 'spacing' };
+          } else if (session.finalReviews.length) question = session.finalReviews.shift();
+          else { this.finish(false); return; }
+          session.lastId = QuestionEngine.pairId(question, session.settings);
+          session.current = { ...question, attempts: 0, hint: 0, elapsed: 0, lastAttemptMs: 0,
+            shownAt: new Date().toISOString(), answers: [], message: '', result: null };
+          this.prepareAnswerOptions();
+          session.paused = false; screen = 'session';
+          UIRenderer.question(true); SessionClock.start(); StorageManager.save();
+        },
+        autoNext() {
+          clearTimeout(transitionTimer);
+          if (!document.hidden && screen === 'session' && !state.active?.paused)
+            transitionTimer = setTimeout(() => this.next(), state.active.test ? 700 : 1150);
+        },
+        pause() {
+          if (!state.active) return;
+          clearTimeout(transitionTimer); SessionClock.pause(); state.active.paused = true; StorageManager.save();
+        },
+        resume() {
+          if (!state.active) return;
+          this.prepareAnswerOptions();
+          screen = 'session'; state.active.paused = false; UIRenderer.question(true);
+          if (!state.active.current.result) SessionClock.start();
+          else if (!state.active.current.result.revealed) this.autoNext();
+          StorageManager.save();
+        },
+        finish(partial) {
+          const session = state.active;
+          if (!session) return;
+          clearTimeout(transitionTimer); SessionClock.stop();
+          const count = session.results.length;
+          session.partial = partial; session.at = Date.now();
+          session.score = percent(session.results.filter(r => r.first).length, count);
+          session.averageMs = count ? sum(session.results, r => r.ms) / count : 0;
+          if (count) {
+            const record = { id: session.id, test: session.test, mode: session.mode, signature: session.signature,
+              partial, at: session.at, score: session.score, averageMs: session.averageMs, count, points: session.points };
+            state.sessions.push(record); state.sessions = state.sessions.slice(-MAX_SESSIONS);
+          }
+          state.active = null; state.streak = 0;
+          AchievementManager.evaluate(); StorageManager.save();
+          UIRenderer.summary(session);
+        }
+      };
+
+      // UI Renderer: one DOM owner. Dynamic user strings are escaped before insertion.
+      const UIRenderer = {
+        icons: {
+          home: '<path d="m3 10 9-7 9 7v10H7V10m10 10v-7h-5v7"/>',
+          practice: '<path d="M5 4h14v16H5zM8 8h8M8 12h3m3 0h2m-8 4h3m3 0h2"/>',
+          tests: '<path d="M9 4H5v17h14V4h-4M9 3h6v4H9zM8 12l2 2 5-4m-7 7h8"/>',
+          stats: '<path d="M4 3v18h17M8 17v-6m5 6V6m5 11V9"/>',
+          medals: '<path d="m8 3 4 5 4-5M8 3H4l5 8m7-8h4l-5 8"/><circle cx="12" cy="15" r="6"/><path d="m12 12 1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/>',
+          settings: '<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="white"/><circle cx="15" cy="12" r="2" fill="white"/><circle cx="8" cy="18" r="2" fill="white"/>'
+        },
+        nav() {
+          const items = [['home', 'בית'], ['practice', 'תרגול'], ['tests', 'מבחנים'], ['stats', 'נתונים'], ['medals', 'הישגים'], ['settings', 'הגדרות']];
+          $('#nav').innerHTML = items.map(([id, label]) => {
+            const active = screen === id || (screen === 'session' && id === (state.active?.test ? 'tests' : 'practice'));
+            return `<button data-nav="${id}" class="${active ? 'active' : ''}" ${active ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${this.icons[id]}</svg>${label}</button>`;
+          }).join('');
+        },
+        mount(html, focus = true) {
+          $('#main').innerHTML = html; this.nav();
+          if (focus) { $('#main').focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'instant' }); }
+        },
+        title(kicker, title, description = '') {
+          return `<div class="heading"><div><div class="eyebrow">${kicker}</div><h1>${title}</h1>${description ? `<p class="muted">${description}</p>` : ''}</div></div>`;
+        },
+        storageNotice() {
+          const warning = $('#storage-warning');
+          warning.hidden = !StorageManager.warning; warning.textContent = StorageManager.warning;
+          $('#local-badge').textContent = StorageManager.warning ? '● שמירה אינה זמינה' : '● נשמר במכשיר';
+        },
+        toast(message) { clearTimeout(toastTimer); $('#toast').textContent = message; $('#toast').hidden = false; toastTimer = setTimeout(() => $('#toast').hidden = true, 4500); },
+        modeCard(mode, title, detail, symbol) {
+          return `<button class="mode-card" data-mode="${mode}"><span class="symbol" aria-hidden="true">${symbol}</span><span>${title}<small>${detail}</small></span><span class="arrow" aria-hidden="true">‹</span></button>`;
+        },
+        home() {
+          screen = 'home';
+          const stats = StatisticsManager.overall(), today = state.days[localDay()]?.questions || 0;
+          const due = Object.values(state.facts).filter(s => s.questions && s.nextDue <= Date.now()).length;
+          this.mount(`${this.title('המקום שלכם לצמוח', 'לומדים בקצב שלכם.', 'קצת תרגול בכל יום, והרבה רגעים של ״הצלחתי!״')}
+            <div class="stack">
+              ${state.active ? `<div class="panel row between"><div><strong>התרגול שלכם מחכה</strong><p class="muted small">${n(state.active.completed)} שאלות הושלמו. אפשר להמשיך מאותה נקודה.</p></div><button class="primary" data-action="resume">ממשיכים מאיפה שעצרנו</button></div>` : ''}
+              <div class="grid hero-grid">
+                <section class="panel hero"><span class="hero-tag">תרגול שמכיר אתכם</span><h2>כל תרגיל הוא<br>צעד קדימה.</h2><p>נתחיל במה שכבר יודעים, נחזק את מה שקצת קשה ונגלה דרכים פשוטות לחשב.</p><button class="primary" data-mode="mixed">בואו נתרגל <span aria-hidden="true">←</span></button><div class="hero-equation" dir="ltr" aria-hidden="true">7 × 8 = <span>56</span></div></section>
+                <section class="panel"><span class="pill">האתגר היומי</span><h2 style="margin-top:12px">עוד קצת, וזה שלכם</h2><div class="goal-number" dir="ltr">${num(today)} <span class="muted" style="font-size:1.3rem">/ ${state.settings.goal}</span></div><p class="muted small">שאלות שהושלמו היום, כולל חזרות</p><progress value="${Math.min(today, state.settings.goal)}" max="${state.settings.goal}" aria-label="התקדמות ליעד היומי"></progress><p style="margin-top:18px">${today >= state.settings.goal ? 'היעד הושלם! כל הכבוד על ההתמדה.' : 'גם כמה דקות של תרגול עושות הבדל.'}</p><p class="muted small" style="margin-top:10px">${n(due)} תרגילים מוכנים לחזרה · ${n(StatisticsManager.daysStreak())} ימי התמדה</p></section>
+              </div>
+              <div class="kpis"><div class="kpi"><strong>${pct(stats.accuracy)}</strong><span>דיוק בניסיון הראשון</span></div><div class="kpi"><strong>${n(stats.questions)}</strong><span>שאלות שהושלמו</span></div><div class="kpi"><strong>${n(state.bestStreak)}</strong><span>רצף השיא שלכם</span></div></div>
+              <section><h2 class="section-title">איך מתרגלים היום?</h2><div class="grid two mode-grid">${this.practiceCards()}</div></section>
+              <div class="note">ההתקדמות נשמרת רק בדפדפן ובמכשיר הזה. אין חשבון ואין שליחת נתונים. מחיקת נתוני הדפדפן תסיר את ההתקדמות.</div>
+            </div>`);
+        },
+        practiceCards() {
+          return [
+            ['digit', 'ספרה אחת, צעד צעד', 'מתמקדים בספרה שבוחרים.', '×'],
+            ['mixed', 'קצת מכל דבר', 'תרגול מעורב שמתאים את עצמו אליכם.', '⤨'],
+            ['advanced', 'מוכנים לאתגר?', 'מכפלות של מספרים מ־6 ומעלה.', '✦'],
+            ['weak', 'מחזקים את מה שקשה', 'חוזרים לתרגילים שצריכים עוד תרגול.', '↻'],
+            ['speed', 'דיוק בקצב מהיר', 'מודדים זמן ומשתפרים בלי לחץ.', 'ϟ'],
+            ['custom', 'בדיוק בשבילכם', 'קבוצות מספרים ותרגילים לבחירתכם.', '☷']
+          ].map(args => this.modeCard(...args)).join('');
+        },
+        practice() { screen = 'practice'; this.mount(`${this.title('תרגול', 'כל אחד והדרך שלו', 'בחרו מסלול, הגדירו את התרגול וצאו לדרך.')}<div class="grid two mode-grid">${this.practiceCards()}</div>`); },
+        tests() {
+          screen = 'tests';
+          this.mount(`${this.title('זמן לבדוק את עצמכם', 'מבחן קטן, תמונה גדולה', 'ניסיון אחד לכל שאלה. הפתרונות והמשוב מחכים לסוף המבחן.')}<div class="grid three">${[
+            ['testDigit', 'מבחן לפי ספרה', 'כמה טוב מכירים את המכפלות שלה?', '×'],
+            ['testCustom', 'מבחן לבחירתכם', 'הטווח, הרמה והכמות בידיים שלכם.', '☷'],
+            ['testWeak', 'מבחן חולשות', 'מתחילים בתרגילים הקשים ביותר שלכם.', '↗']
+          ].map(args => this.modeCard(...args)).join('')}</div><div class="note" style="margin-top:20px">השעון מודד זמן, אך אינו מגביל אותו. ציון המבחן הוא אחוז התשובות הנכונות. השוואה אישית מופיעה מול מבחן קודם באותן הגדרות.</div>`);
+        },
+        settings(mode = 'mixed', onlySettings = false) {
+          screen = 'settings'; configMode = mode; draft = JSON.parse(JSON.stringify(state.settings));
+          if (['mixed', 'speed'].includes(mode) && !onlySettings) draft.pool = 'range';
+          if (['digit', 'testDigit'].includes(mode)) draft.pool = 'digit';
+          if (['weak', 'testWeak'].includes(mode)) { draft.pool = 'hard'; draft.difficulty = 'adaptive'; }
+          if (mode === 'advanced') { draft.difficulty = 'challenge'; draft.pool = 'range'; }
+          if (mode === 'speed') draft.target = Math.min(draft.target, 5);
+          if (mode === 'custom' && !onlySettings) draft.pool = 'custom';
+          const modeNames = { mixed: 'תרגול מעורב', digit: 'תרגול לפי ספרה', advanced: 'תרגול מתקדם', weak: 'תרגול חולשות', speed: 'תרגול מהירות', custom: 'תרגול מותאם אישית', testDigit: 'מבחן לפי ספרה', testCustom: 'מבחן מותאם אישית', testWeak: 'מבחן חולשות' };
+          this.mount(`${this.title('מכוונים לפני שמתחילים', onlySettings ? 'הגדרות התרגול' : modeNames[mode], 'בחירה טובה היא כזו שמתאימה לכם היום.')}
+            <form id="settings-form" class="stack" novalidate>
+              <div class="grid two">
+                <section class="panel stack"><h2>הקצב והאתגר</h2><div class="fields">
+                  <label>מספר שאלות חדשות<input name="count" type="number" inputmode="numeric" min="1" max="100" value="${draft.count}" required></label>
+                  <label>זמן יעד לתשובה (שניות)<input name="target" type="number" inputmode="numeric" min="2" max="120" value="${draft.target}" required></label>
+                  <label>רמת קושי<select name="difficulty"><option value="adaptive">אדפטיבית — לפי הביצועים</option><option value="easy">בסיסית — גורם עד 5 או 10</option><option value="standard">רגילה — כל הטווח</option><option value="challenge">מאתגרת — שני גורמים מ־6</option></select></label>
+                  <label>יעד יומי<input name="goal" type="number" inputmode="numeric" min="1" max="200" value="${draft.goal}" required></label>
+                </div><label class="check"><input name="commutative" type="checkbox" ${draft.commutative ? 'checked' : ''}><span>שימוש בחוק החילוף<small class="muted" style="display:block">${equation({ a: 4, b: 6 })} ו־${equation({ a: 6, b: 4 })} נחשבים לשאלה חדשה אחת.</small></span></label>
+                <label class="check"><input name="unique" type="checkbox" ${draft.unique ? 'checked' : ''}><span>ללא שאלות חדשות כפולות</span></label>
+                <p class="note">חזרות לחיזוק מתווספות לכמות שנבחרה: אחרי ${n(3)} ו־${n(10)} שאלות נוספות ובסוף התרגול. אם צריך, יתווספו שאלות ביניים. במבחן אין חזרות.</p></section>
+                <section class="panel stack"><h2>המספרים שלכם</h2><fieldset><legend>טווחים מוכנים</legend><div class="chips">${[5, 10, 12, 20].map(max => `<button type="button" class="chip" data-range="${max}" dir="ltr" aria-pressed="${draft.min === 1 && draft.max === max}">1–${max}</button>`).join('')}</div></fieldset>
+                  <div class="fields"><label>מספר התחלה<input name="min" type="number" min="1" max="20" value="${draft.min}" required></label><label>מספר סיום<input name="max" type="number" min="1" max="20" value="${draft.max}" required></label><label class="span-all">הגבלת המספרים<select name="cap"><option value="10">עד 10</option><option value="12">עד 12</option><option value="20">עד 20</option></select></label></div>
+                  <p class="muted small">טווח מותאם אישית בין ${n(1)} ל־${n(20)}. ההגבלה חלה על שני הגורמים.</p>
+                </section>
+              </div>
+              <section class="panel stack"><h2>מה נכלול בתרגול?</h2><label>בחירת שאלות<select name="pool" ${['digit', 'testDigit', 'weak', 'testWeak'].includes(mode) ? 'disabled' : ''}>
+                <option value="range">כל המספרים בטווח — בחירה אדפטיבית</option><option value="digit">מספר מול כל המספרים</option><option value="group">קבוצה מול קבוצה</option><option value="specific">תרגילים ספציפיים בלבד</option><option value="random">אקראי מלא בטווח</option><option value="hard">שאלות קשות בלבד</option><option value="slow">שאלות איטיות בלבד</option><option value="errors">שאלות שבהן היו טעויות</option><option value="custom">מספרים לבחירתי מול הטווח</option>
+              </select></label>
+              <div id="digit-options"><label>איזו ספרה מתרגלים?<select name="digit">${range(1, MAX_FACTOR).map(value => `<option value="${value}">${value}</option>`).join('')}</select></label></div>
+              <div id="group-a-options"><fieldset><legend>קבוצה ראשונה / המספרים שלי</legend><div class="chips">${this.groupChips('groupA')}</div></fieldset></div>
+              <div id="group-b-options"><fieldset><legend>קבוצה שנייה</legend><div class="chips">${this.groupChips('groupB')}</div></fieldset></div>
+              <div id="specific-options"><label for="specifics">תרגיל אחד בכל שורה, למשל <bdi dir="ltr">6 × 7</bdi></label><textarea name="specifics" id="specifics" dir="ltr" spellcheck="false">${escapeHtml(draft.specifics)}</textarea></div>
+              <p class="note">למידת הביצועים משותפת תמיד לשתי צורות חוק החילוף. ״קשות״ כוללות טעויות, צורך ברמזים או זמן מענה ארוך. ״איטיות״ הן שאלות שזמן המענה הממוצע שלהן גבוה מזמן היעד שנמדד באותם תרגולים.</p>
+              </section>
+              <div id="settings-preview" class="status" role="status"></div><div id="settings-error" class="error" role="alert" hidden></div>
+              <div class="row"><button class="primary" type="submit">${mode.startsWith('test') ? 'מתחילים מבחן' : 'מתחילים לתרגל'} ←</button><button type="button" data-action="save-settings">שמירת הגדרות</button></div>
+            </form>
+            <section class="panel" style="margin-top:24px"><h2>הנתונים שלכם</h2><p class="muted small" style="margin:8px 0 16px">הגיבוי מכיל את כל הנתונים כקובץ JSON. נשמרים עד ${n(MAX_SESSIONS)} סיכומי סשנים ועד ${n(MAX_EVENTS)} ניסיונות אחרונים; הסכומים המצטברים נשמרים ללא הגבלה.</p><div class="row"><button data-action="export">ייצוא גיבוי</button><button class="danger" data-action="reset">איפוס כל ההתקדמות</button></div></section>`);
+          ['difficulty', 'cap', 'pool', 'digit'].forEach(name => $(`[name="${name}"]`).value = draft[name]);
+          this.settingsOptions(); this.preview();
+        },
+        groupChips(group) { return range(1, MAX_FACTOR).map(value => `<button type="button" class="chip number" data-group="${group}" data-value="${value}" aria-pressed="${draft[group].includes(value)}">${value}</button>`).join(''); },
+        settingsOptions() {
+          const pool = $('[name="pool"]').value;
+          $('#digit-options').hidden = pool !== 'digit';
+          $('#group-a-options').hidden = !['group', 'custom'].includes(pool);
+          $('#group-b-options').hidden = pool !== 'group';
+          $('#specific-options').hidden = pool !== 'specific';
+          const min = Number($('[name="min"]').value), max = Number($('[name="max"]').value), cap = Number($('[name="cap"]').value);
+          $$('[data-group]').forEach(button => button.disabled = Number(button.dataset.value) < min || Number(button.dataset.value) > Math.min(max, cap));
+          $$('[data-range]').forEach(button => button.setAttribute('aria-pressed', String(min === 1 && max === Number(button.dataset.range))));
+        },
+        readSettings() {
+          const settings = { ...draft };
+          ['count', 'target', 'min', 'max', 'cap', 'digit', 'goal'].forEach(key => settings[key] = Number($(`[name="${key}"]`).value));
+          const limits = { count: [1, 100], target: [2, 120], min: [1, 20], max: [1, 20], cap: [10, 20], digit: [1, 20], goal: [1, 200] };
+          for (const [key, [min, max]] of Object.entries(limits)) {
+            if (!Number.isInteger(settings[key]) || settings[key] < min || settings[key] > max) throw new Error('יש להזין מספרים שלמים בטווחים המותרים בכל השדות.');
+          }
+          if (settings.min > settings.max) throw new Error('מספר ההתחלה חייב להיות קטן ממספר הסיום או שווה לו.');
+          if (settings.max > settings.cap) throw new Error('מספר הסיום גבוה מההגבלה. הגדילו את ההגבלה או הקטינו את הטווח.');
+          ['difficulty', 'pool', 'specifics'].forEach(key => settings[key] = $(`[name="${key}"]`).value);
+          ['commutative', 'unique'].forEach(key => settings[key] = $(`[name="${key}"]`).checked);
+          return settings;
+        },
+        preview() {
+          try {
+            const settings = this.readSettings(), pool = QuestionEngine.pool(settings, configMode);
+            const count = settings.unique ? Math.min(settings.count, pool.length) : settings.count;
+            $('#settings-preview').innerHTML = `התרגול יכלול ${n(count)} שאלות חדשות מתוך ${n(pool.length)} אפשרויות.${count < settings.count ? ' הכמות צומצמה כדי למנוע כפילויות.' : ''}`;
+          } catch (error) { $('#settings-preview').textContent = error.message; }
+        },
+        feedback(message, type) { const node = $('#feedback'); if (node) { node.textContent = message; node.className = `feedback ${type}`; } },
+        answerOptions(q, test) {
+          const lastAnswer = q.answers[q.answers.length - 1];
+          return `<fieldset class="answer-options" aria-describedby="feedback"><legend dir="rtl">בחרו את התשובה הנכונה</legend><div class="answer-grid" dir="ltr">${q.choices.map(value => {
+            const selected = value === lastAnswer;
+            const correct = !test && Boolean(q.result) && value === q.a * q.b;
+            const wrong = !test && q.answers.includes(value) && value !== q.a * q.b;
+            const status = correct ? '✓ נכון' : wrong ? 'נסו שוב' : selected ? 'נבחרה' : '';
+            const className = correct ? 'correct' : wrong ? 'wrong' : selected ? 'selected' : '';
+            return `<button type="button" class="answer-choice ${className}" data-answer="${value}" aria-pressed="${selected}" aria-label="תשובה ${value}${status ? `, ${status}` : ''}" ${q.result ? 'disabled' : ''}><bdi class="number" dir="ltr">${value}</bdi><span class="choice-status" dir="rtl" aria-hidden="true">${status}</span></button>`;
+          }).join('')}</div></fieldset>`;
+        },
+        question(focus) {
+          const session = state.active;
+          if (!session) { this.home(); return; }
+          screen = 'session';
+          const q = session.current, result = q.result, revealed = result?.revealed;
+          const kindLabel = { base: 'שאלה חדשה', review3: 'חזרה אחרי 3 שאלות', review10: 'חזרה אחרי 10 שאלות', spacing: 'תרגול בין חזרות', final: 'חיזוק מסכם' }[q.kind];
+          const completedBase = session.results.filter(r => r.kind === 'base').length;
+          const remaining = session.baseGoal - completedBase + session.pending.length + session.finalReviews.length + (q.kind !== 'base' && !result ? 1 : 0);
+          const progressMax = Math.max(1, session.completed + remaining);
+          this.mount(`<div class="session"><div class="session-head"><div class="session-meta"><h1 style="font-size:1.45rem">${session.test ? 'בודקים את עצמנו' : 'כופלים ומתקדמים'}</h1><button data-action="pause">${session.paused ? 'המשך' : 'השהיה'}</button></div><div class="row between small muted"><span>${n(completedBase)} מתוך ${n(session.baseGoal)} שאלות חדשות הושלמו</span><span>${session.test ? 'ניסיון אחד לשאלה' : `ניקוד: ${n(session.points)} · רצף: ${n(state.streak)}`}</span></div><progress value="${session.completed}" max="${progressMax}" aria-label="התקדמות בתרגול"></progress><p class="small muted">${session.test ? 'הפתרונות יופיעו בסיום.' : `הושלמו ${n(session.completed)} שאלות כולל חזרות. מספר השאלות גדל כשנדרש חיזוק.`}</p></div>
+              ${session.paused ? `<section class="panel" style="text-align:center"><h2>לוקחים רגע לנשום</h2><p style="margin:12px 0">הזמן נעצר. ממשיכים כשמוכנים.</p><button class="primary" data-action="resume">ממשיכים</button></section>` : `
+              <div class="question-card ${result?.correct && !session.test ? 'good' : ''}" dir="ltr">
+                <span class="pill" dir="rtl">${session.test ? `שאלה ${n(session.completed + (result ? 0 : 1))} מתוך ${n(session.baseGoal)}` : kindLabel}</span>
+                <div id="question-text" class="equation" dir="ltr" aria-label="${q.a} כפול ${q.b}, כמה הם?">${q.a} × ${q.b} = ?</div>
+                ${this.answerOptions(q, session.test)}
+                <div id="feedback" role="status" aria-live="polite" dir="rtl" class="feedback ${result?.correct && !session.test ? 'correct' : q.message ? 'wrong' : ''}">${result ? (session.test ? 'התשובה נשמרה.' : revealed ? 'לומדים יחד, וממשיכים לנסות.' : result.first ? 'בדיוק! כל הכבוד ✦' : 'הצלחתם! ההתמדה השתלמה.') : escapeHtml(q.message || '')}</div>
+                <div class="timer-strip" dir="rtl"><span>זמן: <bdi id="timer" dir="ltr">${num(q.elapsed / 1000, 1)}</bdi> שנ׳</span><span>יעד: ${n(session.settings.target)} שנ׳</span>${!session.test ? `<span>ניסיונות: <bdi dir="ltr">${q.attempts} / ${MAX_ATTEMPTS}</bdi></span>` : ''}</div>
+              </div>
+              ${q.hint && !session.test ? `<section class="hint-box" aria-label="רמז לתרגיל" aria-live="polite">${HintEngine.render(q, q.hint)}</section>` : ''}
+              <div class="row between" style="margin-top:16px">${!session.test && !result ? `<button data-action="hint">${q.hint === 4 ? 'הצגת פתרון מלא' : q.hint ? 'עוד רמז, בבקשה' : 'אפשר רמז?'}</button>` : '<span></span>'}${result ? '<button class="primary" data-action="next">ממשיכים ←</button>' : ''}</div>`}
+              <div class="row between" style="margin-top:22px"><button data-nav="home">שמירה וחזרה לבית</button><button class="danger" data-action="finish">סיום מוקדם</button></div>
+            </div>`, focus);
+          if (!session.paused && !result) {
+            const lastAnswer = q.answers[q.answers.length - 1];
+            const button = $(`[data-answer="${lastAnswer}"]`) || $('[data-answer]');
+            button.focus({ preventScroll: true });
+          }
+        },
+        summary(session) {
+          screen = 'summary';
+          const mistakes = session.results.filter(r => !r.first);
+          this.mount(`${this.title(session.test ? 'תוצאות המבחן' : 'עוד צעד מאחוריכם', session.partial ? 'עצרתם כאן. ההתקדמות נשמרה.' : 'כל הכבוד על התרגול!', session.partial ? 'זהו סיכום חלקי; הוא לא ישמש להשוואת מבחנים או מגמות.' : 'מסתכלים על ההתקדמות, וממשיכים ממנה.')}
+            <div class="stack"><div class="grid two"><section class="score-card"><p>${session.partial ? 'דיוק בחלק שהושלם' : session.test ? 'ציון המבחן' : 'דיוק בניסיון הראשון, ללא עזרה'}</p><div class="score-value" dir="ltr">${num(session.score)}%</div><p>${n(session.results.filter(r => r.first).length)} מתוך ${n(session.results.length)} שאלות</p></section><section class="panel stack"><h2>הדרך שעשיתם</h2><p>זמן ממוצע לשאלה: <strong>${seconds(session.averageMs)}</strong></p><p>ניקוד שנצבר: <strong>${n(session.points)}</strong></p><p>תשובות נכונות, גם לאחר ניסיון חוזר: <strong>${n(session.results.filter(r => r.correct).length)}</strong></p>${session.test && !session.partial ? TestEngine.comparison(session) : '<p class="muted small">כל ניסיון הוא הזדמנות לזהות מה כדאי לחזק.</p>'}</section></div>
+            <section class="panel"><h2>${mistakes.length ? 'התרגילים שכדאי לחזק' : 'הכול הצליח בניסיון הראשון!'}</h2>${mistakes.length ? `<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>תרגיל</th><th>התשובות שלכם</th><th>פתרון</th><th>ניסיונות</th><th>זמן</th><th>עזרה</th></tr></thead><tbody>${mistakes.map(r => `<tr><td>${equation(r)}</td><td><bdi dir="ltr">${r.answers.length ? r.answers.join(', ') : '—'}</bdi></td><td>${n(r.a * r.b)}</td><td>${n(r.attempts)}</td><td>${seconds(r.ms)}</td><td>${r.revealed ? 'פתרון נחשף' : r.hint ? `רמז ${n(r.hint)}` : 'ללא רמז'}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted" style="margin-top:10px">אפשר להגדיל את הטווח או לנסות אתגר חדש.</p>'}</section>
+            <div class="row"><button class="primary" data-mode="${session.mode}">תרגול נוסף</button><button data-mode="weak">תרגול חולשות</button><button data-nav="stats">הסטטיסטיקות שלי</button><button data-nav="home">לבית</button></div></div>`);
+        },
+        chart(values, label, suffix = '%', fixedMax = 100) {
+          if (!values.length) return '<p class="muted">הגרף יופיע לאחר תרגול.</p>';
+          const max = Math.max(fixedMax, ...values, 1), width = 420, height = 160, left = 40, right = 405, top = 15, bottom = 126;
+          const points = values.map((value, index) => [values.length === 1 ? (left + right) / 2 : left + index * (right - left) / (values.length - 1), bottom - value / max * (bottom - top)]);
+          return `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${label}" dir="ltr"><title>${label}</title>${[0, .5, 1].map(r => `<line x1="${left}" y1="${bottom - r * (bottom - top)}" x2="${right}" y2="${bottom - r * (bottom - top)}" stroke="#dce6e0"/><text x="32" y="${bottom - r * (bottom - top) + 4}" text-anchor="end">${num(max * r, 1)}</text>`).join('')}<polyline points="${points.map(p => p.join(',')).join(' ')}" fill="none" stroke="#12685f" stroke-width="3" stroke-linejoin="round"/>${points.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="4" fill="#12685f"><title>${num(values[i], 1)}${suffix}</title></circle>`).join('')}<text x="${left}" y="150">1</text><text x="${right}" y="150" text-anchor="end">${values.length}</text></svg>`;
+        },
+        rank(title, rows, metric) {
+          return `<section class="panel"><h3>${title}</h3>${rows.length ? rows.slice(0, 5).map(s => `<div class="rank"><strong>${equation(s)}</strong><span>${metric(s)}</span></div>`).join('') : '<p class="muted small" style="margin-top:12px">עדיין אין נתונים להצגה.</p>'}</section>`;
+        },
+        stats() {
+          screen = 'stats';
+          const total = StatisticsManager.overall(), digits = StatisticsManager.byDigit().filter(x => x.count);
+          const facts = Object.values(state.facts).filter(s => s.questions);
+          const days = Object.entries(state.days).sort((a, b) => a[0].localeCompare(b[0])).slice(-14);
+          const sessions = state.sessions.filter(s => !s.partial).slice(-12);
+          const trend = StatisticsManager.trend();
+          this.mount(`${this.title('רואים את הדרך', 'ההתקדמות שלכם', 'כל הנתונים אמיתיים ומתעדכנים אחרי כל שאלה.')}
+            <div class="stack"><div class="kpis"><div class="kpi"><strong>${pct(total.accuracy)}</strong><span>דיוק בניסיון ראשון</span></div><div class="kpi"><strong>${n(total.averageMs / 1000, 1)}</strong><span>שניות לשאלה</span></div><div class="kpi"><strong>${n(state.bestStreak)}</strong><span>רצף שיא</span></div></div>
+            <div class="panel row between"><span>תשובות נכונות: <strong>${n(total.correct)}</strong></span><span>תשובות שגויות: <strong>${n(total.wrong)}</strong></span><span>שאלות שהושלמו: <strong>${n(total.questions)}</strong></span><span>ניקוד: <strong>${n(state.points)}</strong></span></div>
+            <p class="note">דיוק נמדד לפי הצלחה בניסיון ראשון ללא רמז. מוני התשובות כוללים את כל הניסיונות. זמני השאלה כוללים חשיבה ורמזים, ללא השהיות. נתוני ספרה כוללים כל תרגיל שבו היא אחד הגורמים. נתוני תרגיל מאחדים את שתי צורות חוק החילוף.</p>
+            <div class="grid two"><section class="panel chart-panel"><h3>גרף הצלחה · אחוזים לפי יום</h3>${this.chart(days.map(([, d]) => percent(d.firstCorrect, d.questions)), 'אחוז הצלחה בכל יום תרגול')}<p class="muted small">${days.length ? `<bdi dir="ltr">${days[0][0]} — ${days[days.length - 1][0]}</bdi> · עד 14 ימי תרגול אחרונים` : 'מתחילים לתרגל כדי לגלות את המגמה.'}</p></section>
+            <section class="panel chart-panel"><h3>גרף מהירות · שניות לפי יום</h3>${this.chart(days.map(([, d]) => d.totalMs / d.questions / 1000), 'זמן ממוצע בשניות בכל יום תרגול', ' שניות', 1)}<p class="muted small">פחות שניות = מענה מהיר יותר. שומרים גם על דיוק.</p></section>
+            <section class="panel chart-panel"><h3>גרף שיפור · דיוק בסשנים</h3>${this.chart(sessions.map(s => s.score), 'דיוק בסשנים האחרונים שהושלמו')}<p class="muted small">${trend ? `ממוצע קודם: ${pct(trend.previous)} · ממוצע אחרון: ${pct(trend.recent)}${trend.improvement !== null ? ` · שינוי יחסי: ${pct(trend.improvement)}` : ''}` : 'השוואת ממוצעים תופיע אחרי 6 סשנים מלאים.'}</p><p class="muted small">הגרף כולל מסלולים ורמות שונות; זו מגמה כללית.</p></section>
+            <section class="panel chart-panel"><h3>גרף לפי ספרה · אחוזי דיוק</h3><div class="bar-chart">${digits.length ? digits.map(d => `<div class="bar-row"><span>${n(d.digit)}</span><div class="track" role="img" aria-label="ספרה ${d.digit}: ${num(d.accuracy)} אחוז"><div class="fill" style="width:${d.accuracy}%"></div></div><span>${pct(d.accuracy)}</span></div>`).join('') : '<p class="muted">עדיין אין נתונים.</p>'}</div></section></div>
+            <div class="grid three">${this.rank('התרגילים הקשים ביותר', [...facts].sort((a, b) => AdaptiveLearningEngine.score(b) - AdaptiveLearningEngine.score(a)), s => `קושי ${n(AdaptiveLearningEngine.score(s))} / ${n(100)}`)}${this.rank('התרגילים האיטיים ביותר', [...facts].sort((a, b) => b.totalMs / b.questions - a.totalMs / a.questions), s => seconds(s.totalMs / s.questions))}${this.rank('התרגילים עם הכי הרבה טעויות', facts.filter(s => s.wrong).sort((a, b) => b.wrong - a.wrong), s => `${n(s.wrong)} טעויות`)}</div>
+            <section class="panel"><h2>ביצועים לפי ספרה</h2><div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>ספרה</th><th>שאלות</th><th>דיוק</th><th>זמן ממוצע</th></tr></thead><tbody>${digits.map(d => `<tr><td>${n(d.digit)}</td><td>${n(d.count)}</td><td>${pct(d.accuracy)}</td><td>${seconds(d.ms)}</td></tr>`).join('') || '<tr><td colspan="4">לא הושלמו שאלות עדיין.</td></tr>'}</tbody></table></div></section>
+            <section class="panel"><h2>כל תרגיל וההתקדמות שלו</h2><label style="margin-top:12px">סינון לפי ספרה<select id="fact-filter"><option value="all">כל הספרות</option>${range(1, 20).map(value => `<option value="${value}">${value}</option>`).join('')}</select></label><div id="fact-table" style="margin-top:14px">${this.factTable('all')}</div></section>
+            <section class="panel"><details><summary>נתוני הגרפים ופירוט זמני המענה</summary><div class="table-wrap"><table><caption>נתוני הגרפים היומיים</caption><thead><tr><th>תאריך</th><th>שאלות</th><th>דיוק</th><th>ממוצע</th></tr></thead><tbody>${days.map(([day, d]) => `<tr><td><bdi dir="ltr">${day}</bdi></td><td>${n(d.questions)}</td><td>${pct(percent(d.firstCorrect, d.questions))}</td><td>${seconds(d.totalMs / d.questions)}</td></tr>`).join('')}</tbody></table></div><div class="table-wrap" style="margin-top:14px"><table><caption>סשנים אחרונים שהושלמו</caption><thead><tr><th>תאריך</th><th>סוג</th><th>דיוק</th><th>ממוצע</th></tr></thead><tbody>${sessions.map(s => `<tr><td><bdi dir="ltr">${dateLabel(s.at)}</bdi></td><td>${s.test ? 'מבחן' : 'תרגול'}</td><td>${pct(s.score)}</td><td>${seconds(s.averageMs)}</td></tr>`).join('')}</tbody></table></div><div class="table-wrap" style="margin-top:14px"><table><caption>20 הניסיונות האחרונים · זמן כולל כולל השהיות</caption><thead><tr><th>תרגיל</th><th>הוצג</th><th>נענה</th><th>תגובה פעילה מצטברת</th><th>זמן כולל</th></tr></thead><tbody>${state.events.slice(-20).reverse().map(e => `<tr><td>${equation(e)}</td><td><bdi dir="ltr">${new Date(e.shownAt).toLocaleString('he-IL')}</bdi></td><td><bdi dir="ltr">${new Date(e.answeredAt).toLocaleString('he-IL')}</bdi></td><td>${seconds(e.reactionMs)}</td><td>${seconds(e.totalReactionMs)}</td></tr>`).join('')}</tbody></table></div></details></section></div>`);
+        },
+        factTable(filter) {
+          const rows = Object.values(state.facts).filter(s => s.questions && (filter === 'all' || s.a === Number(filter) || s.b === Number(filter))).sort((a, b) => AdaptiveLearningEngine.score(b) - AdaptiveLearningEngine.score(a));
+          return `<div class="table-wrap"><table><thead><tr><th>תרגיל</th><th>נכונות / שגויות</th><th>דיוק</th><th>ממוצע</th><th>מינ׳</th><th>מקס׳</th><th>מהירות / איטיות</th><th>ניסיונות בממוצע</th><th>קושי</th><th>תרגול אחרון</th></tr></thead><tbody>${rows.map(s => `<tr><td>${equation(s)}</td><td><bdi dir="ltr">${s.correct} / ${s.wrong}</bdi></td><td>${pct(percent(s.firstCorrect, s.questions))}</td><td>${seconds(s.totalMs / s.questions)}</td><td>${seconds(s.minMs)}</td><td>${seconds(s.maxMs)}</td><td><bdi dir="ltr">${s.fast} / ${s.slow}</bdi></td><td>${n(s.attempts / s.questions, 1)}</td><td>${n(AdaptiveLearningEngine.score(s))}</td><td><bdi dir="ltr">${dateLabel(s.lastAt)}</bdi></td></tr>`).join('') || '<tr><td colspan="10">אין עדיין נתונים לבחירה זו.</td></tr>'}</tbody></table></div>`;
+        },
+        medals() {
+          screen = 'medals'; const progress = AchievementManager.progress();
+          this.mount(`${this.title('חוגגים את הדרך', 'ההישגים שלכם', 'דיוק, הבנה והתמדה — לכל התקדמות יש מקום.')}<div class="grid two three">${AchievementManager.definitions.map(item => {
+            const earned = state.achievements[item.id], value = earned ? item.goal : Math.min(item.goal, progress[item.id]);
+            return `<section class="panel medal ${earned ? 'unlocked' : ''}"><div class="medal-symbol" aria-hidden="true">${item.symbol}</div><h2>${item.title}</h2><p class="muted small">${item.description}</p><progress max="${item.goal}" value="${value}" aria-label="התקדמות בהישג ${item.title}"></progress><div class="small" style="margin-top:10px">${earned ? `הושג ב־<bdi dir="ltr">${dateLabel(earned)}</bdi>` : `<bdi dir="ltr">${num(value)} / ${item.goal}</bdi> · בדרך לשם`}</div></section>`;
+          }).join('')}</div>`);
+        }
+      };
+
+      // Event routing and accessible confirmation. Navigation pauses, never discards a session.
+      function navigate(destination) {
+        if (state.active && screen === 'session') SessionEngine.pause();
+        if (destination === 'settings') UIRenderer.settings('mixed', true);
+        else if (destination === 'practice' && state.active && !state.active.test) SessionEngine.resume();
+        else if (destination === 'tests' && state.active?.test) SessionEngine.resume();
+        else UIRenderer[destination]();
+      }
+      function confirmAction(title, message, action, buttonLabel = 'אישור') {
+        $('#dialog-title').textContent = title; $('#dialog-text').textContent = message;
+        $('#dialog-confirm').textContent = buttonLabel;
+        $('#dialog-confirm').onclick = () => { $('#confirm-dialog').close(); action(); };
+        $('#confirm-dialog').showModal(); $('#dialog-cancel').focus();
+      }
+      function saveOrStart(start) {
+        try {
+          const settings = UIRenderer.readSettings();
+          QuestionEngine.pool(settings, configMode);
+          $('#settings-error').hidden = true;
+          if (!start) { state.settings = settings; StorageManager.save(); UIRenderer.toast('ההגדרות נשמרו'); return; }
+          const run = () => SessionEngine.start(settings, configMode);
+          if (state.active) confirmAction('מתחילים תרגול חדש?', 'הסשן הקודם יסתיים. התשובות שכבר נענו יישמרו בסיכום חלקי.', () => { SessionEngine.finish(true); run(); }, 'סיום הקודם והתחלה');
+          else run();
+        } catch (error) { $('#settings-error').textContent = error.message; $('#settings-error').hidden = false; $('#settings-error').scrollIntoView({ block: 'nearest' }); }
+      }
+      document.addEventListener('submit', event => {
+        if (event.target.id === 'settings-form') { event.preventDefault(); saveOrStart(true); }
+      });
+      document.addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (!button || button.disabled) return;
+        if (button.dataset.answer !== undefined) { RetryEngine.submit(button.dataset.answer); return; }
+        if (button.dataset.nav) { navigate(button.dataset.nav); return; }
+        if (button.dataset.mode) { if (state.active) SessionEngine.pause(); UIRenderer.settings(button.dataset.mode); return; }
+        if (button.dataset.range) {
+          const max = Number(button.dataset.range);
+          $('[name="min"]').value = 1; $('[name="max"]').value = max; $('[name="cap"]').value = max <= 10 ? 10 : max;
+          UIRenderer.settingsOptions(); UIRenderer.preview(); return;
+        }
+        if (button.dataset.group) {
+          const group = button.dataset.group, value = Number(button.dataset.value);
+          draft[group] = draft[group].includes(value) ? draft[group].filter(x => x !== value) : [...draft[group], value].sort((a, b) => a - b);
+          button.setAttribute('aria-pressed', String(draft[group].includes(value))); UIRenderer.preview(); return;
+        }
+        const actions = {
+          resume: () => SessionEngine.resume(),
+          pause: () => { if (state.active.paused) SessionEngine.resume(); else { SessionEngine.pause(); UIRenderer.question(false); } },
+          hint: () => RetryEngine.hint(), next: () => { if (state.active?.current.result) SessionEngine.next(); },
+          'save-settings': () => saveOrStart(false), export: () => StorageManager.export(),
+          finish: () => { SessionEngine.pause(); UIRenderer.question(false); confirmAction('מסיימים להיום?', 'השאלות שהושלמו יישמרו. מבחן שלא הושלם לא ישמש להשוואת ציונים.', () => SessionEngine.finish(true), 'סיום ושמירה'); },
+          reset: () => confirmAction('לאפס את כל ההתקדמות?', 'כל התרגולים, הנתונים והמדליות בדפדפן הזה יימחקו. אפשר לייצא גיבוי לפני האיפוס.', () => {
+            clearTimeout(transitionTimer); SessionClock.stop(); state = StorageManager.fresh();
+            StorageManager.writable = true; StorageManager.warning = ''; StorageManager.save();
+            UIRenderer.storageNotice(); UIRenderer.home();
+          }, 'מחיקת כל ההתקדמות')
+        };
+        actions[button.dataset.action]?.();
+      });
+      document.addEventListener('input', event => {
+        if (event.target.closest('#settings-form')) { UIRenderer.settingsOptions(); UIRenderer.preview(); }
+      });
+      document.addEventListener('change', event => {
+        if (event.target.id === 'fact-filter') $('#fact-table').innerHTML = UIRenderer.factTable(event.target.value);
+      });
+      $('#dialog-cancel').addEventListener('click', () => $('#confirm-dialog').close());
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && state.active && screen === 'session') { SessionEngine.pause(); UIRenderer.question(false); }
+      });
+      window.addEventListener('pagehide', () => { SessionClock.sync(); StorageManager.save(); });
+      window.addEventListener('storage', event => {
+        if (event.key === KEY) {
+          StorageManager.writable = false;
+          if (state.active) SessionEngine.pause();
+          StorageManager.warning = 'הנתונים השתנו בלשונית אחרת. רעננו את העמוד לפני המשך כדי למנוע דריסת התקדמות.';
+          UIRenderer.storageNotice();
+          if (screen === 'session') UIRenderer.question(false);
+        }
+      });
+      setInterval(() => {
+        const timer = $('#timer');
+        if (timer && SessionClock.running) timer.textContent = num(SessionClock.value() / 1000, 1);
+      }, 100);
+      setInterval(() => { if (SessionClock.running) { SessionClock.sync(); StorageManager.save(); } }, 5000);
+      if (state.active) state.active.paused = true;
+      UIRenderer.storageNotice(); UIRenderer.home();
+    })();
+  </script>
+</body>
+</html>

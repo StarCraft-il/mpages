@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>27-Minute Mental Math Trainer</title>
+<style>
+  :root {
+    font-family: Segoe UI, Arial, sans-serif;
+  }
+  body {
+    margin: 0;
+    background: #f4f6f8;
+    color: #1f2937;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+  }
+  .app {
+    width: min(760px, 92vw);
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.10);
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+  }
+  .subtitle {
+    margin: 0 0 24px;
+    color: #6b7280;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat b {
+    display: block;
+    font-size: 22px;
+  }
+  .question {
+    text-align: center;
+    font-size: 46px;
+    font-weight: 700;
+    margin: 28px 0;
+    letter-spacing: 1px;
+  }
+  .answer-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  input {
+    font-size: 30px;
+    width: 180px;
+    text-align: center;
+    padding: 12px 14px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    outline: none;
+  }
+  input:focus {
+    border-color: #2563eb;
+  }
+  button {
+    font-size: 18px;
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  #checkBtn {
+    background: #2563eb;
+    color: white;
+  }
+  #nextBtn {
+    background: #e5e7eb;
+    color: #111827;
+  }
+  .feedback {
+    min-height: 36px;
+    margin: 20px 0 8px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .hint {
+    text-align: center;
+    color: #6b7280;
+    margin-top: 12px;
+  }
+  .settings {
+    margin-top: 24px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 18px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  select {
+    padding: 7px 10px;
+    font-size: 16px;
+  }
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .question { font-size: 36px; }
+    .answer-row { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>27-Minute Mental Math Trainer</h1>
+  <p class="subtitle">Add 27 minutes as fast as possible. Tip: think <b>+30 − 3</b>.</p>
+
+  <div class="stats">
+    <div class="stat"><span>Correct</span><b id="correct">0</b></div>
+    <div class="stat"><span>Wrong</span><b id="wrong">0</b></div>
+    <div class="stat"><span>Streak</span><b id="streak">0</b></div>
+    <div class="stat"><span>Avg Time</span><b id="avg">0.0s</b></div>
+  </div>
+
+  <div class="question" id="question">--:-- + 27 min</div>
+
+  <div class="answer-row">
+    <input id="answer" inputmode="numeric" autocomplete="off" placeholder="HH:MM" maxlength="5">
+    <button id="checkBtn">Check</button>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="hint">Press Enter to check. Press Enter again for the next question.</div>
+
+  <div class="settings">
+    <label>
+      Difficulty:
+      <select id="difficulty">
+        <option value="easy">Easy - whole hours / simple minutes</option>
+        <option value="normal" selected>Normal - random time</option>
+        <option value="hard">Hard - random time, no hint</option>
+      </select>
+    </label>
+
+    <button id="resetBtn">Reset Score</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const q = document.getElementById('question');
+  const answer = document.getElementById('answer');
+  const feedback = document.getElementById('feedback');
+  const correctEl = document.getElementById('correct');
+  const wrongEl = document.getElementById('wrong');
+  const streakEl = document.getElementById('streak');
+  const avgEl = document.getElementById('avg');
+  const difficulty = document.getElementById('difficulty');
+
+  let currentMinutes = 0;
+  let expected = "";
+  let startedAt = 0;
+  let answered = false;
+
+  let correct = 0;
+  let wrong = 0;
+  let streak = 0;
+  let totalTime = 0;
+  let answeredCount = 0;
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function formatTime(totalMinutes) {
+    totalMinutes = ((totalMinutes % 1440) + 1440) % 1440;
+    return `${pad(Math.floor(totalMinutes / 60))}:${pad(totalMinutes % 60)}`;
+  }
+
+  function randomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  function makeQuestion() {
+    const mode = difficulty.value;
+    let hour = randomInt(24);
+    let minute;
+
+    if (mode === 'easy') {
+      const options = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+      minute = options[randomInt(options.length)];
+    } else {
+      minute = randomInt(60);
+    }
+
+    currentMinutes = hour * 60 + minute;
+    expected = formatTime(currentMinutes + 27);
+
+    q.textContent = `${formatTime(currentMinutes)} + 27 min`;
+    feedback.textContent = "";
+    answer.value = "";
+    answered = false;
+    startedAt = performance.now();
+    answer.focus();
+  }
+
+  function normalizeInput(value) {
+    const digits = value.replace(/\D/g, '');
+
+    if (digits.length === 4) {
+      return digits.slice(0, 2) + ':' + digits.slice(2);
+    }
+
+    const m = value.match(/^(\d{1,2}):(\d{2})$/);
+    if (m) {
+      return `${pad(Number(m[1]))}:${m[2]}`;
+    }
+
+    return value.trim();
+  }
+
+  function checkAnswer() {
+    if (answered) {
+      makeQuestion();
+      return;
+    }
+
+    const userAnswer = normalizeInput(answer.value);
+
+    if (!/^\d{2}:\d{2}$/.test(userAnswer)) {
+      feedback.textContent = "Enter time as HH:MM, for example 17:05.";
+      answer.focus();
+      return;
+    }
+
+    const elapsed = (performance.now() - startedAt) / 1000;
+    totalTime += elapsed;
+    answeredCount++;
+
+    if (userAnswer === expected) {
+      correct++;
+      streak++;
+      feedback.textContent = `Correct ✓  ${expected}   (${elapsed.toFixed(1)}s)`;
+    } else {
+      wrong++;
+      streak = 0;
+      feedback.textContent = `Wrong ✗  Correct answer: ${expected}   (${elapsed.toFixed(1)}s)`;
+    }
+
+    answered = true;
+    updateStats();
+  }
+
+  function updateStats() {
+    correctEl.textContent = correct;
+    wrongEl.textContent = wrong;
+    streakEl.textContent = streak;
+    avgEl.textContent = answeredCount ? `${(totalTime / answeredCount).toFixed(1)}s` : "0.0s";
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+  document.getElementById('nextBtn').addEventListener('click', makeQuestion);
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    correct = 0;
+    wrong = 0;
+    streak = 0;
+    totalTime = 0;
+    answeredCount = 0;
+    updateStats();
+    makeQuestion();
+  });
+
+  difficulty.addEventListener('change', makeQuestion);
+
+  answer.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      checkAnswer();
+    }
+  });
+
+  answer.addEventListener('input', () => {
+    const digits = answer.value.replace(/\D/g, '');
+    if (digits.length === 4 && !answer.value.includes(':')) {
+      answer.value = digits.slice(0, 2) + ':' + digits.slice(2);
+    }
+  });
+
+  makeQuestion();
+})();
+</script>
+</body>
+</html>
