@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>לוח הכפל המותאם</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f0f4f8; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .card { background: white; max-width: 450px; width: 100%; border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+    .equation { font-size: 2.2rem; font-weight: bold; margin: 20px 0; direction: ltr; display: inline-block; }
+    .input-box { font-size: 1.8rem; width: 100px; text-align: center; border: 2px solid #3b82f6; border-radius: 10px; padding: 5px; margin-top: 10px; }
+    .btn { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; margin-top: 15px; width: 100%; }
+    .btn:active { transform: scale(0.98); }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    .key { background: #e2e8f0; border: none; padding: 15px; font-size: 1.5rem; border-radius: 10px; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>תרגול לוח הכפל</h2>
+    <div id="stats">הצלחות: <span id="score">0</span></div>
+    <div class="equation" id="eq">3 × 4 = ?</div>
+    <br>
+    <input type="number" id="ans" class="input-box" readonly>
+    <div class="keypad">
+      <button class="key" onclick="press('1')">1</button>
+      <button class="key" onclick="press('2')">2</button>
+      <button class="key" onclick="press('3')">3</button>
+      <button class="key" onclick="press('4')">4</button>
+      <button class="key" onclick="press('5')">5</button>
+      <button class="key" onclick="press('6')">6</button>
+      <button class="key" onclick="press('7')">7</button>
+      <button class="key" onclick="press('8')">8</button>
+      <button class="key" onclick="press('9')">9</button>
+      <button class="key" onclick="clr()">C</button>
+      <button class="key" onclick="press('0')">0</button>
+      <button class="key" onclick="check()" style="background:#22c55e; color:white;">✓</button>
+    </div>
+  </div>
+
+  <script>
+    let n1 = 3, n2 = 4, score = 0;
+    let errors = [];
+
+    function nextQuestion() {
+      if (errors.length > 0 && Math.random() < 0.4) {
+        let item = errors.shift();
+        n1 = item.a; n2 = item.b;
+      } else {
+        n1 = Math.floor(Math.random() * 10) + 1;
+        n2 = Math.floor(Math.random() * 10) + 1;
+      }
+      document.getElementById('eq').innerText = `${n1} × ${n2} = ?`;
+      document.getElementById('ans').value = '';
+    }
+
+    function press(v) { document.getElementById('ans').value += v; }
+    function clr() { document.getElementById('ans').value = ''; }
+
+    function check() {
+      let val = parseInt(document.getElementById('ans').value);
+      if (val === n1 * n2) {
+        score++;
+        document.getElementById('score').innerText = score;
+        nextQuestion();
+      } else {
+        alert('טעות! נסה שוב');
+        errors.push({a: n1, b: n2});
+        clr();
+      }
+    }
+  </script>
+</body>
+</html>

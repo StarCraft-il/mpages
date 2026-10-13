@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3159b7">
+  <title>לומדים את לוח הכפל</title>
+  <style>
+    :root {
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      color: #19304c;
+      background: #f3f7ff;
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 300px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 48px;
+      padding: 11px 17px;
+      border: 0;
+      border-radius: 13px;
+      background: #3159b7;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:hover { background: #254795; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+
+    button.secondary {
+      color: #254795;
+      background: #e5edff;
+    }
+
+    button.secondary:hover { background: #d6e3ff; }
+    button.danger { background: #a93646; }
+
+    input, select {
+      min-height: 48px;
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #b9cbe9;
+      border-radius: 12px;
+      background: white;
+      color: #19304c;
+    }
+
+    input:focus-visible, select:focus-visible, button:focus-visible {
+      outline: 3px solid #ecad38;
+      outline-offset: 2px;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      min-height: 22px;
+      height: 22px;
+      accent-color: #3159b7;
+    }
+
+    label { font-weight: 700; }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(1.65rem, 5vw, 2.3rem); }
+    h2 { font-size: 1.4rem; }
+
+    .app {
+      width: min(100%, 940px);
+      margin: auto;
+      padding: 16px 14px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    header h1 { margin: 0; }
+    header button { flex: 0 0 auto; }
+
+    .screen[hidden], [hidden] { display: none !important; }
+
+    .card {
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #dce6f6;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 5px 18px rgba(29, 64, 122, .06);
+    }
+
+    .menu {
+      display: grid;
+      gap: 12px;
+    }
+
+    .menu button {
+      min-height: 72px;
+      text-align: right;
+      font-size: 1.2rem;
+    }
+
+    .menu small {
+      display: block;
+      margin-top: 3px;
+      font-size: .85rem;
+      font-weight: 400;
+    }
+
+    .grid, .form-grid, .metrics {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field { display: grid; gap: 7px; }
+
+    .question-card {
+      padding: 30px 10px;
+      text-align: center;
+      border: 3px solid #c7d7f6;
+      transition: border-color .18s, background-color .18s;
+    }
+
+    .question {
+      direction: ltr;
+      unicode-bidi: isolate;
+      font-size: clamp(48px, 11vw, 80px);
+      line-height: 1.3;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .question-card.correct {
+      background: #e8faed;
+      border-color: #43ad63;
+    }
+
+    .question-card.wrong {
+      background: #fff0f0;
+      border-color: #dc7880;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .actions button { flex: 1 1 135px; }
+
+    .answer-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .answer-row input {
+      text-align: center;
+      font-size: 1.5rem;
+      direction: ltr;
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin: 12px 0;
+      font-weight: 700;
+    }
+
+    .feedback.success { color: #176337; }
+    .feedback.error { color: #a93646; }
+
+    .hint {
+      padding: 14px;
+      border-radius: 12px;
+      background: #fff4d8;
+      line-height: 1.6;
+    }
+
+    .hint-grid {
+      display: grid;
+      gap: 3px;
+      width: max-content;
+      max-width: 100%;
+      overflow: auto;
+      margin-top: 12px;
+      direction: ltr;
+    }
+
+    .hint-cell {
+      width: 19px;
+      height: 19px;
+      border-radius: 4px;
+      background: #6587d8;
+    }
+
+    .stat {
+      padding: 15px;
+      border-radius: 14px;
+      background: #edf3ff;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1.45rem;
+    }
+
+    .muted { color: #52657b; }
+    .small { font-size: .9rem; }
+    .check-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+      gap: 9px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px;
+      border: 1px solid #dce6f6;
+      border-radius: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 55px 1fr 58px;
+      align-items: center;
+      gap: 9px;
+      margin: 9px 0;
+    }
+
+    .bar-track {
+      height: 14px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #e8edf6;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: #5279d1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 190px;
+    }
+
+    .chart-caption { margin-bottom: 6px; }
+    .achievement-list { display: grid; gap: 10px; }
+
+    .achievement {
+      padding: 14px;
+      border-radius: 14px;
+      background: #f0f3f8;
+    }
+
+    .achievement.earned { background: #fff1c8; }
+    .achievement progress { width: 100%; margin-top: 8px; }
+
+    .summary-list {
+      max-height: 320px;
+      overflow: auto;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      padding: 9px 0;
+      border-bottom: 1px solid #e3eaf5;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 650px) {
+      .app { padding: 28px; }
+      .menu, .form-grid, .metrics { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <button id="homeButton" class="secondary" type="button" hidden>⌂ ראשי</button>
+      <h1>לומדים את לוח הכפל</h1>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen">
+        <div class="card">
+          <h2>מה עושים היום?</h2>
+          <p class="muted">מתרגלים בקצב שלך ומחזקים תרגילים שדורשים עוד תשומת לב.</p>
+          <div class="menu">
+            <button type="button" data-screen="practice">✏️ תרגול<small>חזרה חכמה, רמזים והתקדמות</small></button>
+            <button type="button" data-screen="test">📝 מבחן<small>בודקים מה כבר יודעים</small></button>
+            <button type="button" data-screen="statistics">📊 סטטיסטיקות<small>רואים הצלחות ונקודות לחיזוק</small></button>
+            <button type="button" data-screen="achievements">🏅 הישגים<small>מתקדמים לעבר היעד הבא</small></button>
+            <button type="button" data-screen="settings">⚙️ הגדרות<small>בוחרים מספרים וטווחים</small></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="practiceScreen" class="screen" hidden>
+        <div id="practiceSetup" class="card">
+          <h2>התחלת תרגול</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="practiceMode">מצב תרגול</label>
+              <select id="practiceMode">
+                <option value="single">ספרה מול כל הטווח</option>
+                <option value="group">קבוצה מול קבוצה</option>
+                <option value="random" selected>תרגול אקראי</option>
+                <option value="weak">תרגול חולשות</option>
+                <option value="mistakes">תרגול טעויות</option>
+                <option value="slow">תרגול איטי</option>
+                <option value="custom">תרגול מותאם אישית</option>
+              </select>
+            </div>
+            <div id="practiceDigitField" class="field" hidden>
+              <label for="practiceDigit">ספרה לתרגול</label>
+              <select id="practiceDigit"></select>
+            </div>
+            <div class="field">
+              <label for="practiceLength">מספר שאלות בסבב</label>
+              <select id="practiceLength">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <p id="practiceModeHelp" class="muted small"></p>
+          <button id="startPractice" type="button">מתחילים לתרגל</button>
+        </div>
+
+        <div id="practicePlay" hidden>
+          <div class="metrics">
+            <div class="stat">שאלה <strong id="practiceProgress">1 / 20</strong></div>
+            <div class="stat">ניקוד <strong id="practiceScore">0</strong></div>
+            <div class="stat">רצף הצלחות <strong id="practiceStreak">0</strong></div>
+          </div>
+          <div id="practiceQuestionCard" class="card question-card">
+            <div id="practiceQuestion" class="question" dir="ltr" aria-label="תרגיל כפל"></div>
+          </div>
+          <form id="practiceForm" class="card" novalidate>
+            <label for="practiceAnswer">מה התשובה?</label>
+            <div class="answer-row">
+              <input id="practiceAnswer" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" required>
+              <button id="checkPractice" type="submit">בדיקה</button>
+            </div>
+            <div class="actions">
+              <button id="practiceHint" class="secondary" type="button">רמז</button>
+              <button id="skipPractice" class="secondary" type="button">דילוג</button>
+              <button id="finishPractice" class="secondary" type="button">סיום הסבב</button>
+            </div>
+            <p id="practiceFeedback" class="feedback" role="status" aria-live="polite"></p>
+            <div id="practiceHintBox" class="hint" hidden></div>
+          </form>
+        </div>
+
+        <div id="practiceSummary" class="card" hidden></div>
+      </section>
+
+      <section id="testScreen" class="screen" hidden>
+        <div id="testSetup" class="card">
+          <h2>מבחן לוח הכפל</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="testMode">סוג מבחן</label>
+              <select id="testMode">
+                <option value="single">לפי ספרה</option>
+                <option value="range">לפי טווח</option>
+                <option value="custom">מותאם אישית</option>
+                <option value="weak">נקודות חולשה</option>
+              </select>
+            </div>
+            <div id="testDigitField" class="field">
+              <label for="testDigit">ספרה</label>
+              <select id="testDigit"></select>
+            </div>
+            <div class="field">
+              <label for="testLength">מספר שאלות</label>
+              <select id="testLength">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <p class="muted small">במבחן יש ניסיון אחד לכל שאלה, ללא רמזים. הבחירה המותאמת אישית משתמשת במספרים שהוגדרו בהגדרות.</p>
+          <button id="startTest" type="button">התחלת מבחן</button>
+        </div>
+
+        <div id="testPlay" hidden>
+          <div class="metrics">
+            <div class="stat">שאלה <strong id="testProgress">1 / 10</strong></div>
+            <div class="stat">תשובות נכונות <strong id="testCorrect">0</strong></div>
+          </div>
+          <div id="testQuestionCard" class="card question-card">
+            <div id="testQuestion" class="question" dir="ltr" aria-label="תרגיל כפל"></div>
+          </div>
+          <form id="testForm" class="card" novalidate>
+            <label for="testAnswer">מה התשובה?</label>
+            <div class="answer-row">
+              <input id="testAnswer" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" required>
+              <button id="checkTest" type="submit">בדיקה</button>
+            </div>
+            <p id="testFeedback" class="feedback" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div id="testSummary" class="card" hidden></div>
+      </section>
+
+      <section id="statisticsScreen" class="screen" hidden>
+        <h2>סטטיסטיקות</h2>
+        <div id="statisticsMetrics" class="metrics"></div>
+        <div class="grid">
+          <div class="card">
+            <h3 class="chart-caption">הצלחה לאורך זמן</h3>
+            <canvas id="successChart" role="img" aria-label="אחוז הצלחה לאורך זמן"></canvas>
+          </div>
+          <div class="card">
+            <h3 class="chart-caption">זמן תגובה לאורך זמן</h3>
+            <canvas id="timeChart" role="img" aria-label="זמן תגובה ממוצע לאורך זמן"></canvas>
+          </div>
+          <div class="card">
+            <h3 class="chart-caption">ביצועים לפי ספרה</h3>
+            <canvas id="digitChart" role="img" aria-label="אחוז הצלחה לפי ספרה"></canvas>
+          </div>
+          <div class="card">
+            <h3>אחוז הצלחה לפי ספרה</h3>
+            <div id="digitBars"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>תרגילים שכדאי לחזק</h3>
+          <div id="weaknessList"></div>
+        </div>
+      </section>
+
+      <section id="achievementsScreen" class="screen" hidden>
+        <h2>הישגים ויעדים</h2>
+        <div id="achievementList" class="achievement-list"></div>
+      </section>
+
+      <section id="settingsScreen" class="screen" hidden>
+        <div class="card">
+          <h2>בחירת מספרים</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="rangePreset">טווח לתרגול</label>
+              <select id="rangePreset">
+                <option value="1-5">1–5</option>
+                <option value="1-10">1–10</option>
+                <option value="1-12">1–12</option>
+                <option value="1-20">1–20</option>
+                <option value="custom">טווח מותאם אישית</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="singleDigit">בחירת ספרה בודדת</label>
+              <select id="singleDigit"></select>
+            </div>
+            <div class="field">
+              <label for="rangeMin">תחילת טווח</label>
+              <input id="rangeMin" type="number" min="1" max="20" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="rangeMax">סוף טווח</label>
+              <input id="rangeMax" type="number" min="1" max="20" inputmode="numeric">
+            </div>
+          </div>
+          <p class="muted small">הטווח קובע את המספרים הזמינים ואת המספר השני במצב ״ספרה מול כל הטווח״.</p>
+          <div class="actions">
+            <button id="applySingle" class="secondary" type="button">בחירת ספרה בודדת</button>
+            <button id="applyRange" class="secondary" type="button">בחירת כל הטווח</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>בחירה ידנית של מספר ספרות</h3>
+          <p class="muted small">המספרים שנבחרו ישמשו בתרגול קבוצה מול קבוצה, בתרגול מותאם אישית ובמבחן מותאם אישית.</p>
+          <div id="manualNumbers" class="check-list"></div>
+          <p id="settingsFeedback" class="feedback" role="status" aria-live="polite"></p>
+          <button id="saveSettings" type="button">שמירת הגדרות</button>
+        </div>
+
+        <div class="card">
+          <h3>איפוס נתונים</h3>
+          <p class="muted">האיפוס מוחק התקדמות, הישגים, מבחנים והגדרות שנשמרו בדפדפן הזה.</p>
+          <button id="resetData" class="danger" type="button">מחיקת כל הנתונים</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const range = (min, max) => Array.from({ length: max - min + 1 }, (_, index) => min + index);
+    const formatSeconds = milliseconds => `${(milliseconds / 1000).toFixed(1)} שניות`;
+    const localDay = date => {
+      const d = new Date(date);
+      return Number.isNaN(d.getTime())
+        ? ""
+        : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    };
+
+    class StorageManager {
+      constructor() {
+        this.key = "hebrewMultiplicationTrainer.v1";
+        this.data = this.load();
+      }
+
+      defaults() {
+        return {
+          settings: { min: 1, max: 12, selected: range(2, 12) },
+          facts: {},
+          history: [],
+          tests: [],
+          achievements: {},
+          totalCorrect: 0,
+          totalWrong: 0,
+          currentStreak: 0,
+          maxStreak: 0,
+          practiceDays: []
+        };
+      }
+
+      load() {
+        const defaults = this.defaults();
+        try {
+          const saved = JSON.parse(localStorage.getItem(this.key));
+          if (!saved || typeof saved !== "object") return defaults;
+          const min = clamp(Number(saved.settings?.min) || 1, 1, 20);
+          const max = clamp(Number(saved.settings?.max) || 12, min, 20);
+          const selected = Array.isArray(saved.settings?.selected)
+            ? [...new Set(saved.settings.selected.map(Number).filter(n => Number.isInteger(n) && n >= min && n <= max))]
+            : defaults.settings.selected;
+          return {
+            ...defaults,
+            ...saved,
+            settings: { min, max, selected: selected.length ? selected : [min] },
+            facts: saved.facts && typeof saved.facts === "object" ? saved.facts : {},
+            history: Array.isArray(saved.history) ? saved.history : [],
+            tests: Array.isArray(saved.tests) ? saved.tests : [],
+            achievements: saved.achievements && typeof saved.achievements === "object" ? saved.achievements : {},
+            practiceDays: Array.isArray(saved.practiceDays) ? saved.practiceDays : []
+          };
+        } catch {
+          return defaults;
+        }
+      }
+
+      save() {
+        try {
+          localStorage.setItem(this.key, JSON.stringify(this.data));
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      reset() {
+        this.data = this.defaults();
+        try {
+          localStorage.removeItem(this.key);
+        } catch {
+          return false;
+        }
+        return true;
+      }
+    }
+
+    class QuestionEngine {
+      constructor(storage) {
+        this.storage = storage;
+      }
+
+      get settings() { return this.storage.data.settings; }
+      get numbers() { return range(this.settings.min, this.settings.max); }
+
+      create(a, b) {
+        return { a, b, answer: a * b, key: `${a}x${b}` };
+      }
+
+      pool(mode, digit = null) {
+        const numbers = this.numbers;
+        const selected = this.settings.selected.filter(n => numbers.includes(n));
+        const chosen = selected.length ? selected : numbers;
+        let pairs;
+
+        switch (mode) {
+          case "single":
+            pairs = numbers.map(b => this.create(digit ?? chosen[0], b));
+            break;
+          case "group":
+          case "custom":
+            pairs = chosen.flatMap(a => chosen.map(b => this.create(a, b)));
+            break;
+          case "weak":
+          case "mistakes":
+          case "slow":
+          case "random":
+          case "range":
+          default:
+            pairs = numbers.flatMap(a => numbers.map(b => this.create(a, b)));
+        }
+
+        if (mode === "mistakes") {
+          const mistakes = pairs.filter(q => (this.storage.data.facts[q.key]?.wrongCount || 0) > 0);
+          if (mistakes.length) return mistakes;
+        }
+        if (mode === "slow") {
+          const practiced = pairs.filter(q => (this.storage.data.facts[q.key]?.attempts || 0) > 0);
+          if (practiced.length) return practiced;
+        }
+
+        return pairs;
+      }
+    }
+
+    class AdaptiveEngine {
+      constructor(storage) {
+        this.storage = storage;
+      }
+
+      difficulty(question) {
+        const fact = this.storage.data.facts[question.key];
+        if (!fact?.attempts) return 0.6;
+        const errorRate = fact.wrongCount / Math.max(1, fact.attempts);
+        const slowRate = clamp((fact.averageTime - 2500) / 9500, 0, 1);
+        const uncertainty = 1 / Math.sqrt(fact.attempts + 1);
+        const elapsedDays = fact.lastPracticeDate
+          ? Math.max(0, (Date.now() - new Date(fact.lastPracticeDate).getTime()) / 86400000)
+          : 7;
+        const overdue = clamp(elapsedDays / 14, 0, 1);
+        return clamp(errorRate * .42 + slowRate * .25 + uncertainty * .16 + overdue * .17, 0, 1);
+      }
+
+      choose(pool, mode, recent = []) {
+        const candidates = pool.filter(q => !recent.includes(q.key));
+        const available = candidates.length ? candidates : pool;
+        if (!available.length) return null;
+
+        if (mode === "weak") {
+          const ranked = [...available].sort((a, b) => this.difficulty(b) - this.difficulty(a));
+          const top = ranked.slice(0, Math.max(1, Math.ceil(ranked.length * .3)));
+          return top[Math.floor(Math.random() * top.length)];
+        }
+
+        const weighted = available.map(q => {
+          const fact = this.storage.data.facts[q.key];
+          let weight = .25 + this.difficulty(q) * 4;
+          if (mode === "slow") weight *= 1 + clamp((fact?.averageTime || 0) / 5000, 0, 4);
+          if (mode === "mistakes") weight *= 1 + (fact?.wrongCount || 0);
+          if (mode === "random" || mode === "range" || mode === "single" || mode === "group" || mode === "custom") {
+            weight = .4 + this.difficulty(q) * 3;
+          }
+          return { question: q, weight };
+        });
+
+        let ticket = Math.random() * weighted.reduce((sum, item) => sum + item.weight, 0);
+        for (const item of weighted) {
+          ticket -= item.weight;
+          if (ticket <= 0) return item.question;
+        }
+        return weighted[weighted.length - 1].question;
+      }
+
+      record(question, correct, reactionTime, extra = {}) {
+        const data = this.storage.data;
+        const fact = data.facts[question.key] || {
+          correctCount: 0,
+          wrongCount: 0,
+          averageTime: 0,
+          minTime: null,
+          maxTime: null,
+          attempts: 0,
+          difficultyScore: 0.6,
+          lastPracticeDate: null
+        };
+
+        fact.attempts++;
+        fact.correctCount += Number(correct);
+        fact.wrongCount += Number(!correct);
+        fact.averageTime += (reactionTime - fact.averageTime) / fact.attempts;
+        fact.minTime = fact.minTime === null ? reactionTime : Math.min(fact.minTime, reactionTime);
+        fact.maxTime = fact.maxTime === null ? reactionTime : Math.max(fact.maxTime, reactionTime);
+        fact.lastPracticeDate = new Date().toISOString();
+
+        data.facts[question.key] = fact;
+        data.totalCorrect += Number(correct);
+        data.totalWrong += Number(!correct);
+        data.currentStreak = correct ? data.currentStreak + 1 : 0;
+        data.maxStreak = Math.max(data.maxStreak, data.currentStreak);
+
+        const today = localDay(Date.now());
+        if (!data.practiceDays.includes(today)) data.practiceDays.push(today);
+
+        data.history.push({
+          key: question.key,
+          a: question.a,
+          b: question.b,
+          correct,
+          reactionTime,
+          date: new Date().toISOString(),
+          ...extra
+        });
+        fact.difficultyScore = this.difficulty(question);
+        this.storage.save();
+      }
+    }
+
+    class HintEngine {
+      get(question, level) {
+        const { a, b, answer } = question;
+        const base = a > 5 ? 5 : Math.max(1, a - 1);
+        const rest = a - base;
+
+        switch (level) {
+          case 1:
+            return { text: `חשבו על ${base} × ${b}, ואז הוסיפו עוד ${rest} קבוצות של ${b}.` };
+          case 2:
+            return { text: `${a} × ${b} = (${base} × ${b}) + (${rest} × ${b})` };
+          case 3:
+            return {
+              text: a <= 12
+                ? Array(a).fill(b).join(" + ")
+                : `${b} ועוד ${b}, בסך הכול ${a} פעמים.`
+            };
+          case 4:
+            return { text: `${a} שורות, ובכל שורה ${b} ריבועים:`, grid: true };
+          default:
+            return { text: `${a} × ${b} = ${answer}` };
+        }
+      }
+    }
+
+    class PracticeEngine {
+      constructor(questions, adaptive, achievements) {
+        this.questions = questions;
+        this.adaptive = adaptive;
+        this.achievements = achievements;
+        this.session = null;
+      }
+
+      start(mode, digit, length) {
+        this.session = {
+          mode,
+          pool: this.questions.pool(mode, digit),
+          length,
+          completed: 0,
+          score: 0,
+          wrongQuestions: new Map(),
+          recent: [],
+          scheduled: [],
+          finalReview: new Map(),
+          asked: 0,
+          current: null,
+          wrongOnCurrent: 0,
+          hadMistake: false,
+          hintLevel: 0,
+          startTime: 0,
+          locked: false
+        };
+        this.next();
+      }
+
+      schedule(question) {
+        const s = this.session;
+        const previous = s.scheduled.filter(item => item.question.key === question.key);
+        if (previous.length) return;
+        s.scheduled.push({ due: s.asked + 3, question });
+        s.scheduled.push({ due: s.asked + 10, question });
+        s.finalReview.set(question.key, question);
+      }
+
+      next() {
+        const s = this.session;
+        if (!s) return null;
+        const dueIndex = s.scheduled.findIndex(item => item.due <= s.asked);
+
+        if (dueIndex >= 0) {
+          s.current = s.scheduled.splice(dueIndex, 1)[0].question;
+        } else if (s.completed < s.length) {
+          s.current = this.adaptive.choose(s.pool, s.mode, s.recent.slice(-5));
+        } else if (s.scheduled.length) {
+          s.scheduled.sort((a, b) => a.due - b.due);
+          s.current = s.scheduled.shift().question;
+        } else if (s.finalReview.size) {
+          const first = s.finalReview.entries().next().value;
+          s.finalReview.delete(first[0]);
+          s.current = first[1];
+        } else {
+          s.current = null;
+          return null;
+        }
+
+        s.asked++;
+        s.recent.push(s.current.key);
+        s.wrongOnCurrent = 0;
+        s.hadMistake = false;
+        s.hintLevel = 0;
+        s.startTime = performance.now();
+        s.locked = false;
+        return s.current;
+      }
+
+      answer(value) {
+        const s = this.session;
+        if (!s?.current || s.locked) return null;
+        const q = s.current;
+        const correct = value === q.answer;
+        const elapsed = Math.max(0, Math.round(performance.now() - s.startTime));
+        this.adaptive.record(q, correct, elapsed, { mode: "practice" });
+        this.achievements.evaluate();
+
+        if (correct) {
+          s.locked = true;
+          s.completed++;
+          s.score += s.hadMistake ? 5 : Math.max(10, 20 - s.hintLevel * 2);
+          if (s.hadMistake) this.schedule(q);
+          return { correct: true, finishedQuestion: true };
+        }
+
+        s.wrongOnCurrent++;
+        s.hadMistake = true;
+        s.wrongQuestions.set(q.key, q);
+        if (s.wrongOnCurrent >= 5) {
+          s.locked = true;
+          s.completed++;
+          this.schedule(q);
+          return { correct: false, finishedQuestion: true, solution: q.answer };
+        }
+
+        if (s.wrongOnCurrent >= 2) s.hintLevel = Math.min(3, s.wrongOnCurrent - 1);
+        return { correct: false, finishedQuestion: false, wrongCount: s.wrongOnCurrent };
+      }
+
+      skip() {
+        const s = this.session;
+        if (!s?.current || s.locked) return null;
+        const q = s.current;
+        this.adaptive.record(q, false, Math.max(0, Math.round(performance.now() - s.startTime)), {
+          mode: "practice",
+          skipped: true
+        });
+        this.achievements.evaluate();
+        s.wrongQuestions.set(q.key, q);
+        s.completed++;
+        s.locked = true;
+        this.schedule(q);
+        return q;
+      }
+    }
+
+    class TestEngine {
+      constructor(questions, adaptive, storage, achievements) {
+        this.questions = questions;
+        this.adaptive = adaptive;
+        this.storage = storage;
+        this.achievements = achievements;
+        this.session = null;
+      }
+
+      start(mode, digit, length) {
+        const pool = this.questions.pool(mode, digit);
+        const available = [...pool];
+        const questions = [];
+
+        while (questions.length < length && available.length) {
+          const next = this.adaptive.choose(available, mode);
+          questions.push(next);
+          available.splice(available.findIndex(q => q.key === next.key), 1);
+        }
+        while (questions.length < length) {
+          const recent = questions.slice(-Math.min(5, pool.length - 1)).map(q => q.key);
+          questions.push(this.adaptive.choose(pool, mode, recent));
+        }
+
+        this.session = {
+          mode,
+          questions,
+          index: 0,
+          correct: 0,
+          mistakes: [],
+          times: [],
+          startTime: performance.now(),
+          locked: false
+        };
+        return this.current();
+      }
+
+      current() {
+        return this.session?.questions[this.session.index] || null;
+      }
+
+      answer(value) {
+        const s = this.session;
+        const q = this.current();
+        if (!q || s.locked) return null;
+        s.locked = true;
+
+        const elapsed = Math.max(0, Math.round(performance.now() - s.startTime));
+        const correct = value === q.answer;
+        s.times.push(elapsed);
+        if (correct) s.correct++;
+        else s.mistakes.push({ ...q, given: value });
+
+        this.adaptive.record(q, correct, elapsed, { mode: "test" });
+        this.achievements.evaluate();
+        return { correct, answer: q.answer };
+      }
+
+      advance() {
+        const s = this.session;
+        s.index++;
+        if (s.index >= s.questions.length) {
+          const previous = this.storage.data.tests.at(-1);
+          const result = {
+            date: new Date().toISOString(),
+            mode: s.mode,
+            count: s.questions.length,
+            correct: s.correct,
+            percent: Math.round(s.correct / s.questions.length * 100),
+            averageTime: s.times.reduce((a, b) => a + b, 0) / s.times.length,
+            mistakes: s.mistakes,
+            previousPercent: previous?.percent ?? null
+          };
+          this.storage.data.tests.push(result);
+          this.storage.save();
+          return { finished: true, result };
+        }
+        s.locked = false;
+        s.startTime = performance.now();
+        return { finished: false, question: this.current() };
+      }
+    }
+
+    class StatisticsManager {
+      constructor(storage, adaptive) {
+        this.storage = storage;
+        this.adaptive = adaptive;
+      }
+
+      overview() {
+        const d = this.storage.data;
+        const total = d.totalCorrect + d.totalWrong;
+        const history = d.history;
+        return {
+          percent: total ? Math.round(d.totalCorrect / total * 100) : 0,
+          averageTime: history.length
+            ? history.reduce((sum, item) => sum + item.reactionTime, 0) / history.length
+            : 0,
+          correct: d.totalCorrect,
+          wrong: d.totalWrong,
+          maxStreak: d.maxStreak
+        };
+      }
+
+      digitStats() {
+        const result = [];
+        for (let digit = 1; digit <= 20; digit++) {
+          const attempts = this.storage.data.history.filter(item => item.a === digit);
+          if (!attempts.length) continue;
+          result.push({
+            digit,
+            count: attempts.length,
+            percent: Math.round(attempts.filter(item => item.correct).length / attempts.length * 100)
+          });
+        }
+        return result;
+      }
+
+      weaknesses() {
+        return Object.entries(this.storage.data.facts)
+          .filter(([, fact]) => fact.attempts > 0)
+          .map(([key, fact]) => ({
+            key,
+            fact,
+            score: this.adaptive.difficulty({ key })
+          }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 8);
+      }
+
+      timeline() {
+        const groups = new Map();
+        for (const item of this.storage.data.history) {
+          const day = localDay(item.date);
+          if (!day) continue;
+          if (!groups.has(day)) groups.set(day, { day, count: 0, correct: 0, totalTime: 0 });
+          const group = groups.get(day);
+          group.count++;
+          group.correct += Number(item.correct);
+          group.totalTime += item.reactionTime;
+        }
+        return [...groups.values()].sort((a, b) => a.day.localeCompare(b.day)).slice(-14);
+      }
+    }
+
+    class AchievementManager {
+      constructor(storage) {
+        this.storage = storage;
+      }
+
+      definitions() {
+        const d = this.storage.data;
+        const facts = Object.entries(d.facts);
+        const mastered = range(1, 20).find(digit => {
+          const relevant = facts.filter(([key]) => key.startsWith(`${digit}x`));
+          return relevant.length >= 5 && relevant.every(([, fact]) =>
+            fact.correctCount >= 3 &&
+            fact.correctCount / Math.max(1, fact.attempts) >= .8
+          );
+        });
+        const days = [...new Set(d.practiceDays)].sort();
+        let consecutiveDays = 0;
+        if (days.length) {
+          let cursor = new Date(`${days.at(-1)}T12:00:00`);
+          while (days.includes(localDay(cursor))) {
+            consecutiveDays++;
+            cursor.setDate(cursor.getDate() - 1);
+          }
+        }
+
+        const correctTimes = d.history.filter(item => item.correct);
+        const first = correctTimes.slice(0, 10);
+        const last = correctTimes.slice(-10);
+        const firstAverage = first.length === 10
+          ? first.reduce((sum, item) => sum + item.reactionTime, 0) / 10
+          : 0;
+        const lastAverage = last.length === 10
+          ? last.reduce((sum, item) => sum + item.reactionTime, 0) / 10
+          : 0;
+        const improvement = firstAverage
+          ? Math.max(0, Math.round((firstAverage - lastAverage) / firstAverage * 100))
+          : 0;
+
+        return [
+          { id: "streak10", icon: "🥉", title: "10 הצלחות רצופות", value: d.maxStreak, goal: 10 },
+          { id: "streak20", icon: "🥈", title: "20 הצלחות רצופות", value: d.maxStreak, goal: 20 },
+          { id: "streak50", icon: "🥇", title: "50 הצלחות רצופות", value: d.maxStreak, goal: 50 },
+          { id: "mastery", icon: "🌟", title: "שליטה בספרה", description: mastered ? `שליטה בספרה ${mastered}` : "לפחות 5 תרגילים באותה ספרה, 3 הצלחות ו־80% דיוק בכל תרגיל", value: mastered ? 1 : 0, goal: 1 },
+          { id: "daily", icon: "📅", title: "תרגול יומי במשך 3 ימים", value: consecutiveDays, goal: 3 },
+          { id: "speed", icon: "⚡", title: "שיפור מהירות של 20%", description: "השוואת 10 ההצלחות הראשונות ל־10 האחרונות", value: correctTimes.length >= 20 ? improvement : 0, goal: 20, unit: "%" }
+        ];
+      }
+
+      evaluate() {
+        const data = this.storage.data;
+        for (const item of this.definitions()) {
+          if (item.value >= item.goal && !data.achievements[item.id]) {
+            data.achievements[item.id] = new Date().toISOString();
+          }
+        }
+        this.storage.save();
+      }
+    }
+
+    class UIManager {
+      constructor(storage, questions, practice, tests, stats, achievements, hints) {
+        this.storage = storage;
+        this.questions = questions;
+        this.practice = practice;
+        this.tests = tests;
+        this.stats = stats;
+        this.achievements = achievements;
+        this.hints = hints;
+        this.timer = null;
+        this.activeScreen = "home";
+        this.bind();
+        this.show("home");
+      }
+
+      bind() {
+        document.querySelectorAll("[data-screen]").forEach(button => {
+          button.addEventListener("click", () => this.show(button.dataset.screen));
+        });
+        $("homeButton").addEventListener("click", () => this.show("home"));
+        $("practiceMode").addEventListener("change", () => this.updatePracticeMode());
+        $("testMode").addEventListener("change", () => {
+          $("testDigitField").hidden = $("testMode").value !== "single";
+        });
+        $("startPractice").addEventListener("click", () => this.startPractice());
+        $("practiceForm").addEventListener("submit", event => {
+          event.preventDefault();
+          this.submitPractice();
+        });
+        $("practiceHint").addEventListener("click", () => this.showNextHint());
+        $("skipPractice").addEventListener("click", () => this.skipPractice());
+        $("finishPractice").addEventListener("click", () => this.finishPractice());
+        $("startTest").addEventListener("click", () => this.startTest());
+        $("testForm").addEventListener("submit", event => {
+          event.preventDefault();
+          this.submitTest();
+        });
+
+        $("rangePreset").addEventListener("change", () => {
+          const preset = $("rangePreset").value;
+          if (preset !== "custom") {
+            const [min, max] = preset.split("-").map(Number);
+            $("rangeMin").value = min;
+            $("rangeMax").value = max;
+          }
+          this.renderManualNumbers();
+        });
+        ["rangeMin", "rangeMax"].forEach(id => {
+          $(id).addEventListener("change", () => {
+            $("rangePreset").value = "custom";
+            this.renderManualNumbers();
+          });
+        });
+        $("applySingle").addEventListener("click", () => {
+          const digit = Number($("singleDigit").value);
+          this.setCheckedNumbers([digit]);
+          this.settingsMessage(`הספרה ${digit} נבחרה. לחצו על שמירת הגדרות.`);
+        });
+        $("applyRange").addEventListener("click", () => {
+          const bounds = this.readBounds();
+          if (!bounds) return;
+          this.setCheckedNumbers(range(bounds.min, bounds.max));
+          this.settingsMessage("כל המספרים בטווח נבחרו. לחצו על שמירת הגדרות.");
+        });
+        $("saveSettings").addEventListener("click", () => this.saveSettings());
+        $("resetData").addEventListener("click", () => this.resetData());
+      }
+
+      show(name) {
+        this.clearTimer();
+        this.activeScreen = name;
+        document.querySelectorAll(".screen").forEach(screen => {
+          screen.hidden = screen.id !== `${name}Screen`;
+        });
+        $("homeButton").hidden = name === "home";
+
+        if (name === "practice") {
+          $("practiceSetup").hidden = false;
+          $("practicePlay").hidden = true;
+          $("practiceSummary").hidden = true;
+          this.populateDigits();
+          this.updatePracticeMode();
+        } else if (name === "test") {
+          $("testSetup").hidden = false;
+          $("testPlay").hidden = true;
+          $("testSummary").hidden = true;
+          this.populateDigits();
+          $("testDigitField").hidden = $("testMode").value !== "single";
+        } else if (name === "statistics") {
+          this.renderStatistics();
+        } else if (name === "achievements") {
+          this.renderAchievements();
+        } else if (name === "settings") {
+          this.renderSettings();
+        }
+        window.scrollTo(0, 0);
+      }
+
+      populateDigits() {
+        const digits = this.questions.numbers;
+        for (const id of ["practiceDigit", "testDigit", "singleDigit"]) {
+          const select = $(id);
+          const old = Number(select.value);
+          select.replaceChildren();
+          for (const digit of digits) {
+            const option = new Option(String(digit), String(digit));
+            select.add(option);
+          }
+          if (digits.includes(old)) select.value = String(old);
+          else if (id === "practiceDigit" && digits.includes(7)) select.value = "7";
+        }
+      }
+
+      updatePracticeMode() {
+        const mode = $("practiceMode").value;
+        $("practiceDigitField").hidden = mode !== "single";
+        const help = {
+          single: "הספרה שנבחרה תהיה המספר הראשון בכל תרגיל.",
+          group: "המספרים שבחרתם ידנית מוכפלים זה בזה.",
+          random: "תרגילים מכל הטווח, עם עדיפות למה שדורש חיזוק.",
+          weak: "תרגילים בעלי ניקוד הקושי הגבוה ביותר.",
+          mistakes: "תרגילים שטעיתם בהם בעבר; אם אין כאלה, מוצגים תרגילים מהטווח.",
+          slow: "תרגילים שפתרתם לאט בעבר; אם אין נתונים, מוצגים תרגילים מהטווח.",
+          custom: "תרגילים מהמספרים שבחרתם ידנית בהגדרות."
+        };
+        $("practiceModeHelp").textContent = help[mode];
+      }
+
+      startPractice() {
+        this.clearTimer();
+        const mode = $("practiceMode").value;
+        this.practice.start(mode, Number($("practiceDigit").value), Number($("practiceLength").value));
+        $("practiceSetup").hidden = true;
+        $("practiceSummary").hidden = true;
+        $("practicePlay").hidden = false;
+        this.renderPracticeQuestion();
+      }
+
+      renderPracticeQuestion() {
+        const s = this.practice.session;
+        if (!s.current) {
+          this.finishPractice();
+          return;
+        }
+        $("practiceQuestion").textContent = `${s.current.a} × ${s.current.b} = ?`;
+        $("practiceProgress").textContent = `${Math.min(s.completed + 1, s.length)} / ${s.length}${s.completed >= s.length ? " · חזרה" : ""}`;
+        $("practiceScore").textContent = s.score;
+        $("practiceStreak").textContent = this.storage.data.currentStreak;
+        $("practiceAnswer").value = "";
+        $("practiceAnswer").disabled = false;
+        $("checkPractice").disabled = false;
+        $("skipPractice").disabled = false;
+        $("practiceHint").disabled = false;
+        this.feedback("practice", "");
+        $("practiceHintBox").hidden = true;
+        $("practiceHintBox").replaceChildren();
+        $("practiceQuestionCard").className = "card question-card";
+        $("practiceAnswer").focus();
+      }
+
+      submitPractice() {
+        const input = $("practiceAnswer");
+        if (input.value.trim() === "" || !Number.isInteger(Number(input.value)) || Number(input.value) < 0) {
+          this.feedback("practice", "יש להזין מספר שלם לפני הבדיקה.", "error");
+          input.focus();
+          return;
+        }
+        const result = this.practice.answer(Number(input.value));
+        if (!result) return;
+
+        $("practiceStreak").textContent = this.storage.data.currentStreak;
+        $("practiceScore").textContent = this.practice.session.score;
+
+        if (result.correct) {
+          this.feedback("practice", "כל הכבוד! תשובה נכונה.", "success");
+          this.markQuestion("practice", true);
+          this.pausePractice(850);
+        } else if (result.finishedQuestion) {
+          this.feedback("practice", `הפתרון הוא ${result.solution}. נחזור על התרגיל בהמשך.`, "error");
+          this.showHint(5);
+          this.markQuestion("practice", false);
+          this.pausePractice(2100);
+        } else {
+          const message = result.wrongCount === 1
+            ? "ניסיון טוב! אפשר לנסות שוב."
+            : "כדאי להיעזר ברמז ולנסות שוב.";
+          this.feedback("practice", message, "error");
+          this.markQuestion("practice", false);
+          if (result.wrongCount >= 2) this.showHint(this.practice.session.hintLevel);
+          input.value = "";
+          input.focus();
+        }
+      }
+
+      showNextHint() {
+        const s = this.practice.session;
+        if (!s?.current || s.locked) return;
+        s.hintLevel = Math.min(5, s.hintLevel + 1);
+        this.showHint(s.hintLevel);
+      }
+
+      showHint(level) {
+        const q = this.practice.session.current;
+        const hint = this.hints.get(q, level);
+        const box = $("practiceHintBox");
+        box.replaceChildren();
+        const label = document.createElement("strong");
+        label.textContent = `רמז ${level}: `;
+        const text = document.createElement("span");
+        text.textContent = hint.text;
+        box.append(label, text);
+
+        if (hint.grid) {
+          const visual = document.createElement("div");
+          visual.className = "hint-grid";
+          visual.style.gridTemplateColumns = `repeat(${q.b}, 19px)`;
+          visual.setAttribute("role", "img");
+          visual.setAttribute("aria-label", `${q.a} שורות של ${q.b} ריבועים`);
+          for (let index = 0; index < q.answer; index++) {
+            const cell = document.createElement("span");
+            cell.className = "hint-cell";
+            cell.setAttribute("aria-hidden", "true");
+            visual.append(cell);
+          }
+          box.append(visual);
+        }
+        box.hidden = false;
+      }
+
+      skipPractice() {
+        const q = this.practice.skip();
+        if (!q) return;
+        this.feedback("practice", `דילגנו. ${q.a} × ${q.b} = ${q.answer}. נחזור על התרגיל.`, "error");
+        this.markQuestion("practice", false);
+        this.pausePractice(1800);
+      }
+
+      pausePractice(delay) {
+        $("practiceAnswer").disabled = true;
+        $("checkPractice").disabled = true;
+        $("skipPractice").disabled = true;
+        $("practiceHint").disabled = true;
+        this.timer = setTimeout(() => {
+          this.timer = null;
+          if (this.activeScreen !== "practice" || $("practicePlay").hidden) return;
+          this.practice.next();
+          this.renderPracticeQuestion();
+        }, delay);
+      }
+
+      finishPractice() {
+        this.clearTimer();
+        const s = this.practice.session;
+        if (!s) return;
+        $("practicePlay").hidden = true;
+        const summary = $("practiceSummary");
+        summary.replaceChildren();
+        const heading = document.createElement("h2");
+        heading.textContent = "סיכום התרגול";
+        const details = document.createElement("p");
+        details.textContent = `נפתרו ${s.completed} שאלות · ניקוד: ${s.score} · תרגילים לחיזוק: ${s.wrongQuestions.size}`;
+        const note = document.createElement("p");
+        note.className = "muted";
+        note.textContent = s.scheduled.length || s.finalReview.size
+          ? "נותרו חזרות מתוזמנות. אפשר להתחיל סבב חדש כדי להמשיך לחזק את התרגילים."
+          : "הסבב הושלם!";
+        const again = document.createElement("button");
+        again.type = "button";
+        again.textContent = "סבב נוסף";
+        again.addEventListener("click", () => this.show("practice"));
+        summary.append(heading, details, note, again);
+        summary.hidden = false;
+      }
+
+      startTest() {
+        this.clearTimer();
+        this.tests.start($("testMode").value, Number($("testDigit").value), Number($("testLength").value));
+        $("testSetup").hidden = true;
+        $("testSummary").hidden = true;
+        $("testPlay").hidden = false;
+        this.renderTestQuestion();
+      }
+
+      renderTestQuestion() {
+        const s = this.tests.session;
+        const q = this.tests.current();
+        $("testQuestion").textContent = `${q.a} × ${q.b} = ?`;
+        $("testProgress").textContent = `${s.index + 1} / ${s.questions.length}`;
+        $("testCorrect").textContent = s.correct;
+        $("testAnswer").value = "";
+        $("testAnswer").disabled = false;
+        $("checkTest").disabled = false;
+        this.feedback("test", "");
+        $("testQuestionCard").className = "card question-card";
+        $("testAnswer").focus();
+      }
+
+      submitTest() {
+        const input = $("testAnswer");
+        if (input.value.trim() === "" || !Number.isInteger(Number(input.value)) || Number(input.value) < 0) {
+          this.feedback("test", "יש להזין מספר שלם לפני הבדיקה.", "error");
+          input.focus();
+          return;
+        }
+        const result = this.tests.answer(Number(input.value));
+        if (!result) return;
+        this.markQuestion("test", result.correct);
+        this.feedback("test", result.correct ? "נכון!" : `התשובה הנכונה היא ${result.answer}.`, result.correct ? "success" : "error");
+        input.disabled = true;
+        $("checkTest").disabled = true;
+        $("testCorrect").textContent = this.tests.session.correct;
+        this.timer = setTimeout(() => {
+          this.timer = null;
+          if (this.activeScreen !== "test" || $("testPlay").hidden) return;
+          const next = this.tests.advance();
+          if (next.finished) this.renderTestSummary(next.result);
+          else this.renderTestQuestion();
+        }, result.correct ? 850 : 1450);
+      }
+
+      renderTestSummary(result) {
+        $("testPlay").hidden = true;
+        const box = $("testSummary");
+        box.replaceChildren();
+
+        const heading = document.createElement("h2");
+        heading.textContent = "תוצאות המבחן";
+        box.append(heading);
+
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
+        const entries = [
+          ["ציון", `${result.correct} / ${result.count}`],
+          ["אחוז הצלחה", `${result.percent}%`],
+          ["זמן ממוצע", formatSeconds(result.averageTime)],
+          ["טעויות", String(result.mistakes.length)],
+          ["לעומת המבחן הקודם", result.previousPercent === null
+            ? "מבחן ראשון"
+            : `${result.percent - result.previousPercent >= 0 ? "+" : ""}${result.percent - result.previousPercent} נקודות אחוז`]
+        ];
+        for (const [label, value] of entries) {
+          const item = document.createElement("div");
+          item.className = "stat";
+          const title = document.createElement("span");
+          title.textContent = label;
+          const number = document.createElement("strong");
+          number.textContent = value;
+          item.append(title, number);
+          metrics.append(item);
+        }
+        box.append(metrics);
+
+        if (result.mistakes.length) {
+          const title = document.createElement("h3");
+          title.textContent = "שאלות שטעית בהן";
+          const list = document.createElement("ul");
+          list.className = "summary-list";
+          for (const mistake of result.mistakes) {
+            const item = document.createElement("li");
+            item.textContent = `${mistake.a} × ${mistake.b} = ${mistake.answer} · התשובה שלך: ${mistake.given}`;
+            list.append(item);
+          }
+          box.append(title, list);
+        }
+
+        const again = document.createElement("button");
+        again.type = "button";
+        again.textContent = "מבחן נוסף";
+        again.addEventListener("click", () => this.show("test"));
+        box.append(again);
+        box.hidden = false;
+      }
+
+      renderStatistics() {
+        const overview = this.stats.overview();
+        const metrics = [
+          ["אחוז הצלחה כללי", `${overview.percent}%`],
+          ["זמן תגובה ממוצע", formatSeconds(overview.averageTime)],
+          ["תשובות נכונות", overview.correct],
+          ["טעויות", overview.wrong],
+          ["רצף הצלחות מרבי", overview.maxStreak]
+        ];
+        $("statisticsMetrics").replaceChildren();
+        for (const [label, value] of metrics) {
+          const card = document.createElement("div");
+          card.className = "stat";
+          const text = document.createElement("span");
+          text.textContent = label;
+          const strong = document.createElement("strong");
+          strong.textContent = value;
+          card.append(text, strong);
+          $("statisticsMetrics").append(card);
+        }
+
+        const digits = this.stats.digitStats();
+        $("digitBars").replaceChildren();
+        if (!digits.length) {
+          $("digitBars").textContent = "כאן יוצגו נתונים אחרי התרגול הראשון.";
+        } else {
+          for (const item of digits) {
+            const row = document.createElement("div");
+            row.className = "bar-row";
+            const label = document.createElement("span");
+            label.textContent = String(item.digit);
+            const track = document.createElement("div");
+            track.className = "bar-track";
+            const fill = document.createElement("div");
+            fill.className = "bar-fill";
+            fill.style.width = `${item.percent}%`;
+            track.append(fill);
+            const value = document.createElement("span");
+            value.textContent = `${item.percent}%`;
+            row.append(label, track, value);
+            $("digitBars").append(row);
+          }
+        }
+
+        $("weaknessList").replaceChildren();
+        const weak = this.stats.weaknesses();
+        if (!weak.length) {
+          $("weaknessList").textContent = "עדיין אין תרגילים לניתוח. התחילו לתרגל!";
+        } else {
+          const list = document.createElement("ul");
+          for (const item of weak) {
+            const line = document.createElement("li");
+            const [a, b] = item.key.split("x");
+            line.textContent = `${a} × ${b}: ${item.fact.wrongCount} טעויות, ${formatSeconds(item.fact.averageTime)} בממוצע, ${item.fact.attempts} ניסיונות`;
+            list.append(line);
+          }
+          $("weaknessList").append(list);
+        }
+
+        const timeline = this.stats.timeline();
+        requestAnimationFrame(() => {
+          if (this.activeScreen !== "statistics") return;
+          this.drawLineChart(
+            $("successChart"),
+            timeline.map(day => ({ label: day.day.slice(5), value: day.correct / day.count * 100 })),
+            100,
+            "%"
+          );
+          this.drawLineChart(
+            $("timeChart"),
+            timeline.map(day => ({ label: day.day.slice(5), value: day.totalTime / day.count / 1000 })),
+            null,
+            "ש׳"
+          );
+          this.drawBarChart($("digitChart"), digits);
+        });
+      }
+
+      canvasContext(canvas) {
+        const width = Math.max(260, canvas.clientWidth);
+        const height = 190;
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        const ctx = canvas.getContext("2d");
+        ctx.scale(ratio, ratio);
+        ctx.clearRect(0, 0, width, height);
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#52657b";
+        return { ctx, width, height };
+      }
+
+      drawEmpty(ctx, width) {
+        ctx.textAlign = "center";
+        ctx.fillText("הגרף יופיע לאחר שמירת תשובות", width / 2, 95);
+      }
+
+      drawLineChart(canvas, points, fixedMax, unit) {
+        const { ctx, width, height } = this.canvasContext(canvas);
+        if (!points.length) {
+          this.drawEmpty(ctx, width);
+          return;
+        }
+
+        const left = 38;
+        const right = width - 15;
+        const top = 18;
+        const bottom = height - 28;
+        const max = fixedMax || Math.max(1, ...points.map(point => point.value)) * 1.15;
+        ctx.strokeStyle = "#dce6f6";
+        ctx.lineWidth = 1;
+
+        for (let tick = 0; tick <= 4; tick++) {
+          const y = bottom - (bottom - top) * tick / 4;
+          ctx.beginPath();
+          ctx.moveTo(left, y);
+          ctx.lineTo(right, y);
+          ctx.stroke();
+          ctx.textAlign = "left";
+          ctx.fillStyle = "#52657b";
+          ctx.fillText(`${Math.round(max * tick / 4)}${unit}`, 1, y + 4);
+        }
+
+        const locations = points.map((point, index) => ({
+          x: points.length === 1 ? (left + right) / 2 : left + index * (right - left) / (points.length - 1),
+          y: bottom - point.value / max * (bottom - top)
+        }));
+        ctx.strokeStyle = "#3159b7";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        locations.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
+        ctx.fillStyle = "#3159b7";
+        locations.forEach(point => {
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.fillStyle = "#52657b";
+        ctx.textAlign = "center";
+        ctx.fillText(points[0].label, locations[0].x, height - 7);
+        if (points.length > 1) ctx.fillText(points.at(-1).label, locations.at(-1).x, height - 7);
+      }
+
+      drawBarChart(canvas, digits) {
+        const { ctx, width, height } = this.canvasContext(canvas);
+        if (!digits.length) {
+          this.drawEmpty(ctx, width);
+          return;
+        }
+        const left = 20;
+        const bottom = height - 30;
+        const top = 15;
+        const step = (width - left - 10) / digits.length;
+        const barWidth = Math.max(3, step * .65);
+        digits.forEach((item, index) => {
+          const x = left + index * step + (step - barWidth) / 2;
+          const barHeight = (bottom - top) * item.percent / 100;
+          ctx.fillStyle = "#5279d1";
+          ctx.fillRect(x, bottom - barHeight, barWidth, barHeight);
+          ctx.fillStyle = "#52657b";
+          ctx.textAlign = "center";
+          if (digits.length <= 12 || index % 2 === 0) {
+            ctx.fillText(String(item.digit), x + barWidth / 2, height - 8);
+          }
+        });
+        ctx.fillStyle = "#52657b";
+        ctx.textAlign = "left";
+        ctx.fillText("100%", 0, 12);
+      }
+
+      renderAchievements() {
+        this.achievements.evaluate();
+        const list = $("achievementList");
+        list.replaceChildren();
+        for (const item of this.achievements.definitions()) {
+          const earned = Boolean(this.storage.data.achievements[item.id]);
+          const card = document.createElement("div");
+          card.className = `achievement${earned ? " earned" : ""}`;
+          const title = document.createElement("h3");
+          title.textContent = `${item.icon} ${item.title}${earned ? " · הושג!" : ""}`;
+          const detail = document.createElement("p");
+          detail.textContent = item.description || `התקדמות: ${Math.min(item.value, item.goal)} מתוך ${item.goal}${item.unit || ""}`;
+          const progress = document.createElement("progress");
+          progress.max = item.goal;
+          progress.value = earned ? item.goal : Math.min(item.value, item.goal);
+          progress.setAttribute("aria-label", `התקדמות בהישג ${item.title}`);
+          card.append(title, detail, progress);
+          list.append(card);
+        }
+      }
+
+      renderSettings() {
+        const { min, max, selected } = this.storage.data.settings;
+        $("rangeMin").value = min;
+        $("rangeMax").value = max;
+        const preset = `${min}-${max}`;
+        $("rangePreset").value = ["1-5", "1-10", "1-12", "1-20"].includes(preset) ? preset : "custom";
+        this.renderManualNumbers(selected);
+        this.settingsMessage("");
+      }
+
+      readBounds() {
+        const min = Number($("rangeMin").value);
+        const max = Number($("rangeMax").value);
+        if (!Number.isInteger(min) || !Number.isInteger(max) || min < 1 || max > 20 || min > max) {
+          this.settingsMessage("בחרו טווח תקין בין 1 ל־20, כאשר ההתחלה אינה גדולה מהסוף.", true);
+          return null;
+        }
+        return { min, max };
+      }
+
+      renderManualNumbers(preferred = null) {
+        const bounds = this.readBounds();
+        if (!bounds) return;
+        const oldChecked = preferred || [...document.querySelectorAll("#manualNumbers input:checked")].map(input => Number(input.value));
+        const checked = oldChecked.length ? oldChecked : this.storage.data.settings.selected;
+        const container = $("manualNumbers");
+        container.replaceChildren();
+
+        for (const number of range(bounds.min, bounds.max)) {
+          const label = document.createElement("label");
+          label.className = "check-item";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = String(number);
+          checkbox.checked = checked.includes(number);
+          label.append(checkbox, document.createTextNode(String(number)));
+          container.append(label);
+        }
+
+        const single = $("singleDigit");
+        const old = Number(single.value);
+        single.replaceChildren();
+        for (const number of range(bounds.min, bounds.max)) single.add(new Option(String(number), String(number)));
+        if (old >= bounds.min && old <= bounds.max) single.value = String(old);
+      }
+
+      setCheckedNumbers(numbers) {
+        document.querySelectorAll("#manualNumbers input").forEach(input => {
+          input.checked = numbers.includes(Number(input.value));
+        });
+      }
+
+      saveSettings() {
+        const bounds = this.readBounds();
+        if (!bounds) return;
+        const selected = [...document.querySelectorAll("#manualNumbers input:checked")].map(input => Number(input.value));
+        if (!selected.length) {
+          this.settingsMessage("יש לבחור לפחות מספר אחד.", true);
+          return;
+        }
+        this.storage.data.settings = { ...bounds, selected };
+        this.settingsMessage(this.storage.save()
+          ? "ההגדרות נשמרו בהצלחה."
+          : "לא ניתן לשמור בדפדפן הזה. ההגדרות זמינות עד לסגירת הדף.", !localStorageAvailable());
+      }
+
+      resetData() {
+        if (!window.confirm("למחוק את כל נתוני התרגול, המבחנים, ההישגים וההגדרות?")) return;
+        const removed = this.storage.reset();
+        this.renderSettings();
+        this.settingsMessage(removed ? "כל הנתונים אופסו." : "לא ניתן למחוק את הנתונים מהאחסון בדפדפן.", !removed);
+      }
+
+      settingsMessage(message, error = false) {
+        const box = $("settingsFeedback");
+        box.textContent = message;
+        box.className = `feedback${message ? error ? " error" : " success" : ""}`;
+      }
+
+      feedback(prefix, message, kind = "") {
+        const box = $(`${prefix}Feedback`);
+        box.textContent = message;
+        box.className = `feedback${kind ? ` ${kind}` : ""}`;
+      }
+
+      markQuestion(prefix, correct) {
+        $(`${prefix}QuestionCard`).className = `card question-card ${correct ? "correct" : "wrong"}`;
+      }
+
+      clearTimer() {
+        if (this.timer !== null) clearTimeout(this.timer);
+        this.timer = null;
+      }
+    }
+
+    function localStorageAvailable() {
+      try {
+        const key = "__multiplication_storage_check__";
+        localStorage.setItem(key, "1");
+        localStorage.removeItem(key);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    const storage = new StorageManager();
+    const questions = new QuestionEngine(storage);
+    const adaptive = new AdaptiveEngine(storage);
+    const achievements = new AchievementManager(storage);
+    const hints = new HintEngine();
+    const practice = new PracticeEngine(questions, adaptive, achievements);
+    const tests = new TestEngine(questions, adaptive, storage, achievements);
+    const statistics = new StatisticsManager(storage, adaptive);
+    new UIManager(storage, questions, practice, tests, statistics, achievements, hints);
+  </script>
+</body>
+</html>
