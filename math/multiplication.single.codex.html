@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#334bce">
+    <meta name="description" content="לומדים את לוח הכפל בקצב שלך: תרגול חכם, חזרות, רמזים, מבחנים והישגים.">
+    <title>כפל קטן · הצלחות גדולות</title>
+    <style>
+        :root { --bg:#f1f2f5; --card:#fff; --ink:#202a44; --muted:#606b82; --primary:#334bce; --soft:#eef0ff; --line:#dce1eb; --green:#166a46; --red:#a52d40; --radius:22px; }
+        * { box-sizing:border-box; }
+        [hidden] { display:none !important; }
+        body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,"Segoe UI",sans-serif; line-height:1.6; }
+        button,input,select { font:inherit; }
+        button,a,input,select { -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+        button { min-height:48px; padding:11px 20px; border:1px solid transparent; border-radius:14px; background:var(--primary); color:white; font-weight:700; cursor:pointer; }
+        button:hover { filter:brightness(.95); }
+        button:disabled { opacity:.55; cursor:default; }
+        :focus-visible { outline:3px solid #b06400; outline-offset:4px; }
+        input,select { width:100%; min-height:48px; border:1px solid #b7c0d2; border-radius:12px; background:white; color:var(--ink); padding:10px 12px; }
+        label { display:block; font-weight:700; }
+        input[type=checkbox] { width:22px; min-height:22px; accent-color:var(--primary); }
+        fieldset { min-width:0; margin:0; padding:16px; border:1px solid var(--line); border-radius:16px; }
+        legend { padding:0 8px; font-weight:700; }
+        h1,h2,h3,p { margin:0 0 12px; }
+        h1 { font-size:clamp(28px,6vw,42px); line-height:1.2; letter-spacing:-1px; }
+        h2 { font-size:23px; line-height:1.35; }
+        h3 { font-size:18px; }
+        small,.muted { color:var(--muted); }
+        small { font-size:14px; }
+        header { background:#ffffffed; border-bottom:1px solid var(--line); }
+        .header-inner { max-width:1120px; margin:auto; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .brand { display:flex; align-items:center; gap:10px; padding:0; color:var(--ink); background:none; text-align:right; }
+        .brand-mark { width:46px; height:46px; display:grid; place-items:center; border-radius:14px; background:var(--primary); color:white; font-size:35px; line-height:1; }
+        .brand strong { display:block; font-size:21px; }
+        .brand small { display:block; font-size:12px; font-weight:400; }
+        .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:30px; font-size:13px; background:var(--soft); color:var(--primary); font-weight:700; }
+        main { max-width:1120px; margin:auto; padding:28px 16px 120px; min-height:80vh; }
+        .section-head { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+        .section-head p { margin:8px 0 0; color:var(--muted); }
+        .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px; }
+        .stack { display:grid; gap:18px; }
+        .grid { display:grid; gap:16px; grid-template-columns:1fr; }
+        .row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+        .spread { justify-content:space-between; }
+        .hero { background:var(--primary); color:white; padding:30px 24px; overflow:hidden; }
+        .hero p { max-width:560px; color:#e3e8ff; font-size:17px; }
+        .hero .pill { background:#ffffff1f; color:white; margin-bottom:20px; }
+        .hero .white { background:white; color:var(--primary); }
+        .hero .outline { color:white; background:transparent; border-color:#bec8ff; }
+        .hero-math { display:flex; gap:12px; align-items:center; justify-content:center; margin-top:28px; font-size:32px; font-weight:800; }
+        .hero-math span { background:#ffffff15; padding:6px 19px; border:1px solid #ffffff33; border-radius:16px; }
+        .metric-grid { display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .metric { padding:18px; background:white; border:1px solid var(--line); border-radius:18px; }
+        .metric strong { display:block; font-size:28px; line-height:1.35; }
+        .metric span { font-size:14px; color:var(--muted); }
+        .action-card { text-align:right; color:var(--ink); background:white; padding:22px; border:1px solid var(--line); border-radius:20px; }
+        .action-card b { display:block; margin:10px 0 6px; font-size:21px; }
+        .action-card small { display:block; font-weight:400; }
+        .icon { display:inline-grid; width:44px; height:44px; place-items:center; border-radius:13px; background:var(--soft); font-size:24px; }
+        .secondary { background:var(--soft); color:var(--primary); }
+        .ghost { background:transparent; color:var(--muted); border-color:var(--line); }
+        .danger { color:var(--red); background:#fff0f2; border-color:#ebc5ce; }
+        .full { width:100%; }
+        .space { margin-top:20px; }
+        .small-gap { margin-top:10px; }
+        .form-grid { display:grid; gap:18px; grid-template-columns:1fr; }
+        .field { display:grid; gap:6px; align-content:start; }
+        .help { margin:0; font-size:14px; color:var(--muted); font-weight:400; }
+        .note { background:var(--soft); color:#344583; border-radius:14px; padding:14px 16px; }
+        .error { color:var(--red); font-weight:700; }
+        .number-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin-top:12px; }
+        .number-choice { min-height:49px; display:flex; align-items:center; justify-content:center; gap:5px; border:1px solid var(--line); border-radius:10px; cursor:pointer; background:#fafbff; }
+        .number-choice:has(input:checked) { background:var(--soft); border-color:var(--primary); color:var(--primary); }
+        .number-choice input { margin:0; width:17px; min-height:17px; }
+        .play-shell { max-width:760px; margin:auto; }
+        .question-card { text-align:center; padding:28px 18px; transition:background-color .18s,border-color .18s; }
+        .question-card.success { background:#edfaf2; border-color:#72b38c; }
+        .question-card.failure { background:#fff3f4; border-color:#e0a1ab; }
+        .equation { direction:ltr; unicode-bidi:isolate; display:block; text-align:center; font-size:clamp(48px,10vw,76px); line-height:1.4; font-weight:800; letter-spacing:-.5px; word-spacing:-2px; margin:20px 0; white-space:nowrap; }
+        .math { direction:ltr; unicode-bidi:isolate; display:inline-block; }
+        .answer-form { display:grid; gap:14px; max-width:480px; margin:auto; }
+        .answer-options { padding:14px; }
+        .answer-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
+        .answer-choice { display:flex; align-items:center; gap:8px; min-height:82px; padding:10px; border:2px solid var(--line); border-radius:14px; background:white; cursor:pointer; text-align:right; }
+        .answer-choice > span { min-width:0; }
+        .answer-choice input { width:22px; height:22px; min-height:22px; margin:0; padding:0; flex-shrink:0; accent-color:var(--primary); }
+        .answer-choice bdi { display:block; font-size:30px; line-height:1.2; }
+        .answer-choice:has(input:checked) { background:var(--soft); border-color:var(--primary); }
+        .answer-choice:has(input:focus-visible) { outline:3px solid #b06400; outline-offset:3px; }
+        .answer-choice.wrong { border-color:#dc9aa8; background:#fff3f4; }
+        .answer-choice.correct { border-color:#72b38c; background:#edfaf2; }
+        .answer-choice:has(input:disabled) { cursor:default; }
+        .choice-status { display:block; min-height:20px; font-size:12px; font-weight:700; }
+        .answer-choice.wrong .choice-status { color:var(--red); }
+        .answer-choice.correct .choice-status { color:var(--green); }
+        .feedback { min-height:34px; margin:14px 0 0; font-weight:700; }
+        .hint { text-align:right; margin-top:18px; border:1px solid #e4d5a2; background:#fff9e8; border-radius:16px; padding:18px; }
+        .hint .math { display:block; font-size:21px; text-align:center; overflow-wrap:anywhere; }
+        .array-grid { display:grid; gap:3px; max-width:360px; margin:14px auto; direction:ltr; }
+        .array-grid i { display:block; aspect-ratio:1; border-radius:3px; background:#5969d6; }
+        progress { width:100%; height:11px; border:0; border-radius:20px; accent-color:var(--primary); overflow:hidden; background:#e4e8f0; }
+        progress::-webkit-progress-bar { background:#e4e8f0; border-radius:20px; }
+        progress::-webkit-progress-value { background:var(--primary); border-radius:20px; }
+        .achievement { display:flex; gap:16px; align-items:flex-start; }
+        .achievement .icon { flex-shrink:0; background:#f3f4f7; filter:grayscale(1); }
+        .achievement.earned { border-color:#e4ce8d; background:#fffdf6; }
+        .achievement.earned .icon { background:#fff0bd; filter:none; }
+        .achievement > div { flex:1; }
+        .achievement p { font-size:14px; color:var(--muted); }
+        .chart { height:230px; position:relative; margin-top:12px; }
+        canvas { display:block; width:100%; height:230px; }
+        .table-scroll { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:14px; }
+        th,td { padding:12px 9px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }
+        th { color:var(--muted); font-weight:700; }
+        caption { text-align:right; padding:10px 0; font-weight:700; }
+        .weak-item { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:14px 0; border-bottom:1px solid var(--line); }
+        .weak-item:last-child { border-bottom:0; }
+        .weak-item .math { font-size:22px; font-weight:700; }
+        .score-circle { width:138px; height:138px; border:9px solid #dfe5ff; border-radius:50%; display:grid; place-content:center; margin:18px auto; text-align:center; }
+        .score-circle strong { font-size:40px; line-height:1.1; color:var(--primary); }
+        .center { text-align:center; }
+        .empty { padding:24px; text-align:center; color:var(--muted); }
+        nav { position:fixed; bottom:0; inset-inline:0; z-index:20; padding:7px 5px calc(7px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--line); display:flex; justify-content:center; gap:3px; }
+        nav button { background:transparent; color:var(--muted); flex:1; max-width:150px; padding:7px 2px; min-height:61px; border-radius:12px; font-size:12px; }
+        nav button span { display:block; font-size:21px; line-height:1.2; margin-bottom:4px; }
+        nav button[aria-current=page] { color:var(--primary); background:var(--soft); }
+        .storage-warning { max-width:1088px; margin:12px auto 0; padding:12px 18px; background:#fff0d5; color:#654300; border-radius:12px; }
+        .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); width:max-content; max-width:90vw; background:#202a44; color:white; padding:13px 20px; border-radius:14px; box-shadow:0 8px 30px #202a4433; z-index:30; }
+        .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+        .skip-link { position:fixed; top:-80px; right:15px; z-index:50; background:white; padding:12px; }
+        .skip-link:focus { top:10px; }
+        summary { min-height:44px; padding:8px 0; cursor:pointer; font-weight:700; }
+        footer { margin-top:28px; color:var(--muted); font-size:13px; text-align:center; }
+        oai-mem-citation { display:none; }
+        @media(min-width:680px) {
+            main { padding:36px 24px 125px; }
+            .grid.two,.form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+            .metric-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+            .hero { padding:40px; }
+            .hero-math { justify-content:flex-start; }
+            .answer-form button { min-height:56px; }
+            .question-card { padding:30px; }
+            nav button { font-size:14px; }
+        }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#app">דילוג לתוכן</a>
+    <header>
+        <div class="header-inner">
+            <button class="brand" data-page="home" aria-label="כפל קטן — מסך ראשי">
+                <span class="brand-mark" aria-hidden="true">×</span>
+                <span><strong>כפל קטן</strong><small>כל תרגיל הוא צעד קדימה</small></span>
+            </button>
+            <span class="pill" id="total-score">0 נקודות</span>
+        </div>
+    </header>
+    <div id="storage-warning" class="storage-warning" role="status" hidden></div>
+    <main id="app" tabindex="-1"></main>
+    <nav aria-label="תפריט ראשי">
+        <button data-page="practice"><span aria-hidden="true">×</span>תרגול</button>
+        <button data-page="test"><span aria-hidden="true">✓</span>מבחן</button>
+        <button data-page="statistics"><span aria-hidden="true">▥</span>סטטיסטיקות</button>
+        <button data-page="achievements"><span aria-hidden="true">★</span>הישגים</button>
+        <button data-page="settings"><span aria-hidden="true">⚙</span>הגדרות</button>
+    </nav>
+    <div class="toast" id="toast" role="status" hidden></div>
+    <noscript><p class="card">יש להפעיל JavaScript בדפדפן כדי להשתמש בתרגול.</p></noscript>
+    <script>
+        'use strict';
+
+        const $ = (selector, root = document) => root.querySelector(selector);
+        const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+        const range = (min, max) => Array.from({ length: max - min + 1 }, (_, index) => min + index);
+        const mean = values => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+        const percent = (correct, total) => total ? Math.round(correct / total * 100) : 0;
+        const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+        const seconds = value => `${(value / 1000).toFixed(1)} שנ׳`;
+        const localDay = () => {
+            const date = new Date();
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        };
+        const dateLabel = value => new Date(value).toLocaleDateString('he-IL');
+        const isNumber = value => Number.isInteger(value) && value >= 1 && value <= 20;
+        const validKey = key => /^\d{1,2}x\d{1,2}$/.test(key) && key.split('x').every(value => isNumber(Number(value)));
+        const nonnegative = value => Number.isFinite(value) && value >= 0 ? value : 0;
+
+        /** Versioned, bounded local persistence; unavailable storage never blocks learning. */
+        class StorageManager {
+            constructor() {
+                this.key = 'kefel-katan-v1';
+                this.warning = '';
+                this.blockWrites = false;
+                this.data = this.load();
+            }
+
+            defaults() {
+                return {
+                    version:1,
+                    settings:{ min:1, max:12, selected:range(2, 12), secondSelected:range(2, 12), table:7, sessionLength:20, slowSeconds:10 },
+                    facts:{}, daily:{}, reviews:{}, tests:[], achievements:{},
+                    meta:{ score:0, streak:0, bestStreak:0, practiceQuestions:0, cleanAnswers:0, baselineTimes:[], recentTimes:[] }
+                };
+            }
+
+            load() {
+                const data = this.defaults();
+                try {
+                    const text = localStorage.getItem(this.key);
+                    if (!text) return data;
+                    const raw = JSON.parse(text);
+                    if (!raw || raw.version !== 1 || !raw.settings || !raw.facts || !raw.meta) throw new Error('Invalid data');
+                    const settings = raw.settings;
+                    ['min', 'max', 'table'].forEach(key => { if (isNumber(settings[key])) data.settings[key] = settings[key]; });
+                    if (data.settings.min > data.settings.max) { data.settings.min = 1; data.settings.max = 12; }
+                    ['selected', 'secondSelected'].forEach(key => {
+                        const numbers = Array.isArray(settings[key]) ? Array.from(new Set(settings[key].filter(isNumber))) : [];
+                        if (numbers.length) data.settings[key] = numbers;
+                    });
+                    if ([10, 20, 30, 50].includes(settings.sessionLength)) data.settings.sessionLength = settings.sessionLength;
+                    if (Number.isFinite(settings.slowSeconds) && settings.slowSeconds >= 3 && settings.slowSeconds <= 60) data.settings.slowSeconds = settings.slowSeconds;
+                    Object.entries(raw.facts).forEach(([key, value]) => {
+                        if (!validKey(key) || !value || typeof value !== 'object') return;
+                        const fact = {};
+                        ['correctCount', 'wrongCount', 'averageTime', 'minTime', 'maxTime', 'difficultyScore', 'cleanCount', 'cleanStreak', 'skippedCount'].forEach(name => { fact[name] = nonnegative(value[name]); });
+                        fact.attempts = fact.correctCount + fact.wrongCount;
+                        fact.lastPracticeDate = typeof value.lastPracticeDate === 'string' && Number.isFinite(Date.parse(value.lastPracticeDate)) ? value.lastPracticeDate : null;
+                        fact.needsReview = Boolean(value.needsReview);
+                        data.facts[key] = fact;
+                    });
+                    Object.entries(raw.daily || {}).slice(-730).forEach(([key, value]) => {
+                        if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || !value) return;
+                        data.daily[key] = {};
+                        ['correct', 'wrong', 'totalTime', 'practiceCompleted'].forEach(name => { data.daily[key][name] = nonnegative(value[name]); });
+                    });
+                    Object.keys(data.meta).forEach(key => {
+                        if (!Array.isArray(data.meta[key])) data.meta[key] = nonnegative(raw.meta[key]);
+                    });
+                    ['baselineTimes', 'recentTimes'].forEach(key => {
+                        data.meta[key] = Array.isArray(raw.meta[key]) ? raw.meta[key].filter(value => Number.isFinite(value) && value >= 0).slice(-20) : [];
+                    });
+                    Object.entries(raw.reviews || {}).forEach(([key, value]) => {
+                        if (validKey(key) && value && Array.isArray(value.after)) data.reviews[key] = { after:value.after.filter(Number.isFinite).slice(0, 2), end:Boolean(value.end) };
+                    });
+                    Object.entries(raw.achievements || {}).forEach(([key, value]) => {
+                        if (/^(streak10|streak20|streak50|mastery|daily|speed)$/.test(key) && typeof value === 'string' && Number.isFinite(Date.parse(value))) data.achievements[key] = value;
+                    });
+                    data.tests = Array.isArray(raw.tests) ? raw.tests.filter(test => test && typeof test.signature === 'string' && typeof test.title === 'string' && Number.isFinite(Date.parse(test.date)) && Array.isArray(test.answers) && test.answers.length > 0 && test.answers.length <= 50 && test.answers.every(answer => answer && isNumber(answer.a) && isNumber(answer.b) && typeof answer.correct === 'boolean' && Number.isFinite(answer.time) && answer.time >= 0 && (answer.answer === null || Number.isInteger(answer.answer)))).slice(-50) : [];
+                    return data;
+                } catch (error) {
+                    this.blockWrites = error instanceof SyntaxError || error.message === 'Invalid data';
+                    this.warning = this.blockWrites ? 'הנתונים השמורים אינם תקינים או שייכים לגרסה אחרת. הם לא יידרסו. ניתן לתרגל זמנית או לאפס אותם בהגדרות.' : 'האחסון המקומי אינו זמין. אפשר לתרגל, אך הנתונים יישמרו רק כל עוד הדף פתוח.';
+                    return data;
+                }
+            }
+
+            save() {
+                if (this.blockWrites) return false;
+                try {
+                    localStorage.setItem(this.key, JSON.stringify(this.data));
+                    this.warning = '';
+                    return true;
+                } catch (error) {
+                    this.warning = 'לא ניתן לשמור בדפדפן כרגע. ההתקדמות זמינה בדף זה בלבד; בדקו הרשאות אחסון ומקום פנוי.';
+                    return false;
+                }
+            }
+
+            reset() {
+                try { localStorage.removeItem(this.key); }
+                catch (error) { this.warning = 'הדפדפן חסם את המחיקה. הנתונים בדף אופסו; ייתכן שיש למחוק את נתוני האתר גם בהגדרות הדפדפן.'; }
+                this.blockWrites = false;
+                this.data = this.defaults();
+                this.save();
+            }
+        }
+
+        /** Keeps operand order: 4x6 and 6x4 are distinct facts. */
+        class QuestionEngine {
+            key(question) { return `${question.a}x${question.b}`; }
+            fromKey(key) { const [a, b] = key.split('x').map(Number); return { a, b }; }
+            build(left, right) { return left.flatMap(a => right.map(b => ({ a, b }))); }
+            /** Builds four unique choices, with exactly one correct answer. */
+            answerChoices(question) {
+                const { a, b } = question;
+                const correct = a * b;
+                const candidates = new Set([
+                    (a - 1) * b, (a + 1) * b, a * (b - 1), a * (b + 1),
+                    a + b, correct - 1, correct + 1, correct - 10, correct + 10
+                ]);
+                candidates.delete(correct);
+                const distractors = this.shuffle(Array.from(candidates).filter(value => Number.isInteger(value) && value >= 1 && value <= 400)).slice(0, 3);
+                for (let value = 1; distractors.length < 3 && value <= 400; value++) {
+                    if (value !== correct && !distractors.includes(value)) distractors.push(value);
+                }
+                return this.shuffle([correct, ...distractors]);
+            }
+            shuffle(values) {
+                const result = values.slice();
+                for (let index = result.length - 1; index > 0; index--) {
+                    const other = Math.floor(Math.random() * (index + 1));
+                    [result[index], result[other]] = [result[other], result[index]];
+                }
+                return result;
+            }
+            practicePool(settings, mode, facts) {
+                const numbers = range(settings.min, settings.max);
+                if (mode === 'single') return this.build([settings.table], numbers);
+                if (mode === 'group') return this.build(settings.selected, settings.selected);
+                if (mode === 'custom') return this.build(settings.selected, settings.secondSelected);
+                const pool = this.build(numbers, numbers);
+                if (mode === 'mistakes') return pool.filter(question => {
+                    const fact = facts[this.key(question)];
+                    return fact && fact.needsReview;
+                });
+                if (mode === 'slow') {
+                    const slow = pool.filter(question => facts[this.key(question)] && facts[this.key(question)].averageTime > settings.slowSeconds * 1000);
+                    return slow.length ? slow : pool;
+                }
+                return pool;
+            }
+        }
+
+        /** Weighted selection plus persisted question-count-based spaced repetition. */
+        class AdaptiveEngine {
+            constructor(storage, questions) { this.storage = storage; this.questions = questions; }
+            score(question) {
+                const fact = this.storage.data.facts[this.questions.key(question)];
+                if (!fact || !fact.attempts) return 5;
+                const errorRate = fact.wrongCount / fact.attempts;
+                const speed = Math.min(fact.averageTime / (this.storage.data.settings.slowSeconds * 1000), 3);
+                const elapsedDays = fact.lastPracticeDate ? Math.max(0, (Date.now() - Date.parse(fact.lastPracticeDate)) / 86400000) : 30;
+                const exploration = 2 / Math.sqrt(fact.attempts + 1);
+                const recency = Math.min(elapsedDays / 3, 4);
+                const fluency = fact.cleanStreak >= 3 && speed < 1 ? .45 : 1;
+                return Math.max(.35, (1 + errorRate * 8 + speed * 2 + exploration + recency + (fact.needsReview ? 3 : 0)) * fluency);
+            }
+            choose(pool, previousKey, mode) {
+                const candidates = pool.length > 1 ? pool.filter(question => this.questions.key(question) !== previousKey) : pool;
+                const weights = candidates.map(question => Math.pow(this.score(question), mode === 'weak' ? 2 : 1));
+                let ticket = Math.random() * weights.reduce((sum, value) => sum + value, 0);
+                for (let index = 0; index < candidates.length; index++) {
+                    ticket -= weights[index];
+                    if (ticket <= 0) return candidates[index];
+                }
+                return candidates[candidates.length - 1];
+            }
+            schedule(key) {
+                const count = this.storage.data.meta.practiceQuestions;
+                this.storage.data.reviews[key] = { after:[count + 3, count + 10], end:true };
+            }
+            due(pool) {
+                const keys = new Set(pool.map(question => this.questions.key(question)));
+                const count = this.storage.data.meta.practiceQuestions;
+                return Object.entries(this.storage.data.reviews).filter(([key, review]) => keys.has(key) && review.after.some(due => due <= count)).sort((first, second) => Math.min(...first[1].after) - Math.min(...second[1].after))[0];
+            }
+            consume(key, type) {
+                const review = this.storage.data.reviews[key];
+                if (!review) return;
+                if (type === 'end') review.end = false;
+                if (type === 'spaced') review.after.splice(0, 1);
+                if (!review.after.length && !review.end) delete this.storage.data.reviews[key];
+            }
+        }
+
+        /** Hint markup is generated exclusively from validated numeric operands. */
+        class HintEngine {
+            render(question, level) {
+                const { a, b } = question;
+                const base = a > 5 ? 5 : Math.max(0, a - 1);
+                const rest = a - base;
+                const label = `<strong>רמז ${level} מתוך 5</strong>`;
+                if (level === 1) return `${label}<p>חשבו על <bdi dir="ltr">${base} × ${b}</bdi>, ואז הוסיפו ${rest === 1 ? `עוד ${b}` : `${rest} קבוצות של ${b}`}.</p>`;
+                if (level === 2) return `${label}<p>מפרקים את המספר הראשון לחלקים נוחים:</p><div class="math" dir="ltr">${a} × ${b} = (${base} × ${b}) + (${rest} × ${b})</div>`;
+                if (level === 3) return `${label}<p>מחברים ${a} פעמים את ${b}:</p><div class="math" dir="ltr">${Array(a).fill(b).join(' + ')}</div>`;
+                if (level === 4) return `${label}<p>${a} שורות, בכל שורה ${b} נקודות. ספרו בקבוצות.</p><div class="array-grid" style="grid-template-columns:repeat(${b},1fr)" role="img" aria-label="${a} שורות של ${b} נקודות">${'<i aria-hidden="true"></i>'.repeat(a * b)}</div>`;
+                return `<strong>לומדים מהפתרון</strong><div class="math" dir="ltr">${a} × ${b} = ${a * b}</div><p>נפגוש את התרגיל שוב בחזרה חכמה.</p>`;
+            }
+        }
+
+        class StatisticsManager {
+            constructor(storage, questions, adaptive) { this.storage = storage; this.questions = questions; this.adaptive = adaptive; }
+            day() {
+                const key = localDay();
+                const data = this.storage.data;
+                if (!data.daily[key]) data.daily[key] = { correct:0, wrong:0, totalTime:0, practiceCompleted:0 };
+                const keys = Object.keys(data.daily).sort();
+                if (keys.length > 730) keys.slice(0, keys.length - 730).forEach(day => delete data.daily[day]);
+                return data.daily[key];
+            }
+            record(question, correct, time, clean, skipped = false) {
+                const data = this.storage.data;
+                const key = this.questions.key(question);
+                if (!data.facts[key]) data.facts[key] = { correctCount:0, wrongCount:0, averageTime:0, minTime:0, maxTime:0, attempts:0, difficultyScore:5, lastPracticeDate:null, cleanCount:0, cleanStreak:0, skippedCount:0, needsReview:false };
+                const fact = data.facts[key];
+                const duration = Math.max(0, time);
+                fact.averageTime = (fact.averageTime * fact.attempts + duration) / (fact.attempts + 1);
+                fact.minTime = fact.attempts ? Math.min(fact.minTime, duration) : duration;
+                fact.maxTime = Math.max(fact.maxTime, duration);
+                fact.attempts++;
+                fact[correct ? 'correctCount' : 'wrongCount']++;
+                fact.lastPracticeDate = new Date().toISOString();
+                if (skipped) fact.skippedCount++;
+                if (!correct || !clean) { fact.cleanStreak = 0; fact.needsReview = true; }
+                if (correct && clean) {
+                    fact.cleanCount++;
+                    fact.cleanStreak++;
+                    if (fact.cleanStreak >= 2) fact.needsReview = false;
+                    data.meta.streak++;
+                    data.meta.bestStreak = Math.max(data.meta.bestStreak, data.meta.streak);
+                    data.meta.cleanAnswers++;
+                    if (data.meta.baselineTimes.length < 20) data.meta.baselineTimes.push(duration);
+                    data.meta.recentTimes.push(duration);
+                    data.meta.recentTimes = data.meta.recentTimes.slice(-20);
+                } else {
+                    data.meta.streak = 0;
+                }
+                const day = this.day();
+                day[correct ? 'correct' : 'wrong']++;
+                day.totalTime += duration;
+                fact.difficultyScore = this.adaptive.score(question);
+                this.storage.save();
+            }
+            completedPractice() {
+                this.storage.data.meta.practiceQuestions++;
+                this.day().practiceCompleted++;
+            }
+            totals(facts = Object.values(this.storage.data.facts)) {
+                const correct = facts.reduce((sum, fact) => sum + fact.correctCount, 0);
+                const wrong = facts.reduce((sum, fact) => sum + fact.wrongCount, 0);
+                const total = correct + wrong;
+                return { correct, wrong, total, rate:percent(correct, total), average:total ? facts.reduce((sum, fact) => sum + fact.averageTime * fact.attempts, 0) / total : 0 };
+            }
+            byNumber() {
+                return range(1, 20).map(number => Object.assign({ number }, this.totals(Object.entries(this.storage.data.facts).filter(([key]) => Number(key.split('x')[0]) === number).map(([, fact]) => fact))));
+            }
+            weak() {
+                return Object.entries(this.storage.data.facts).filter(([, fact]) => fact.attempts && (fact.needsReview || fact.wrongCount / fact.attempts > .15 || fact.averageTime > this.storage.data.settings.slowSeconds * 1000)).map(([key, fact]) => ({ key, fact, score:this.adaptive.score(this.questions.fromKey(key)) })).sort((a, b) => b.score - a.score).slice(0, 10);
+            }
+            days() { return Object.entries(this.storage.data.daily).sort(([a], [b]) => a.localeCompare(b)).slice(-14); }
+        }
+
+        class AchievementManager {
+            constructor(storage) { this.storage = storage; }
+            goals() {
+                const data = this.storage.data;
+                const mastery = range(1, 20).map(a => ({ number:a, count:range(1, 12).filter(b => {
+                    const fact = data.facts[`${a}x${b}`];
+                    return fact && fact.cleanCount >= 3 && fact.cleanStreak >= 2 && fact.correctCount / fact.attempts >= .8 && fact.averageTime <= 10000;
+                }).length })).sort((a, b) => b.count - a.count);
+                const today = data.daily[localDay()];
+                const baseline = mean(data.meta.baselineTimes);
+                const recent = mean(data.meta.recentTimes);
+                const improvement = baseline > 0 && data.meta.cleanAnswers >= 40 ? Math.max(0, (baseline - recent) / baseline * 100) : 0;
+                return [
+                    ...[10, 20, 50].map(target => ({ id:`streak${target}`, icon:'★', title:`${target} הצלחות ברצף`, description:'תשובות נכונות בניסיון הראשון, ללא רמז.', value:data.meta.bestStreak, target })),
+                    { id:'mastery', icon:'🏅', title:'שליטה בספרה', description:`כפולות 1–12: לפחות 3 הצלחות עצמאיות לכל תרגיל, 2 אחרונות עצמאיות, 80% דיוק וזמן ממוצע עד 10 שניות. הספרה המובילה: ${mastery[0].number}.`, value:mastery[0].count, target:12 },
+                    { id:'daily', icon:'☀', title:'תרגול יומי', description:'משלימים 10 שאלות תרגול ביום אחד. מחר מתחילים יעד יומי חדש.', value:today ? today.practiceCompleted : 0, target:10 },
+                    { id:'speed', icon:'⚡', title:'שיפור מהירות', description:'שיפור של 20% בזמנים: 20 הצלחות עצמאיות אחרונות לעומת 20 הראשונות. נדרשות לפחות 40 הצלחות עצמאיות.', value:improvement, target:20 }
+                ];
+            }
+            evaluate() {
+                const fresh = [];
+                this.goals().forEach(goal => {
+                    if (!this.storage.data.achievements[goal.id] && goal.value >= goal.target) {
+                        this.storage.data.achievements[goal.id] = new Date().toISOString();
+                        fresh.push(goal.title);
+                    }
+                });
+                this.storage.save();
+                return fresh;
+            }
+        }
+
+        /** Practice state contains no DOM references. Review queues survive page reloads. */
+        class PracticeEngine {
+            constructor(storage, questions, adaptive, statistics) {
+                this.storage = storage; this.questions = questions; this.adaptive = adaptive; this.statistics = statistics;
+                this.active = false; this.current = null;
+            }
+            start(mode, pool, limit) {
+                this.active = true; this.mode = mode; this.pool = pool; this.limit = limit;
+                this.phase = 'main'; this.completed = 0; this.reviewCompleted = 0; this.results = []; this.score = 0;
+                this.endKeys = []; this.previousKey = ''; this.current = null;
+                this.next();
+            }
+            open(question, reviewType = '') {
+                this.current = Object.assign({}, question, { choices:this.questions.answerChoices(question), startTime:performance.now(), pausedTime:0, hiddenAt:document.hidden ? performance.now() : null, wrongAttempts:0, hintLevel:0, assisted:false, locked:false, reviewType });
+                this.previousKey = this.questions.key(question);
+            }
+            elapsed() {
+                const question = this.current;
+                return Math.max(0, (question.hiddenAt === null ? performance.now() : question.hiddenAt) - question.startTime - question.pausedTime);
+            }
+            visibility(hidden) {
+                const question = this.current;
+                if (!this.active || !question || question.locked) return;
+                if (hidden && question.hiddenAt === null) question.hiddenAt = performance.now();
+                if (!hidden && question.hiddenAt !== null) { question.pausedTime += performance.now() - question.hiddenAt; question.hiddenAt = null; }
+            }
+            next() {
+                if (!this.active) return;
+                if (this.phase === 'main' && this.completed >= this.limit) { this.beginEnd(); return; }
+                if (this.phase === 'end') {
+                    if (!this.endKeys.length) { this.active = false; this.current = null; return; }
+                    this.open(this.questions.fromKey(this.endKeys.shift()), 'end');
+                    return;
+                }
+                const due = this.adaptive.due(this.pool);
+                if (due) { this.open(this.questions.fromKey(due[0]), 'spaced'); return; }
+                this.open(this.adaptive.choose(this.pool, this.previousKey, this.mode));
+            }
+            beginEnd() {
+                this.phase = 'end';
+                const keys = new Set(this.pool.map(question => this.questions.key(question)));
+                this.endKeys = Object.entries(this.storage.data.reviews).filter(([key, value]) => keys.has(key) && value.end).map(([key]) => key);
+                this.next();
+            }
+            submit(answer) {
+                const question = this.current;
+                if (!question || question.locked || !question.choices.includes(answer)) return null;
+                const time = this.elapsed();
+                const correct = answer === question.a * question.b;
+                const clean = correct && !question.wrongAttempts && !question.assisted;
+                this.statistics.record(question, correct, time, clean);
+                if (correct) {
+                    const points = clean ? Math.max(5, 20 - Math.floor(time / 1000)) : 5;
+                    this.score += points; this.storage.data.meta.score += points;
+                    this.finishQuestion(true, clean, time);
+                    return { kind:'correct', text:clean ? `מצוין! תשובה נכונה. +${points} נקודות` : 'יפה! למידה והתמדה משתלמות. +5 נקודות' };
+                }
+                question.wrongAttempts++;
+                if (question.wrongAttempts >= 5) {
+                    question.hintLevel = 5;
+                    this.finishQuestion(false, false, time);
+                    return { kind:'revealed', text:'בואו נלמד מהפתרון. נחזור לתרגיל בהמשך.' };
+                }
+                question.hintLevel = Math.max(question.hintLevel, question.wrongAttempts - 1);
+                if (question.hintLevel) question.assisted = true;
+                return { kind:'wrong', text:question.wrongAttempts === 1 ? 'כמעט! אפשר לנסות שוב. לומדים גם מטעויות.' : 'לא נורא. ניעזר ברמז וננסה שוב.' };
+            }
+            hint() {
+                const question = this.current;
+                if (!question || question.locked) return null;
+                question.assisted = true;
+                question.hintLevel = Math.min(5, question.hintLevel + 1);
+                if (question.hintLevel === 5) {
+                    this.statistics.record(question, false, this.elapsed(), false);
+                    this.finishQuestion(false, false, this.elapsed());
+                    return { kind:'revealed', text:'הפתרון מוצג. התרגיל נשמר לחיזוק.' };
+                }
+                return { kind:'hint', text:'קחו את הזמן. הרמז כאן כדי לעזור.' };
+            }
+            skip() {
+                if (!this.current || this.current.locked) return null;
+                this.statistics.record(this.current, false, this.elapsed(), false, true);
+                this.current.hintLevel = 5;
+                this.finishQuestion(false, false, this.elapsed());
+                return { kind:'revealed', text:'דילגנו ושמרנו לחיזוק. אפשר ללמוד מהפתרון לפני שממשיכים.' };
+            }
+            finishQuestion(correct, clean, time) {
+                const question = this.current;
+                question.locked = true;
+                const key = this.questions.key(question);
+                this.adaptive.consume(key, question.reviewType);
+                this.statistics.completedPractice();
+                if (!clean) this.adaptive.schedule(key);
+                if (this.phase === 'main') this.completed++;
+                if (this.phase === 'end') this.reviewCompleted++;
+                this.results.push({ a:question.a, b:question.b, correct, clean, time });
+                this.storage.save();
+            }
+            stop() { this.active = false; this.current = null; this.storage.save(); }
+        }
+
+        class TestEngine {
+            constructor(storage, questions, adaptive, statistics) {
+                this.storage = storage; this.questions = questions; this.adaptive = adaptive; this.statistics = statistics;
+                this.active = false; this.current = null;
+            }
+            start(pool, count, mode, title) {
+                this.active = true; this.answers = []; this.index = 0; this.list = []; this.title = title;
+                this.signature = `single-choice-v1|${mode}|${count}|${pool.map(question => this.questions.key(question)).sort().join(',')}`;
+                while (this.list.length < count) {
+                    let remaining = pool.slice();
+                    if (mode !== 'weak') remaining = this.questions.shuffle(remaining);
+                    while (remaining.length && this.list.length < count) {
+                        const previous = this.list.length ? this.questions.key(this.list[this.list.length - 1]) : '';
+                        let question = mode === 'weak' ? this.adaptive.choose(remaining, previous, 'weak') : remaining[0];
+                        if (remaining.length > 1 && this.questions.key(question) === previous) question = remaining[1];
+                        this.list.push(question);
+                        remaining = remaining.filter(item => this.questions.key(item) !== this.questions.key(question));
+                    }
+                }
+                this.open();
+            }
+            open() {
+                const question = this.list[this.index];
+                this.current = Object.assign({}, question, { choices:this.questions.answerChoices(question), startTime:performance.now(), pausedTime:0, hiddenAt:document.hidden ? performance.now() : null });
+            }
+            elapsed() { return Math.max(0, (this.current.hiddenAt === null ? performance.now() : this.current.hiddenAt) - this.current.startTime - this.current.pausedTime); }
+            visibility(hidden) {
+                if (!this.active || !this.current) return;
+                if (hidden && this.current.hiddenAt === null) this.current.hiddenAt = performance.now();
+                if (!hidden && this.current.hiddenAt !== null) { this.current.pausedTime += performance.now() - this.current.hiddenAt; this.current.hiddenAt = null; }
+            }
+            submit(answer) {
+                if (!this.active) return null;
+                const question = this.current;
+                if (answer !== null && !question.choices.includes(answer)) return null;
+                const time = this.elapsed();
+                const correct = answer === question.a * question.b;
+                this.statistics.record(question, correct, time, correct, answer === null);
+                if (!correct) this.adaptive.schedule(this.questions.key(question));
+                this.answers.push({ a:question.a, b:question.b, answer, correct, time });
+                this.index++;
+                if (this.index < this.list.length) { this.open(); this.storage.save(); return null; }
+                this.active = false; this.current = null;
+                this.result = { title:this.title, signature:this.signature, date:new Date().toISOString(), answers:this.answers.slice() };
+                this.previous = this.storage.data.tests.slice().reverse().find(test => test.signature === this.signature) || null;
+                this.storage.data.tests.push(this.result);
+                this.storage.data.tests = this.storage.data.tests.slice(-50);
+                this.storage.save();
+                return this.result;
+            }
+            stop() { this.active = false; this.current = null; this.storage.save(); }
+        }
+
+        class UIManager {
+            constructor(storage, questions, adaptive, hints, practice, tests, statistics, achievements) {
+                Object.assign(this, { storage, questions, adaptive, hints, practice, tests, statistics, achievements });
+                this.page = 'home'; this.timer = null; this.toastTimer = null; this.practiceMode = 'random'; this.testMode = 'range';
+                this.bind();
+                this.render();
+            }
+            bind() {
+                document.addEventListener('click', event => {
+                    const button = event.target.closest('button');
+                    if (!button || button.disabled) return;
+                    if (button.dataset.page) { this.navigate(button.dataset.page); return; }
+                    const action = button.dataset.action;
+                    if (action === 'hint') this.practiceFeedback(this.practice.hint());
+                    if (action === 'skip-practice') this.practiceFeedback(this.practice.skip());
+                    if (action === 'next') this.nextPractice();
+                    if (action === 'end-practice') this.endPractice();
+                    if (action === 'skip-test') this.submitTest(null);
+                    if (action === 'reset') this.reset();
+                    if (action === 'weak-practice') { this.practiceMode = 'weak'; this.navigate('practice'); }
+                    if (action === 'mistake-practice') { this.practiceMode = 'mistakes'; this.navigate('practice'); }
+                    if (action === 'pick-all' || action === 'pick-none') $$(`#${button.dataset.target} input`).forEach(input => { input.checked = action === 'pick-all'; });
+                    if (action === 'copy-group') {
+                        const selected = this.selected('group-a');
+                        $$('#group-b input').forEach(input => { input.checked = selected.includes(Number(input.value)); });
+                    }
+                });
+                document.addEventListener('submit', event => {
+                    event.preventDefault();
+                    switch (event.target.id) {
+                        case 'practice-setup': this.startPractice(); break;
+                        case 'test-setup': this.startTest(); break;
+                        case 'settings-form': this.saveSettings(); break;
+                        case 'answer-form': this.answer(); break;
+                    }
+                });
+                document.addEventListener('change', event => {
+                    if (event.target.matches('#answer-form input[name="answer"]')) {
+                        const group = $('#answer-options');
+                        if (group.hasAttribute('aria-invalid')) {
+                            group.removeAttribute('aria-invalid');
+                            $('#feedback').textContent = '';
+                        }
+                    }
+                    if (event.target.id === 'practice-mode') { this.practiceMode = event.target.value; this.updatePracticeSetup(); }
+                    if (event.target.id === 'test-mode') { this.testMode = event.target.value; this.updateTestSetup(); }
+                    if (event.target.id === 'range-preset' && event.target.value !== 'custom') {
+                        $('#range-min').value = 1; $('#range-max').value = event.target.value;
+                    }
+                    if (event.target.id === 'range-min' || event.target.id === 'range-max') $('#range-preset').value = 'custom';
+                });
+                document.addEventListener('keydown', event => {
+                    if (event.key !== 'Enter' || !event.target.matches('#answer-form input[name="answer"]')) return;
+                    event.preventDefault();
+                    if (!event.repeat) this.answer();
+                });
+                document.addEventListener('visibilitychange', () => { this.practice.visibility(document.hidden); this.tests.visibility(document.hidden); });
+                window.addEventListener('resize', () => {
+                    cancelAnimationFrame(this.resizeFrame);
+                    this.resizeFrame = requestAnimationFrame(() => { if (this.page === 'statistics') this.drawCharts(); });
+                });
+                window.addEventListener('beforeunload', event => {
+                    if (!this.practice.active && !this.tests.active) return;
+                    event.preventDefault(); event.returnValue = '';
+                });
+            }
+            navigate(page) {
+                if ((this.practice.active || this.tests.active) && !confirm('לצאת מהסשן? התשובות שכבר נשלחו והחזרות יישמרו. מבחן שלא הושלם לא ייכלל בהשוואת מבחנים.')) return;
+                clearTimeout(this.timer);
+                this.practice.stop(); this.tests.stop();
+                this.page = page; this.render();
+                $('#app').focus(); window.scrollTo(0, 0);
+            }
+            render() {
+                const screens = { home:() => this.home(), practice:() => this.practiceSetup(), test:() => this.testSetup(), statistics:() => this.statisticsScreen(), achievements:() => this.achievementsScreen(), settings:() => this.settingsScreen() };
+                $('#app').innerHTML = screens[this.page]();
+                $$('nav button').forEach(button => {
+                    if (button.dataset.page === this.page) button.setAttribute('aria-current', 'page');
+                    else button.removeAttribute('aria-current');
+                });
+                this.updateStatus();
+                if (this.page === 'practice') this.updatePracticeSetup();
+                if (this.page === 'test') this.updateTestSetup();
+                if (this.page === 'statistics') requestAnimationFrame(() => this.drawCharts());
+            }
+            updateStatus() {
+                $('#total-score').textContent = `${this.storage.data.meta.score.toLocaleString('he-IL')} נקודות`;
+                $('#storage-warning').textContent = this.storage.warning;
+                $('#storage-warning').hidden = !this.storage.warning;
+            }
+            notify(text) {
+                clearTimeout(this.toastTimer); $('#toast').textContent = text; $('#toast').hidden = false;
+                this.toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 4200);
+            }
+            afterAnswer() {
+                const fresh = this.achievements.evaluate();
+                if (fresh.length) this.notify(`הישג חדש: ${fresh.join(' · ')}`);
+                this.updateStatus();
+            }
+            heading(title, description) { return `<div class="section-head"><div><h1>${title}</h1><p>${description}</p></div><button class="ghost" data-page="home">למסך הראשי</button></div>`; }
+            metric(value, label) { return `<div class="metric"><strong>${value}</strong><span>${label}</span></div>`; }
+            options(values, selected) { return values.map(value => `<option value="${value}" ${value === selected ? 'selected' : ''}>${value}</option>`).join(''); }
+            numbers(id, values) { return `<div class="number-grid" id="${id}">${range(1, 20).map(number => `<label class="number-choice"><input type="checkbox" value="${number}" ${values.includes(number) ? 'checked' : ''}><span>${number}</span></label>`).join('')}</div>`; }
+            selected(id) { return $$(`#${id} input:checked`).map(input => Number(input.value)); }
+            error(message) { $('#form-error').textContent = message; $('#form-error').focus(); }
+            home() {
+                const totals = this.statistics.totals();
+                const today = this.storage.data.daily[localDay()];
+                const completed = today ? today.practiceCompleted : 0;
+                return `<div class="stack">
+                    <section class="hero card"><span class="pill">לומדים בקצב שלך</span><h1>כפל קטן.<br>הצלחות גדולות.</h1><p class="space">עוד תרגיל, עוד רגע של הבנה. נתרגל יחד, נלמד מטעויות ונגלה כמה כבר התקדמת.</p><div class="row space"><button class="white" data-page="practice">בואו נתרגל ←</button><button class="outline" data-page="test">מוכנים למבחן?</button></div><div class="hero-math" dir="ltr" aria-hidden="true"><span>6</span>×<span>7</span>=<span>42</span></div></section>
+                    <div class="metric-grid">${this.metric(totals.total ? `${totals.rate}%` : '—', 'הצלחה בכלל הניסיונות')}${this.metric(this.storage.data.meta.bestStreak, 'שיא רצף עצמאי')}${this.metric(this.storage.data.meta.practiceQuestions, 'שאלות תרגול שהושלמו')}${this.metric(Object.keys(this.storage.data.achievements).length, 'מדליות שהרווחת')}</div>
+                    <section class="card"><div class="row spread"><h2>קצת בכל יום, הרבה לאורך הדרך</h2><span class="pill">${completed} / 10 היום</span></div><progress value="${Math.min(completed, 10)}" max="10" aria-label="התקדמות ליעד היומי"></progress><p class="help small-gap">היעד היומי: 10 שאלות. אין לחץ ואין מגבלת זמן.</p></section>
+                    <div class="grid three"><button class="action-card" data-action="weak-practice"><span class="icon" aria-hidden="true">✦</span><b>מחזקים את מה שקשה</b><small>בחירה חכמה לפי טעויות, זמן תגובה ותרגול קודם.</small></button><button class="action-card" data-action="mistake-practice"><span class="icon" aria-hidden="true">↻</span><b>טעות היא הזדמנות</b><small>חוזרים לתרגילים שעדיין צריכים חיזוק.</small></button><button class="action-card" data-page="statistics"><span class="icon" aria-hidden="true">▥</span><b>רואים את ההתקדמות</b><small>מגלים מה כבר זורם ומה כדאי לתרגל בהמשך.</small></button></div>
+                    <div class="row"><button class="ghost" data-page="achievements">ההישגים שלי</button><button class="ghost" data-page="settings">התאמת מספרים וטווחים</button></div></div><footer>ללא חשבון וללא חיבור לרשת. הנתונים נשמרים בדפדפן הזה בלבד.</footer>`;
+            }
+            practiceSetup() {
+                const settings = this.storage.data.settings;
+                const modes = [['single','ספרה מול כל הטווח'],['group','קבוצה מול קבוצה'],['random','תרגול אקראי'],['weak','תרגול חולשות'],['mistakes','תרגול טעויות'],['slow','תרגול איטי'],['custom','תרגול מותאם אישית']];
+                return `${this.heading('זמן לתרגל', 'בוחרים דרך, מתחילים בקטן ומתקדמים ביחד.')}<form id="practice-setup" class="card stack"><div class="form-grid"><div class="field"><label for="practice-mode">מצב תרגול</label><select id="practice-mode">${modes.map(([value, text]) => `<option value="${value}" ${this.practiceMode === value ? 'selected' : ''}>${text}</option>`).join('')}</select></div><div class="field"><label for="practice-length">שאלות לפני חזרת הסיום</label><select id="practice-length">${this.options([10,20,30,50], settings.sessionLength)}</select></div><div class="field" id="practice-table-wrap"><label for="practice-table">המספר הראשון בתרגיל</label><select id="practice-table">${this.options(range(1,20), settings.table)}</select></div></div><div class="note" id="practice-description"></div><p class="help">תרגיל שנפתר אחרי טעות חוזר לאחר 3 שאלות נוספות, לאחר 10, ובחזרת הסיום. חזרות שלא הגיע זמנן נשמרות לסשן הבא. רמזים אינם מוגבלים בזמן.</p><p class="error" id="form-error" role="alert" tabindex="-1"></p><div class="row"><button type="submit">מתחילים לתרגל ←</button><button type="button" class="ghost" data-page="settings">בחירת מספרים וטווחים</button></div></form>`;
+            }
+            updatePracticeSetup() {
+                const settings = this.storage.data.settings;
+                const descriptions = {
+                    single:`הספרה שנבחרה תופיע ראשונה, מול כל המספרים בטווח ${settings.min}–${settings.max}.`,
+                    group:`קבוצה מול עצמה: ${settings.selected.join(', ')}.`,
+                    random:`שני המספרים בטווח ${settings.min}–${settings.max}. בחירה אקראית עם קדימות לתרגילים שצריכים חיזוק.`,
+                    weak:`בטווח ${settings.min}–${settings.max}, עם עדיפות מוגברת לטעויות, לזמנים איטיים ולתרגילים שלא תורגלו לאחרונה. בלי היסטוריה מתחילים באבחון.`,
+                    mistakes:`רק תרגילים שמסומנים לחיזוק בטווח ${settings.min}–${settings.max}. שתי הצלחות עצמאיות רצופות מסירות את הסימון.`,
+                    slow:`מתמקדים בתרגילים שהזמן הממוצע שלהם מעל ${settings.slowSeconds} שניות, בטווח ${settings.min}–${settings.max}. כשאין כאלה, מתרגלים את הטווח בקצב רגוע.`,
+                    custom:`המספר הראשון מתוך: ${settings.selected.join(', ')}. המספר השני מתוך: ${settings.secondSelected.join(', ')}. הסדר נשמר תמיד.`
+                };
+                $('#practice-description').textContent = descriptions[this.practiceMode];
+                $('#practice-table-wrap').hidden = this.practiceMode !== 'single';
+            }
+            startPractice() {
+                const settings = Object.assign({}, this.storage.data.settings, { table:Number($('#practice-table').value) });
+                const pool = this.questions.practicePool(settings, this.practiceMode, this.storage.data.facts);
+                if (!pool.length) { this.error('אין כרגע טעויות לחיזוק בטווח הזה. אפשר להרחיב את הטווח בהגדרות או לבחור תרגול אקראי.'); return; }
+                this.practice.start(this.practiceMode, pool, Number($('#practice-length').value));
+                this.renderQuestion('practice');
+            }
+            questionShell(kind) {
+                const engine = kind === 'practice' ? this.practice : this.tests;
+                const practice = kind === 'practice';
+                const current = engine.current;
+                const number = practice ? (engine.phase === 'end' ? engine.reviewCompleted + 1 : engine.completed + 1) : engine.index + 1;
+                const total = practice ? (engine.phase === 'end' ? engine.reviewCompleted + engine.endKeys.length + 1 : engine.limit) : engine.list.length;
+                const label = practice && engine.phase === 'end' ? 'חזרת סיום' : practice ? 'תרגול' : 'מבחן';
+                return `<div class="play-shell stack">
+                    <div class="row spread"><h1>${label}</h1><span class="pill" id="question-counter">שאלה ${number} מתוך ${total}</span></div>
+                    <progress value="${number - 1}" max="${total}" aria-label="התקדמות בסשן"></progress>
+                    ${practice ? `<div class="row spread"><span>ניקוד בסשן: <strong id="session-score">${engine.score}</strong></span><span>רצף עצמאי: <strong id="current-streak">${this.storage.data.meta.streak}</strong> ✦</span></div>` : '<p class="help">ניסיון אחד לכל שאלה, ללא רמזים. הפתרונות יופיעו רק בסיכום.</p>'}
+                    <section class="card question-card" id="question-card">
+                        <span class="pill">${current.reviewType ? '↻ חוזרים כדי לזכור' : 'אפשר לקחת את הזמן'}</span>
+                        <div class="equation" id="current-equation" dir="ltr" aria-label="${current.a} כפול ${current.b}, כמה זה?">${current.a} × ${current.b} = ?</div>
+                        <form id="answer-form" class="answer-form" novalidate>
+                            <fieldset id="answer-options" class="answer-options" tabindex="-1" aria-describedby="current-equation answer-instructions feedback">
+                                <legend>בחרו תשובה אחת</legend>
+                                <p id="answer-instructions" class="help">סמנו אפשרות אחת ולחצו ${practice ? 'בדיקה' : 'שליחת תשובה'}. אפשר לשנות את הבחירה לפני השליחה.</p>
+                                <div class="answer-choices">
+                                    ${current.choices.map((value, index) => `<label class="answer-choice" for="answer-${index}"><input id="answer-${index}" name="answer" type="radio" value="${value}" aria-describedby="current-equation"><span><bdi dir="ltr">${value}</bdi><small class="choice-status"></small></span></label>`).join('')}
+                                </div>
+                            </fieldset>
+                            <button type="submit" id="check-answer">${practice ? 'בדיקה' : 'שליחת תשובה'}</button>
+                        </form>
+                        <div class="feedback" id="feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+                        <div class="row space" style="justify-content:center">
+                            <button class="secondary" data-action="${practice ? 'hint' : 'skip-test'}" id="hint-button">${practice ? 'רמז קטן' : 'דילוג'}</button>
+                            ${practice ? '<button class="ghost" data-action="skip-practice" id="skip-button">דילוג</button>' : ''}
+                            <button data-action="next" id="next-button" hidden>המשך ←</button>
+                        </div>
+                        <div class="hint" id="hint-box" role="region" aria-label="רמז לתרגיל" hidden></div>
+                    </section>
+                    <div class="row spread">${practice ? '<button class="ghost" data-action="end-practice">סיום הסשן</button>' : '<button class="ghost" data-page="test">יציאה מהמבחן</button>'}<small>הזמן נעצר כשהדף אינו גלוי.</small></div>
+                </div>`;
+            }
+            renderQuestion(kind) {
+                if (kind === 'practice' && !this.practice.active) { this.practiceSummary(); return; }
+                $('#app').innerHTML = this.questionShell(kind);
+                $('#answer-options').focus({ preventScroll:true });
+            }
+            answer() {
+                const group = $('#answer-options');
+                const button = $('#check-answer');
+                if (!group || !button || button.disabled) return;
+                const selected = $('#answer-form input[name="answer"]:checked');
+                if (!selected) {
+                    $('#feedback').textContent = 'יש לבחור תשובה אחת לפני הבדיקה.';
+                    group.setAttribute('aria-invalid', 'true');
+                    group.focus({ preventScroll:true });
+                    return;
+                }
+                if (selected.disabled) return;
+                group.removeAttribute('aria-invalid');
+                const answer = Number(selected.value);
+                if (this.practice.active) { this.practiceFeedback(this.practice.submit(answer)); return; }
+                if (this.tests.active) this.submitTest(answer);
+            }
+            practiceFeedback(result) {
+                if (!result) return;
+                const question = this.practice.current;
+                $('#feedback').textContent = result.text;
+                $('#question-card').className = `card question-card ${result.kind === 'correct' ? 'success' : result.kind === 'wrong' || result.kind === 'revealed' ? 'failure' : ''}`;
+                $('#session-score').textContent = this.practice.score;
+                $('#current-streak').textContent = this.storage.data.meta.streak;
+                $('#hint-box').hidden = question.hintLevel === 0;
+                if (question.hintLevel) $('#hint-box').innerHTML = this.hints.render(question, question.hintLevel);
+                $('#hint-button').textContent = question.hintLevel ? 'לרמז הבא' : 'רמז קטן';
+                this.updateAnswerChoices(result.kind, question);
+                ['#check-answer','#hint-button','#skip-button'].forEach(selector => { $(selector).disabled = question.locked; });
+                $('#next-button').hidden = !question.locked;
+                this.afterAnswer();
+                if (result.kind === 'correct') {
+                    this.timer = setTimeout(() => this.nextPractice(), 1100);
+                    return;
+                }
+                if (question.locked) { $('#next-button').focus({ preventScroll:true }); return; }
+                if (result.kind === 'wrong') $('#answer-options').focus({ preventScroll:true });
+            }
+            updateAnswerChoices(kind, question) {
+                $$('#answer-form input[name="answer"]').forEach(input => {
+                    const label = input.closest('.answer-choice');
+                    const status = $('.choice-status', label);
+                    if (kind === 'wrong' && input.checked) {
+                        label.classList.add('wrong');
+                        status.textContent = 'עדיין לא — נסו שוב';
+                        input.checked = false;
+                    }
+                    if ((kind === 'correct' || kind === 'revealed') && Number(input.value) === question.a * question.b) {
+                        label.classList.add('correct');
+                        status.textContent = '✓ התשובה הנכונה';
+                    }
+                    input.disabled = question.locked;
+                });
+            }
+            nextPractice() {
+                clearTimeout(this.timer);
+                if (!this.practice.active || !this.practice.current || !this.practice.current.locked) return;
+                this.practice.next(); this.renderQuestion('practice');
+            }
+            endPractice() {
+                const ending = this.practice.phase === 'end';
+                const message = ending ? 'לסיים בלי יתר חזרת הסיום? התרגילים שנותרו יישמרו לחזרה עתידית.' : 'לעבור לחזרת הסיום? השאלה הנוכחית שלא נענתה לא תיספר.';
+                if (!confirm(message)) return;
+                clearTimeout(this.timer);
+                if (ending) this.practice.stop();
+                else this.practice.beginEnd();
+                this.renderQuestion('practice');
+            }
+            practiceSummary() {
+                const results = this.practice.results;
+                const clean = results.filter(result => result.clean).length;
+                const solved = results.filter(result => result.correct).length;
+                $('#app').innerHTML = `${this.heading('כל הכבוד על הדרך!', 'גם כשצריך רמז, המוח לומד משהו חדש.')}<div class="stack"><section class="card center"><span class="icon" aria-hidden="true">★</span><h2 class="space">הסשן הסתיים</h2><p>${results.length} שאלות הושלמו, כולל ${this.practice.reviewCompleted} שאלות בחזרת הסיום.</p><div class="metric-grid">${this.metric(this.practice.score, 'נקודות בסשן')}${this.metric(clean, 'הצלחות עצמאיות')}${this.metric(solved, 'פתרונות נכונים, גם בעזרה')}${this.metric(results.length ? seconds(mean(results.map(result => result.time))) : '—', 'זמן ממוצע לשאלה')}</div><p class="help space">חזרות עתידיות נשמרו. תרגיל עם טעות או רמז נשאר לחיזוק עד שתי הצלחות עצמאיות רצופות.</p><div class="row space" style="justify-content:center"><button data-page="practice">עוד סבב קטן</button><button class="secondary" data-page="statistics">לראות התקדמות</button></div></section></div>`;
+                this.updateStatus(); $('#app').focus();
+            }
+            testSetup() {
+                const settings = this.storage.data.settings;
+                const modes = [['single','מבחן לפי ספרה'],['range','מבחן לפי טווח'],['custom','מבחן מותאם אישית'],['weak','מבחן חולשות']];
+                return `${this.heading('מגלים כמה כבר יודעים', 'בלי רמזים, בלי לחץ. התוצאות והפתרונות מחכים בסוף.')}<form id="test-setup" class="card stack"><div class="form-grid"><div class="field"><label for="test-mode">סוג מבחן</label><select id="test-mode">${modes.map(([value, title]) => `<option value="${value}" ${this.testMode === value ? 'selected' : ''}>${title}</option>`).join('')}</select></div><div class="field"><label for="test-length">מספר שאלות</label><select id="test-length">${this.options([10,20,30,50],20)}</select></div><div class="field" id="test-table-wrap"><label for="test-table">המספר הראשון</label><select id="test-table">${this.options(range(1,20), settings.table)}</select></div></div><fieldset id="test-range-wrap"><legend>טווח המספרים</legend><div class="form-grid"><div class="field"><label for="test-min">ממספר</label><input id="test-min" type="number" min="1" max="20" value="${settings.min}" required></div><div class="field"><label for="test-max">עד מספר</label><input id="test-max" type="number" min="1" max="20" value="${settings.max}" required></div></div></fieldset><div id="test-custom-wrap" class="grid two"><fieldset><legend>קבוצה ראשונה</legend>${this.numbers('test-group-a',settings.selected)}</fieldset><fieldset><legend>קבוצה שנייה</legend>${this.numbers('test-group-b',settings.secondSelected)}</fieldset></div><p class="note" id="test-description"></p><p class="help">אין חזרה על תרגיל עד שממצים את המאגר. אם נבחרו יותר שאלות מתרגילים, מתחיל סבב חדש. דילוג נחשב לתשובה שגויה.</p><p class="error" id="form-error" role="alert" tabindex="-1"></p><button type="submit">מתחילים מבחן ←</button></form>`;
+            }
+            updateTestSetup() {
+                const custom = this.testMode === 'custom';
+                $('#test-custom-wrap').hidden = !custom;
+                $('#test-table-wrap').hidden = this.testMode !== 'single';
+                $('#test-range-wrap').hidden = custom;
+                $$('#test-range-wrap input').forEach(input => { input.disabled = custom; });
+                $('#test-description').textContent = this.testMode === 'weak' ? 'קדימות לחולשות בתוך הטווח הנבחר. ללא היסטוריה, המבחן ישמש לאבחון ראשוני.' : this.testMode === 'single' ? 'הספרה שנבחרה תמיד ראשונה. המספר השני נלקח מהטווח.' : custom ? 'בוחרים מספר אחד או כמה בכל קבוצה. הקבוצה הראשונה מגדירה את האופרנד הראשון.' : 'שני המספרים נבחרים מתוך הטווח.';
+            }
+            startTest() {
+                const min = Number($('#test-min').value); const max = Number($('#test-max').value);
+                if (this.testMode !== 'custom' && (!isNumber(min) || !isNumber(max) || min > max)) { this.error('יש לבחור טווח תקין בין 1 ל־20.'); return; }
+                let left = this.testMode === 'custom' ? this.selected('test-group-a') : range(min,max);
+                const right = this.testMode === 'custom' ? this.selected('test-group-b') : range(min,max);
+                if (this.testMode === 'single') left = [Number($('#test-table').value)];
+                if (!left.length || !right.length) { this.error('יש לבחור לפחות מספר אחד בכל קבוצה.'); return; }
+                const titles = { single:`מבחן לספרה ${left[0]}`, range:`מבחן בטווח ${min}–${max}`, custom:'מבחן מותאם אישית', weak:`מבחן חולשות ${min}–${max}` };
+                this.tests.start(this.questions.build(left,right), Number($('#test-length').value), this.testMode, titles[this.testMode]);
+                this.renderQuestion('test');
+            }
+            submitTest(answer) {
+                if (!this.tests.active) return;
+                const result = this.tests.submit(answer);
+                this.afterAnswer();
+                if (result) { this.testSummary(); return; }
+                this.renderQuestion('test');
+            }
+            testSummary() {
+                const result = this.tests.result;
+                const correct = result.answers.filter(answer => answer.correct).length;
+                const grade = percent(correct, result.answers.length);
+                const average = mean(result.answers.map(answer => answer.time));
+                const errors = result.answers.filter(answer => !answer.correct);
+                let comparison = 'זה המבחן הראשון שנשמר בהרכב הזה. ההשוואה תהיה למבחן קודם מאותו סוג, מספר שאלות ומאגר תרגילים.';
+                if (this.tests.previous) {
+                    const previous = this.tests.previous;
+                    const difference = grade - percent(previous.answers.filter(answer => answer.correct).length,previous.answers.length);
+                    const timeDifference = average - mean(previous.answers.map(answer => answer.time));
+                    comparison = `בהשוואה למבחן המקביל מ־${dateLabel(previous.date)}: ${difference > 0 ? 'עלייה' : difference < 0 ? 'ירידה' : 'ללא שינוי'}${difference ? ` של ${Math.abs(difference)} נקודות אחוז` : ' בציון'}; הזמן הממוצע ${Math.abs(timeDifference) < 50 ? 'כמעט ללא שינוי' : `${timeDifference < 0 ? 'מהיר' : 'איטי'} יותר ב־${seconds(Math.abs(timeDifference))}`}.`;
+                }
+                $('#app').innerHTML = `${this.heading('המבחן מאחוריך!', escapeHtml(result.title))}<div class="stack"><section class="card center"><h2>סיכום התוצאות</h2><div class="score-circle"><strong>${grade}</strong><span>ציון מתוך 100</span></div><div class="metric-grid">${this.metric(`${grade}%`,'הצלחה')}${this.metric(`${correct} / ${result.answers.length}`,'תשובות נכונות')}${this.metric(seconds(average),'זמן ממוצע')}${this.metric(errors.length,'טעויות ודילוגים')}</div><p class="note space">${comparison}</p></section><section class="card"><h2>לומדים מהטעויות</h2>${errors.length ? `<div class="table-scroll"><table><caption>כל הטעויות נשמרו לחיזוק</caption><thead><tr><th scope="col">הפתרון הנכון</th><th scope="col">התשובה שלך</th><th scope="col">זמן</th></tr></thead><tbody>${errors.map(answer => `<tr><td><bdi dir="ltr">${answer.a} × ${answer.b} = ${answer.a * answer.b}</bdi></td><td>${answer.answer === null ? 'דילוג' : answer.answer}</td><td>${seconds(answer.time)}</td></tr>`).join('')}</tbody></table></div>` : '<p>כל התשובות נכונות. עבודה נהדרת!</p>'}</section><div class="row"><button data-page="test">מבחן נוסף</button><button class="secondary" data-action="mistake-practice">תרגול טעויות</button><button class="ghost" data-page="statistics">סטטיסטיקות</button></div></div>`;
+                $('#app').focus();
+            }
+            statisticsScreen() {
+                const totals = this.statistics.totals();
+                const numbers = this.statistics.byNumber().filter(item => item.total);
+                const weak = this.statistics.weak();
+                const days = this.statistics.days();
+                const recentTests = this.storage.data.tests.slice(-10).reverse();
+                return `${this.heading('ההתקדמות שלך', 'לא חייבים להיות מושלמים כדי להתקדם.')}<div class="stack"><div class="metric-grid">${this.metric(totals.total ? `${totals.rate}%` : '—','הצלחה כללית')}${this.metric(totals.total ? seconds(totals.average) : '—','זמן תגובה ממוצע')}${this.metric(totals.correct,'ניסיונות נכונים')}${this.metric(totals.wrong,'טעויות ודילוגים')}</div><div class="note">שיא הרצף העצמאי: <strong>${this.storage.data.meta.bestStreak}</strong>. הדיוק כולל כל ניסיון בתרגול ובמבחנים; דילוג או חשיפת פתרון נחשבים לטעות. זמן ניסיון נמדד מהצגת השאלה, בלי הזמן שבו הדף מוסתר.</div><div class="grid two"><section class="card"><h2>הצלחה לאורך זמן</h2><p class="help">14 ימי הפעילות האחרונים · אחוזים</p><div class="chart"><canvas id="success-chart" role="img" aria-label="גרף אחוזי הצלחה לפי יום. הנתונים זמינים בטבלה בהמשך."></canvas></div></section><section class="card"><h2>זמן תגובה לאורך זמן</h2><p class="help">14 ימי הפעילות האחרונים · שניות</p><div class="chart"><canvas id="time-chart" role="img" aria-label="גרף זמן תגובה לפי יום. הנתונים זמינים בטבלה בהמשך."></canvas></div></section></div><section class="card"><h2>ביצועים לפי ספרה</h2><p class="help">לפי המספר הראשון בתרגיל · אחוזי הצלחה</p><div class="chart"><canvas id="number-chart" role="img" aria-label="גרף אחוזי הצלחה לפי המספר הראשון. הנתונים זמינים בטבלה בהמשך."></canvas></div><div class="table-scroll"><table><caption>דיוק וזמנים לכל ספרה</caption><thead><tr><th scope="col">ספרה</th><th scope="col">ניסיונות</th><th scope="col">הצלחה</th><th scope="col">זמן ממוצע</th></tr></thead><tbody>${numbers.length ? numbers.map(item => `<tr><th scope="row">${item.number}</th><td>${item.total}</td><td>${item.rate}%</td><td>${seconds(item.average)}</td></tr>`).join('') : '<tr><td colspan="4">אחרי התרגול הראשון יופיעו כאן נתונים.</td></tr>'}</tbody></table></div></section><section class="card"><div class="row spread"><h2>כאן כדאי להתחזק</h2><button class="secondary" data-action="weak-practice">תרגול חולשות</button></div>${weak.length ? weak.map(item => { const question = this.questions.fromKey(item.key); return `<div class="weak-item"><bdi class="math" dir="ltr">${question.a} × ${question.b} = ?</bdi><div><strong>${percent(item.fact.correctCount,item.fact.attempts)}% הצלחה</strong><br><small>${item.fact.attempts} ניסיונות · ממוצע ${seconds(item.fact.averageTime)}<br>מינימום ${seconds(item.fact.minTime)} · מקסימום ${seconds(item.fact.maxTime)}</small></div><span class="pill">${item.fact.needsReview ? 'לחיזוק' : 'עוד קצת תרגול'}</span></div>`; }).join('') : '<p class="empty">אין כרגע חולשות מזוהות. ממשיכים לתרגל ולגלות!</p>'}</section><details class="card"><summary>נתוני הגרפים לפי יום</summary><div class="table-scroll"><table><caption>14 ימי הפעילות האחרונים</caption><thead><tr><th scope="col">תאריך</th><th scope="col">הצלחות</th><th scope="col">טעויות</th><th scope="col">הצלחה</th><th scope="col">זמן ממוצע</th></tr></thead><tbody>${days.map(([day,value]) => `<tr><td>${dateLabel(`${day}T12:00:00`)}</td><td>${value.correct}</td><td>${value.wrong}</td><td>${percent(value.correct,value.correct + value.wrong)}%</td><td>${seconds(value.totalTime / Math.max(1,value.correct + value.wrong))}</td></tr>`).join('') || '<tr><td colspan="5">אין עדיין נתונים.</td></tr>'}</tbody></table></div></details><details class="card"><summary>מבחנים אחרונים</summary><div class="table-scroll"><table><caption>עד 10 מבחנים אחרונים מתוך 50 הנשמרים במכשיר</caption><thead><tr><th scope="col">תאריך</th><th scope="col">סוג</th><th scope="col">שאלות</th><th scope="col">ציון</th></tr></thead><tbody>${recentTests.map(test => `<tr><td>${dateLabel(test.date)}</td><td>${escapeHtml(test.title)}</td><td>${test.answers.length}</td><td>${percent(test.answers.filter(answer => answer.correct).length,test.answers.length)}</td></tr>`).join('') || '<tr><td colspan="4">עוד לא הושלם מבחן.</td></tr>'}</tbody></table></div></details><details class="card"><summary>נתונים מלאים לכל תרגיל</summary><div class="table-scroll"><table><caption>סדר האופרנדים נשמר בנפרד</caption><thead><tr><th scope="col">תרגיל</th><th scope="col">ניסיונות</th><th scope="col">נכונים</th><th scope="col">שגויים</th><th scope="col">ממוצע</th><th scope="col">מינימום</th><th scope="col">מקסימום</th><th scope="col">קושי</th><th scope="col">תרגול אחרון</th></tr></thead><tbody>${Object.entries(this.storage.data.facts).sort(([a],[b]) => a.localeCompare(b,undefined,{numeric:true})).map(([key,fact]) => { const question = this.questions.fromKey(key); return `<tr><td><bdi dir="ltr">${question.a} × ${question.b}</bdi></td><td>${fact.attempts}</td><td>${fact.correctCount}</td><td>${fact.wrongCount}</td><td>${seconds(fact.averageTime)}</td><td>${seconds(fact.minTime)}</td><td>${seconds(fact.maxTime)}</td><td>${this.adaptive.score(question).toFixed(1)}</td><td>${fact.lastPracticeDate ? dateLabel(fact.lastPracticeDate) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="9">אין עדיין נתונים.</td></tr>'}</tbody></table></div></details></div>`;
+            }
+            drawCharts() {
+                if (this.page !== 'statistics' || !$('#success-chart')) return;
+                const days = this.statistics.days().filter(([,value]) => value.correct + value.wrong);
+                const labels = days.map(([day]) => `${Number(day.slice(8))}/${Number(day.slice(5,7))}`);
+                this.chart('success-chart',labels,days.map(([,value]) => percent(value.correct,value.correct + value.wrong)),100,false);
+                const times = days.map(([,value]) => value.totalTime / (value.correct + value.wrong) / 1000);
+                this.chart('time-chart',labels,times,Math.max(5,Math.ceil(Math.max(0,...times))),false);
+                const numbers = this.statistics.byNumber().filter(item => item.total);
+                this.chart('number-chart',numbers.map(item => String(item.number)),numbers.map(item => item.rate),100,true);
+            }
+            chart(id, labels, values, maximum, bars) {
+                const canvas = $(`#${id}`); const context = canvas.getContext('2d');
+                if (!context) return;
+                const width = canvas.clientWidth; const height = 230; const ratio = Math.min(window.devicePixelRatio || 1,3);
+                canvas.width = Math.round(width * ratio); canvas.height = height * ratio;
+                context.scale(ratio,ratio); context.clearRect(0,0,width,height);
+                context.font = '12px Arial'; context.direction = 'ltr'; context.fillStyle = '#606b82';
+                if (!values.length) { context.textAlign = 'center'; context.fillText('הגרף יתחיל להתמלא אחרי התרגול הראשון',width / 2,height / 2,Math.max(100,width - 20)); return; }
+                const left = 36; const top = 18; const bottom = 194; const right = width - 12;
+                for (let step = 0; step <= 4; step++) {
+                    const y = bottom - (bottom - top) * step / 4;
+                    context.strokeStyle = '#e3e7ef'; context.lineWidth = 1; context.beginPath(); context.moveTo(left,y); context.lineTo(right,y); context.stroke();
+                    context.textAlign = 'right'; context.fillStyle = '#606b82'; context.fillText(String(Math.round(maximum * step / 4)),left - 6,y + 4);
+                }
+                const step = (right - left) / Math.max(values.length,1);
+                const points = values.map((value,index) => ({ x:left + step * (index + .5), y:bottom - (bottom - top) * value / maximum }));
+                if (bars) {
+                    context.fillStyle = '#5266dc';
+                    points.forEach(point => context.fillRect(point.x - step * .32,point.y,step * .64,Math.max(2,bottom - point.y)));
+                } else {
+                    context.strokeStyle = '#334bce'; context.lineWidth = 3; context.beginPath();
+                    points.forEach((point,index) => { if (!index) context.moveTo(point.x,point.y); else context.lineTo(point.x,point.y); });
+                    context.stroke(); context.fillStyle = '#334bce';
+                    points.forEach(point => { context.beginPath(); context.arc(point.x,point.y,4,0,Math.PI * 2); context.fill(); });
+                }
+                const interval = Math.max(1,Math.ceil(labels.length / Math.max(1,Math.floor((right - left) / (bars ? 24 : 44)))));
+                context.textAlign = 'center'; context.fillStyle = '#606b82';
+                points.forEach((point,index) => { if (index % interval === 0) context.fillText(labels[index],point.x,bottom + 22); });
+            }
+            achievementsScreen() {
+                return `${this.heading('אוסף ההצלחות שלך', 'כל מדליה מספרת על התמדה, הבנה וצמיחה.')}<div class="grid two">${this.achievements.goals().map(goal => {
+                    const earned = this.storage.data.achievements[goal.id];
+                    const progress = Math.min(goal.value,goal.target);
+                    return `<section class="card achievement ${earned ? 'earned' : ''}"><span class="icon" aria-hidden="true">${goal.icon}</span><div><span class="pill">${earned ? 'הושג!' : 'בדרך לשם'}</span><h2 class="small-gap">${goal.title}</h2><p>${goal.description}</p><progress max="${goal.target}" value="${earned && goal.id !== 'daily' ? goal.target : progress}" aria-label="התקדמות: ${goal.title}"></progress><small>${goal.id === 'daily' ? 'היום: ' : ''}${Math.round(progress)} / ${goal.target}${goal.id === 'speed' ? '%' : ''}${earned ? ` · הושג ב־${dateLabel(earned)}` : ''}</small></div></section>`;
+                }).join('')}</div><div class="note space">מדליות שכבר הושגו נשארות באוסף. יעד התרגול היומי מתחדש בכל יום לפי השעה במכשיר.</div><button class="space" data-page="practice">ממשיכים לצבור הצלחות ←</button>`;
+            }
+            settingsScreen() {
+                const settings = this.storage.data.settings;
+                const preset = settings.min === 1 && [5,10,12,20].includes(settings.max) ? String(settings.max) : 'custom';
+                return `${this.heading('בדיוק בקצב שלך', 'הטווח קובע את התרגול הכללי; הקבוצות קובעות את התרגול המותאם.')}<form id="settings-form" class="stack"><section class="card stack"><h2>טווחים והעדפות</h2><div class="field"><label for="range-preset">טווח מהיר</label><select id="range-preset">${[5,10,12,20].map(max => `<option value="${max}" ${preset === String(max) ? 'selected' : ''}>1–${max}</option>`).join('')}<option value="custom" ${preset === 'custom' ? 'selected' : ''}>טווח מותאם אישית</option></select></div><div class="form-grid"><div class="field"><label for="range-min">ממספר</label><input id="range-min" type="number" min="1" max="20" value="${settings.min}" required></div><div class="field"><label for="range-max">עד מספר</label><input id="range-max" type="number" min="1" max="20" value="${settings.max}" required></div><div class="field"><label for="default-table">ספרה לתרגול בודד</label><select id="default-table">${this.options(range(1,20),settings.table)}</select></div><div class="field"><label for="default-length">אורך סשן ברירת מחדל</label><select id="default-length">${this.options([10,20,30,50],settings.sessionLength)}</select></div><div class="field"><label for="slow-seconds">סף זמן לתרגול איטי, בשניות</label><input id="slow-seconds" type="number" min="3" max="60" value="${settings.slowSeconds}" required></div></div><p class="help">המספרים הנתמכים הם 1–20. טווח מותאם יכול להיות למשל 3–17.</p></section><div class="grid two"><fieldset class="card"><legend>קבוצה ראשונה · בחירה ידנית</legend><p class="help">מספר אחד או כמה. במצב קבוצה מול קבוצה משתמשים בקבוצה זו בשני הצדדים.</p><div class="row small-gap"><button type="button" class="secondary" data-action="pick-all" data-target="group-a">הכול</button><button type="button" class="ghost" data-action="pick-none" data-target="group-a">ניקוי בחירה</button></div>${this.numbers('group-a',settings.selected)}</fieldset><fieldset class="card"><legend>קבוצה שנייה · לתרגול מותאם</legend><p class="help">האופרנד השני נבחר מקבוצה זו. הבחירה הידנית אינה מוגבלת לטווח הכללי.</p><div class="row small-gap"><button type="button" class="secondary" data-action="copy-group">העתקה מהראשונה</button><button type="button" class="ghost" data-action="pick-none" data-target="group-b">ניקוי בחירה</button></div>${this.numbers('group-b',settings.secondSelected)}</fieldset></div><p class="error" id="form-error" role="alert" tabindex="-1"></p><button type="submit">שמירת ההגדרות</button></form><section class="card space"><h2>הנתונים שלך, במכשיר שלך</h2><p class="help">הנתונים נשמרים ב־LocalStorage בדפדפן זה, ללא שליחה לשרת. ניקוי נתוני האתר או גלישה פרטית עלולים למחוק את ההתקדמות. איפוס מוחק רק את נתוני האפליקציה הזאת.</p><button class="danger space" data-action="reset">איפוס כל הנתונים</button></section>`;
+            }
+            saveSettings() {
+                const min = Number($('#range-min').value); const max = Number($('#range-max').value);
+                const slow = Number($('#slow-seconds').value);
+                const selected = this.selected('group-a'); const secondSelected = this.selected('group-b');
+                if (!isNumber(min) || !isNumber(max) || min > max) { this.error('יש לבחור טווח תקין בין 1 ל־20.'); return; }
+                if (!selected.length || !secondSelected.length) { this.error('יש לבחור לפחות מספר אחד בכל קבוצה.'); return; }
+                if (!Number.isFinite(slow) || slow < 3 || slow > 60) { this.error('סף הזמן חייב להיות בין 3 ל־60 שניות.'); return; }
+                this.storage.data.settings = { min,max,selected,secondSelected,slowSeconds:slow,table:Number($('#default-table').value),sessionLength:Number($('#default-length').value) };
+                const saved = this.storage.save();
+                this.render(); this.notify(saved ? 'ההגדרות נשמרו. אפשר להתחיל!' : 'ההגדרות עודכנו בדף זה, אך לא נשמרו בדפדפן.');
+            }
+            reset() {
+                if (!confirm('למחוק לצמיתות את כל הניקוד, התוצאות, החזרות, ההישגים וההגדרות? לא ניתן לבטל פעולה זו.')) return;
+                clearTimeout(this.timer); this.practice.stop(); this.tests.stop();
+                this.storage.reset(); this.practiceMode = 'random'; this.testMode = 'range'; this.page = 'home'; this.render();
+                this.notify('נתוני האפליקציה אופסו. מתחילים מחדש.');
+            }
+        }
+
+        const storage = new StorageManager();
+        const questions = new QuestionEngine();
+        const adaptive = new AdaptiveEngine(storage, questions);
+        const statistics = new StatisticsManager(storage, questions, adaptive);
+        const achievements = new AchievementManager(storage);
+        const practice = new PracticeEngine(storage, questions, adaptive, statistics);
+        const tests = new TestEngine(storage, questions, adaptive, statistics);
+        const ui = new UIManager(storage, questions, adaptive, new HintEngine(), practice, tests, statistics, achievements);
+    </script>
+</body>
+</html>
