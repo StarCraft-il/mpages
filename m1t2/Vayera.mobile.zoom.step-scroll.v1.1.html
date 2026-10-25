@@ -12,11 +12,9 @@
     <link href="content/css/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <link href="content/css/style_portion_razor.css" rel="stylesheet" />
         <link href="content/css/style_flex2.css" rel="stylesheet" />
-        <link href="content/css/aliya-reading-place.css" rel="stylesheet" />
         <script src="content/lib/jquery/3.5.1/jquery.js"></script>
         <script src="content/js/html2canvas.min.js"></script>
         <script src="content/js/site_flex2.js"></script>
-        <script src="content/js/aliya-reading-place.js"></script>
     <style>
         :root {
             --tmot-zoom-multiplier: 1;
@@ -359,6 +357,199 @@
             color: #e8f3ff;
         }
     </style>
+    <style>
+    .tmot-reading-place-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin: 34px 0 18px;
+        padding: 0 14px;
+        direction: rtl;
+    }
+
+    .tmot-reading-place-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        width: min(100%, 360px);
+        min-height: 56px;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        border-radius: 18px;
+        padding: 13px 22px;
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 52%, #7c3aed 100%);
+        color: #ffffff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
+        box-shadow: 0 12px 28px rgba(49, 46, 129, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+    }
+
+    .tmot-reading-place-button:active {
+        transform: translateY(1px) scale(0.98);
+        box-shadow: 0 7px 18px rgba(49, 46, 129, 0.3);
+    }
+
+    .tmot-reading-place-button:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.28);
+        outline-offset: 4px;
+    }
+
+    .tmot-reading-place-button:disabled {
+        cursor: wait;
+        opacity: 0.72;
+    }
+
+    .tmot-reading-place-button-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+    }
+
+    .tmot-reading-place-button-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.9;
+    }
+
+    .tmot-reading-place-button.is-working .tmot-reading-place-button-icon {
+        border: 3px solid rgba(255, 255, 255, 0.38);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        box-sizing: border-box;
+        animation: tmot-reading-place-spin 800ms linear infinite;
+    }
+
+    .tmot-reading-place-button.is-working .tmot-reading-place-button-icon svg {
+        display: none;
+    }
+
+    .tmot-reading-place-status {
+        min-height: 0;
+        max-width: min(100%, 360px);
+        color: #334155;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .tmot-reading-place-status:not(:empty) {
+        min-height: 1.45em;
+        border: 1px solid rgba(100, 116, 139, 0.2);
+        border-radius: 999px;
+        padding: 7px 13px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    .tmot-reading-place-preview {
+        position: fixed;
+        inset: 0;
+        z-index: 12000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(15, 23, 42, 0.82);
+        direction: rtl;
+        font-family: Arial, Helvetica, sans-serif;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .tmot-reading-place-preview-card {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: min(100%, 520px);
+        max-height: calc(100vh - 36px);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 24px;
+        padding: 16px;
+        background: #ffffff;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+    }
+
+    .tmot-reading-place-preview-title {
+        margin: 0;
+        color: #172033;
+        font-size: 20px;
+        line-height: 1.35;
+        text-align: center;
+    }
+
+    .tmot-reading-place-preview-image {
+        width: 100%;
+        max-height: 66vh;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        object-fit: contain;
+        background: #f4f7f6;
+    }
+
+    .tmot-reading-place-preview-actions {
+        display: flex;
+        gap: 10px;
+        direction: rtl;
+    }
+
+    .tmot-reading-place-preview-save,
+    .tmot-reading-place-preview-close {
+        flex: 1 1 0;
+        min-height: 48px;
+        border: 0;
+        border-radius: 14px;
+        padding: 11px 14px;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.3;
+        text-align: center;
+        text-decoration: none;
+        touch-action: manipulation;
+    }
+
+    .tmot-reading-place-preview-save {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #ffffff;
+    }
+
+    .tmot-reading-place-preview-close {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    @keyframes tmot-reading-place-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (max-width: 420px) {
+        .tmot-reading-place-button {
+            width: 100%;
+            font-size: 17px;
+        }
+
+        .tmot-reading-place-preview-actions {
+            flex-direction: column;
+        }
+    }
+</style>
 </head>
 <body dir="rtl">
     <div id="parashaContentRow">
@@ -812,7 +1003,13 @@
                 data-screenshot-target="v_Verse_1_18_14_439"
                 data-aliya-number="1"
                 aria-describedby="aliya-reading-place-status-1">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-1" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -1343,7 +1540,13 @@
                 data-screenshot-target="v_Verse_2_18_33_458"
                 data-aliya-number="2"
                 aria-describedby="aliya-reading-place-status-2">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-2" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -1894,7 +2097,13 @@
                 data-screenshot-target="v_Verse_3_19_20_478"
                 data-aliya-number="3"
                 aria-describedby="aliya-reading-place-status-3">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-3" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -2790,7 +2999,13 @@
                 data-screenshot-target="v_Verse_4_21_4_518"
                 data-aliya-number="4"
                 aria-describedby="aliya-reading-place-status-4">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-4" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -3180,7 +3395,13 @@
                 data-screenshot-target="v_Verse_5_21_21_535"
                 data-aliya-number="5"
                 aria-describedby="aliya-reading-place-status-5">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-5" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -3482,7 +3703,13 @@
                 data-screenshot-target="v_Verse_6_21_34_548"
                 data-aliya-number="6"
                 aria-describedby="aliya-reading-place-status-6">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-6" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -4026,7 +4253,13 @@
                 data-screenshot-target="v_Verse_7_22_24_572"
                 data-aliya-number="7"
                 aria-describedby="aliya-reading-place-status-7">
-            📷 שמור תמונת מקום הקריאה
+            <span class="tmot-reading-place-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 7.5h3l1.4-2h7.2l1.4 2h3a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5a2 2 0 0 1 2-2Z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </span>
+            <span class="tmot-reading-place-button-label">שמור את מקום הקריאה</span>
         </button>
         <div id="aliya-reading-place-status-7" class="tmot-reading-place-status" role="status" aria-live="polite"></div>
     </div>
@@ -4973,5 +5206,235 @@
     })();
 </script>
 
+    <script>
+    (function () {
+        "use strict";
+
+        const buttons = document.querySelectorAll(".tmot-reading-place-button");
+        let previewImageUrl = "";
+
+        buttons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                saveReadingPlaceScreenshot(button);
+            });
+        });
+
+        async function saveReadingPlaceScreenshot(button) {
+            const actions = button.closest(".tmot-reading-place-actions");
+            const status = actions ? actions.querySelector(".tmot-reading-place-status") : null;
+            const label = button.querySelector(".tmot-reading-place-button-label");
+            const originalLabel = label ? label.textContent : "";
+            const targetId = button.getAttribute("data-screenshot-target");
+            const target = targetId ? document.getElementById(targetId) : null;
+
+            setButtonBusy(button, label, true);
+            setStatus(status, "מכין תמונה של הפסוק האחרון...");
+
+            try {
+                if (!target) {
+                    throw new Error("The last verse element was not found.");
+                }
+
+                if (typeof window.html2canvas !== "function") {
+                    throw new Error("The html2canvas library was not loaded.");
+                }
+
+                await waitForFonts();
+                const canvas = await captureElement(target);
+                const imageBlob = await createPngBlob(canvas);
+                const fileName = createFileName(button);
+                await shareOrPreviewImage(imageBlob, fileName, status);
+            } catch (error) {
+                console.error("Could not save the Aliya reading-place screenshot.", error);
+                const errorMessage = "לא ניתן ליצור את התמונה. ודא שתיקיית content המעודכנת הועתקה למכשיר.";
+                setStatus(status, errorMessage);
+                window.alert(errorMessage);
+            } finally {
+                setButtonBusy(button, label, false, originalLabel);
+            }
+        }
+
+        function setButtonBusy(button, label, isBusy, originalLabel) {
+            button.disabled = isBusy;
+            button.classList.toggle("is-working", isBusy);
+
+            if (!label) {
+                return;
+            }
+
+            label.textContent = isBusy ? "מכין תמונה..." : originalLabel;
+        }
+
+        async function waitForFonts() {
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+        }
+
+        function captureElement(target) {
+            const pixelRatio = window.devicePixelRatio || 1;
+            const captureScale = Math.min(Math.max(pixelRatio, 1.5), 2.5);
+
+            return window.html2canvas(target, {
+                allowTaint: false,
+                backgroundColor: getPageBackgroundColor(),
+                logging: false,
+                scale: captureScale,
+                useCORS: true,
+            });
+        }
+
+        function getPageBackgroundColor() {
+            const bodyBackgroundColor = window.getComputedStyle(document.body).backgroundColor;
+            if (bodyBackgroundColor && bodyBackgroundColor !== "rgba(0, 0, 0, 0)") {
+                return bodyBackgroundColor;
+            }
+
+            return "#f4f7f6";
+        }
+
+        function createPngBlob(canvas) {
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (imageBlob) {
+                    if (imageBlob) {
+                        resolve(imageBlob);
+                        return;
+                    }
+
+                    reject(new Error("The screenshot canvas did not produce a PNG image."));
+                }, "image/png");
+            });
+        }
+
+        async function shareOrPreviewImage(imageBlob, fileName, status) {
+            if (typeof File === "function" && navigator.share && navigator.canShare) {
+                const imageFile = new File([imageBlob], fileName, { type: "image/png" });
+                let canShareImage = false;
+
+                try {
+                    canShareImage = navigator.canShare({ files: [imageFile] });
+                } catch (error) {
+                    console.warn("File sharing is not available.", error);
+                }
+
+                if (canShareImage) {
+                    try {
+                        await navigator.share({
+                            files: [imageFile],
+                            title: "מקום הקריאה האחרון",
+                            text: "הפסוק האחרון שקראתי",
+                        });
+                        setStatus(status, "התמונה מוכנה ונשלחה לשמירה או לשיתוף.");
+                        return;
+                    } catch (error) {
+                        if (error && error.name === "AbortError") {
+                            setStatus(status, "השיתוף בוטל. לחץ שוב כדי לנסות מחדש.");
+                            return;
+                        }
+
+                        console.warn("Native sharing failed. Showing the image preview instead.", error);
+                    }
+                }
+            }
+
+            showImagePreview(imageBlob, fileName);
+            setStatus(status, "התמונה מוכנה. לחץ על שמור תמונה.");
+        }
+
+        function showImagePreview(imageBlob, fileName) {
+            closeImagePreview();
+            previewImageUrl = URL.createObjectURL(imageBlob);
+
+            const preview = document.createElement("div");
+            preview.className = "tmot-reading-place-preview";
+            preview.setAttribute("role", "dialog");
+            preview.setAttribute("aria-modal", "true");
+            preview.setAttribute("aria-label", "תצוגה מקדימה של מקום הקריאה");
+
+            const card = document.createElement("div");
+            card.className = "tmot-reading-place-preview-card";
+
+            const title = document.createElement("h2");
+            title.className = "tmot-reading-place-preview-title";
+            title.textContent = "מקום הקריאה האחרון";
+
+            const image = document.createElement("img");
+            image.className = "tmot-reading-place-preview-image";
+            image.src = previewImageUrl;
+            image.alt = "תמונת הפסוק האחרון באותו יום";
+
+            const previewActions = document.createElement("div");
+            previewActions.className = "tmot-reading-place-preview-actions";
+
+            const saveLink = document.createElement("a");
+            saveLink.className = "tmot-reading-place-preview-save";
+            saveLink.href = previewImageUrl;
+            saveLink.download = fileName;
+            saveLink.textContent = "שמור תמונה";
+
+            const closeButton = document.createElement("button");
+            closeButton.type = "button";
+            closeButton.className = "tmot-reading-place-preview-close";
+            closeButton.textContent = "סגור";
+            closeButton.addEventListener("click", closeImagePreview);
+
+            previewActions.appendChild(saveLink);
+            previewActions.appendChild(closeButton);
+            card.appendChild(title);
+            card.appendChild(image);
+            card.appendChild(previewActions);
+            preview.appendChild(card);
+            document.body.appendChild(preview);
+
+            preview.addEventListener("click", function (event) {
+                if (event.target === preview) {
+                    closeImagePreview();
+                }
+            });
+
+            closeButton.focus();
+        }
+
+        function closeImagePreview() {
+            const existingPreview = document.querySelector(".tmot-reading-place-preview");
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+
+            if (previewImageUrl) {
+                URL.revokeObjectURL(previewImageUrl);
+                previewImageUrl = "";
+            }
+        }
+
+        function createFileName(button) {
+            const aliyaNumber = button.getAttribute("data-aliya-number") || "unknown";
+            const pageToken = sanitizeFileToken(document.title || "TwoMikraOneTaj");
+            const timestamp = formatTimestamp(new Date());
+            return pageToken + "-aliya-" + aliyaNumber + "-reading-place-" + timestamp + ".png";
+        }
+
+        function sanitizeFileToken(value) {
+            const sanitizedValue = value.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+            return sanitizedValue || "TwoMikraOneTaj";
+        }
+
+        function formatTimestamp(date) {
+            const year = String(date.getFullYear());
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            const seconds = String(date.getSeconds()).padStart(2, "0");
+            return year + month + day + "-" + hours + minutes + seconds;
+        }
+
+        function setStatus(status, message) {
+            if (status) {
+                status.textContent = message;
+            }
+        }
+    })();
+</script>
 </body>
 </html>
