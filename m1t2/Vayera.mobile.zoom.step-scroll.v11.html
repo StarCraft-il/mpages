@@ -457,82 +457,6 @@
         box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     }
 
-    .tmot-reading-place-preview {
-        position: fixed;
-        inset: 0;
-        z-index: 12000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-        background: rgba(15, 23, 42, 0.82);
-        direction: rtl;
-        font-family: Arial, Helvetica, sans-serif;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-
-    .tmot-reading-place-preview-card {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        width: min(100%, 520px);
-        max-height: calc(100vh - 36px);
-        border: 1px solid rgba(255, 255, 255, 0.55);
-        border-radius: 24px;
-        padding: 16px;
-        background: #ffffff;
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
-    }
-
-    .tmot-reading-place-preview-title {
-        margin: 0;
-        color: #172033;
-        font-size: 20px;
-        line-height: 1.35;
-        text-align: center;
-    }
-
-    .tmot-reading-place-preview-image {
-        width: 100%;
-        max-height: 66vh;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        object-fit: contain;
-        background: #f4f7f6;
-    }
-
-    .tmot-reading-place-preview-actions {
-        display: flex;
-        gap: 10px;
-        direction: rtl;
-    }
-
-    .tmot-reading-place-preview-save,
-    .tmot-reading-place-preview-close {
-        flex: 1 1 0;
-        min-height: 48px;
-        border: 0;
-        border-radius: 14px;
-        padding: 11px 14px;
-        font-size: 16px;
-        font-weight: 700;
-        line-height: 1.3;
-        text-align: center;
-        text-decoration: none;
-        touch-action: manipulation;
-    }
-
-    .tmot-reading-place-preview-save {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        color: #ffffff;
-    }
-
-    .tmot-reading-place-preview-close {
-        background: #e2e8f0;
-        color: #1e293b;
-    }
-
     @keyframes tmot-reading-place-spin {
         to {
             transform: rotate(360deg);
@@ -543,10 +467,6 @@
         .tmot-reading-place-button {
             width: 100%;
             font-size: 17px;
-        }
-
-        .tmot-reading-place-preview-actions {
-            flex-direction: column;
         }
     }
 </style>
@@ -5211,7 +5131,7 @@
         "use strict";
 
         const buttons = document.querySelectorAll(".tmot-reading-place-button");
-        let previewImageUrl = "";
+        let screenshotDirectoryHandle = null;
 
         buttons.forEach(function (button) {
             button.addEventListener("click", function () {
@@ -5226,11 +5146,14 @@
             const originalLabel = label ? label.textContent : "";
             const targetId = button.getAttribute("data-screenshot-target");
             const target = targetId ? document.getElementById(targetId) : null;
+            const fileName = createFileName(button);
 
             setButtonBusy(button, label, true);
-            setStatus(status, "מכין תמונה של הפסוק האחרון...");
 
             try {
+                const saveDestination = await getSaveDestination(fileName, status);
+                setStatus(status, "מכין תמונה של הפסוק האחרון...");
+
                 if (!target) {
                     throw new Error("The last verse element was not found.");
                 }
@@ -5242,16 +5165,73 @@
                 await waitForFonts();
                 const canvas = await captureElement(target);
                 const imageBlob = await createPngBlob(canvas);
-                const fileName = createFileName(button);
-                await shareOrPreviewImage(imageBlob, fileName, status);
+                await saveImage(imageBlob, fileName, saveDestination);
+                setSaveSuccessStatus(status, saveDestination);
             } catch (error) {
+                if (error && error.name === "AbortError") {
+                    setStatus(status, "השמירה בוטלה.");
+                    return;
+                }
+
                 console.error("Could not save the Aliya reading-place screenshot.", error);
-                const errorMessage = "לא ניתן ליצור את התמונה. ודא שתיקיית content המעודכנת הועתקה למכשיר.";
+                const errorMessage = "לא ניתן לשמור את התמונה. ודא שתיקיית content המעודכנת הועתקה למכשיר.";
                 setStatus(status, errorMessage);
                 window.alert(errorMessage);
             } finally {
                 setButtonBusy(button, label, false, originalLabel);
             }
+        }
+
+        async function getSaveDestination(fileName, status) {
+            if (screenshotDirectoryHandle) {
+                return { type: "directory", handle: screenshotDirectoryHandle };
+            }
+
+            if (typeof window.showDirectoryPicker === "function") {
+                setStatus(status, "בחר פעם אחת את תיקיית Pictures/Screenshots.");
+
+                try {
+                    screenshotDirectoryHandle = await window.showDirectoryPicker({
+                        id: "tmot-reading-place-screenshots",
+                        mode: "readwrite",
+                        startIn: "pictures",
+                    });
+                    return { type: "directory", handle: screenshotDirectoryHandle };
+                } catch (error) {
+                    if (error && error.name === "AbortError") {
+                        throw error;
+                    }
+
+                    console.warn("Directory selection is unavailable. Trying a file save dialog.", error);
+                }
+            }
+
+            if (typeof window.showSaveFilePicker === "function") {
+                setStatus(status, "בחר את תיקיית Pictures/Screenshots לשמירת התמונה.");
+
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        id: "tmot-reading-place-screenshot",
+                        startIn: "pictures",
+                        suggestedName: fileName,
+                        types: [
+                            {
+                                description: "PNG image",
+                                accept: { "image/png": [".png"] },
+                            },
+                        ],
+                    });
+                    return { type: "file", handle: fileHandle };
+                } catch (error) {
+                    if (error && error.name === "AbortError") {
+                        throw error;
+                    }
+
+                    console.warn("The file save dialog is unavailable. Using a browser download.", error);
+                }
+            }
+
+            return { type: "download", handle: null };
         }
 
         function setButtonBusy(button, label, isBusy, originalLabel) {
@@ -5262,7 +5242,7 @@
                 return;
             }
 
-            label.textContent = isBusy ? "מכין תמונה..." : originalLabel;
+            label.textContent = isBusy ? "שומר צילום מסך..." : originalLabel;
         }
 
         async function waitForFonts() {
@@ -5306,112 +5286,61 @@
             });
         }
 
-        async function shareOrPreviewImage(imageBlob, fileName, status) {
-            if (typeof File === "function" && navigator.share && navigator.canShare) {
-                const imageFile = new File([imageBlob], fileName, { type: "image/png" });
-                let canShareImage = false;
-
-                try {
-                    canShareImage = navigator.canShare({ files: [imageFile] });
-                } catch (error) {
-                    console.warn("File sharing is not available.", error);
-                }
-
-                if (canShareImage) {
-                    try {
-                        await navigator.share({
-                            files: [imageFile],
-                            title: "מקום הקריאה האחרון",
-                            text: "הפסוק האחרון שקראתי",
-                        });
-                        setStatus(status, "התמונה מוכנה ונשלחה לשמירה או לשיתוף.");
-                        return;
-                    } catch (error) {
-                        if (error && error.name === "AbortError") {
-                            setStatus(status, "השיתוף בוטל. לחץ שוב כדי לנסות מחדש.");
-                            return;
-                        }
-
-                        console.warn("Native sharing failed. Showing the image preview instead.", error);
-                    }
-                }
+        async function saveImage(imageBlob, fileName, saveDestination) {
+            if (saveDestination.type === "directory") {
+                const fileHandle = await saveDestination.handle.getFileHandle(fileName, { create: true });
+                await writeImageFile(fileHandle, imageBlob);
+                return;
             }
 
-            showImagePreview(imageBlob, fileName);
-            setStatus(status, "התמונה מוכנה. לחץ על שמור תמונה.");
+            if (saveDestination.type === "file") {
+                await writeImageFile(saveDestination.handle, imageBlob);
+                return;
+            }
+
+            downloadImage(imageBlob, fileName);
         }
 
-        function showImagePreview(imageBlob, fileName) {
-            closeImagePreview();
-            previewImageUrl = URL.createObjectURL(imageBlob);
-
-            const preview = document.createElement("div");
-            preview.className = "tmot-reading-place-preview";
-            preview.setAttribute("role", "dialog");
-            preview.setAttribute("aria-modal", "true");
-            preview.setAttribute("aria-label", "תצוגה מקדימה של מקום הקריאה");
-
-            const card = document.createElement("div");
-            card.className = "tmot-reading-place-preview-card";
-
-            const title = document.createElement("h2");
-            title.className = "tmot-reading-place-preview-title";
-            title.textContent = "מקום הקריאה האחרון";
-
-            const image = document.createElement("img");
-            image.className = "tmot-reading-place-preview-image";
-            image.src = previewImageUrl;
-            image.alt = "תמונת הפסוק האחרון באותו יום";
-
-            const previewActions = document.createElement("div");
-            previewActions.className = "tmot-reading-place-preview-actions";
-
-            const saveLink = document.createElement("a");
-            saveLink.className = "tmot-reading-place-preview-save";
-            saveLink.href = previewImageUrl;
-            saveLink.download = fileName;
-            saveLink.textContent = "שמור תמונה";
-
-            const closeButton = document.createElement("button");
-            closeButton.type = "button";
-            closeButton.className = "tmot-reading-place-preview-close";
-            closeButton.textContent = "סגור";
-            closeButton.addEventListener("click", closeImagePreview);
-
-            previewActions.appendChild(saveLink);
-            previewActions.appendChild(closeButton);
-            card.appendChild(title);
-            card.appendChild(image);
-            card.appendChild(previewActions);
-            preview.appendChild(card);
-            document.body.appendChild(preview);
-
-            preview.addEventListener("click", function (event) {
-                if (event.target === preview) {
-                    closeImagePreview();
-                }
-            });
-
-            closeButton.focus();
+        async function writeImageFile(fileHandle, imageBlob) {
+            const writable = await fileHandle.createWritable();
+            await writable.write(imageBlob);
+            await writable.close();
         }
 
-        function closeImagePreview() {
-            const existingPreview = document.querySelector(".tmot-reading-place-preview");
-            if (existingPreview) {
-                existingPreview.remove();
+        function downloadImage(imageBlob, fileName) {
+            const imageUrl = URL.createObjectURL(imageBlob);
+            const downloadLink = document.createElement("a");
+            downloadLink.href = imageUrl;
+            downloadLink.download = fileName;
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+
+            window.setTimeout(function () {
+                URL.revokeObjectURL(imageUrl);
+            }, 10000);
+        }
+
+        function setSaveSuccessStatus(status, saveDestination) {
+            if (saveDestination.type === "directory") {
+                setStatus(status, "צילום המסך נשמר בתיקיית המדיה שבחרת.");
+                return;
             }
 
-            if (previewImageUrl) {
-                URL.revokeObjectURL(previewImageUrl);
-                previewImageUrl = "";
+            if (saveDestination.type === "file") {
+                setStatus(status, "צילום המסך נשמר בתיקיית Pictures/Screenshots שבחרת.");
+                return;
             }
+
+            setStatus(status, "צילום המסך הורד למכשיר. הדפדפן אינו מאפשר בחירת תיקיית מדיה ישירה.");
         }
 
         function createFileName(button) {
             const aliyaNumber = button.getAttribute("data-aliya-number") || "unknown";
             const pageToken = sanitizeFileToken(document.title || "TwoMikraOneTaj");
             const timestamp = formatTimestamp(new Date());
-            return pageToken + "-aliya-" + aliyaNumber + "-reading-place-" + timestamp + ".png";
+            return "Screenshot_" + timestamp + "_" + pageToken + "_Aliya-" + aliyaNumber + ".png";
         }
 
         function sanitizeFileToken(value) {
