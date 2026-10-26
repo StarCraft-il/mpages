@@ -5131,6 +5131,9 @@
         "use strict";
 
         const buttons = document.querySelectorAll(".tmot-reading-place-button");
+        const directoryDatabaseName = "TwoMikraOneTajReadingPlace";
+        const directoryStoreName = "settings";
+        const directoryHandleKey = "screenshots-directory";
         let screenshotDirectoryHandle = null;
 
         buttons.forEach(function (button) {
@@ -5187,6 +5190,19 @@
                 return { type: "directory", handle: screenshotDirectoryHandle };
             }
 
+            const savedDirectoryHandle = await getSavedDirectoryHandle();
+            if (savedDirectoryHandle) {
+                try {
+                    if (await verifyDirectoryPermission(savedDirectoryHandle)) {
+                        screenshotDirectoryHandle = savedDirectoryHandle;
+                        setStatus(status, "שומר ישירות בתיקיית צילומי המסך שנבחרה.");
+                        return { type: "directory", handle: screenshotDirectoryHandle };
+                    }
+                } catch (error) {
+                    console.warn("Could not reuse the saved screenshots directory.", error);
+                }
+            }
+
             if (typeof window.showDirectoryPicker === "function") {
                 setStatus(status, "בחר פעם אחת את תיקיית Pictures/Screenshots.");
 
@@ -5196,6 +5212,7 @@
                         mode: "readwrite",
                         startIn: "pictures",
                     });
+                    await saveDirectoryHandle(screenshotDirectoryHandle);
                     return { type: "directory", handle: screenshotDirectoryHandle };
                 } catch (error) {
                     if (error && error.name === "AbortError") {
@@ -5232,6 +5249,97 @@
             }
 
             return { type: "download", handle: null };
+        }
+
+        async function verifyDirectoryPermission(directoryHandle) {
+            const permissionOptions = { mode: "readwrite" };
+
+            if (typeof directoryHandle.queryPermission === "function") {
+                const permissionState = await directoryHandle.queryPermission(permissionOptions);
+                if (permissionState === "granted") {
+                    return true;
+                }
+            }
+
+            if (typeof directoryHandle.requestPermission !== "function") {
+                return false;
+            }
+
+            const permissionState = await directoryHandle.requestPermission(permissionOptions);
+            return permissionState === "granted";
+        }
+
+        async function getSavedDirectoryHandle() {
+            try {
+                const database = await openDirectoryDatabase();
+                const directoryHandle = await readDirectoryHandle(database);
+                database.close();
+                return directoryHandle;
+            } catch (error) {
+                console.warn("Could not read the saved screenshots directory.", error);
+                return null;
+            }
+        }
+
+        async function saveDirectoryHandle(directoryHandle) {
+            try {
+                const database = await openDirectoryDatabase();
+                await writeDirectoryHandle(database, directoryHandle);
+                database.close();
+            } catch (error) {
+                console.warn("Could not remember the screenshots directory.", error);
+            }
+        }
+
+        function openDirectoryDatabase() {
+            return new Promise(function (resolve, reject) {
+                const request = window.indexedDB.open(directoryDatabaseName, 1);
+
+                request.onupgradeneeded = function () {
+                    const database = request.result;
+                    if (!database.objectStoreNames.contains(directoryStoreName)) {
+                        database.createObjectStore(directoryStoreName);
+                    }
+                };
+
+                request.onsuccess = function () {
+                    resolve(request.result);
+                };
+
+                request.onerror = function () {
+                    reject(request.error);
+                };
+            });
+        }
+
+        function readDirectoryHandle(database) {
+            return new Promise(function (resolve, reject) {
+                const transaction = database.transaction(directoryStoreName, "readonly");
+                const request = transaction.objectStore(directoryStoreName).get(directoryHandleKey);
+
+                request.onsuccess = function () {
+                    resolve(request.result || null);
+                };
+
+                request.onerror = function () {
+                    reject(request.error);
+                };
+            });
+        }
+
+        function writeDirectoryHandle(database, directoryHandle) {
+            return new Promise(function (resolve, reject) {
+                const transaction = database.transaction(directoryStoreName, "readwrite");
+                transaction.objectStore(directoryStoreName).put(directoryHandle, directoryHandleKey);
+
+                transaction.oncomplete = function () {
+                    resolve();
+                };
+
+                transaction.onerror = function () {
+                    reject(transaction.error);
+                };
+            });
         }
 
         function setButtonBusy(button, label, isBusy, originalLabel) {
