@@ -476,6 +476,7 @@
         <div id="parashaName"><h1>פרשת וַיֵּצֵא</h1></div>
 <ul id="aliyusTableLinks">
     <li><a href="#parashaName" data-show-all-aliyot="true">כל העליות</a></li>
+    <li><a href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a></li>
         <li><a href="#1_one_header">ראשון - (13)</a></li>
         <li><a href="#2_two_header">שני - (17)</a></li>
         <li><a href="#3_three_header">שלישי - (31)</a></li>
@@ -490,7 +491,7 @@
 
 
 
-<div class="allText">
+<div class="allText" id="leshemYichud">
     <div>
         לְשֵׁם יִחוּד  קֻדְשָׁא בְּרִיךְ הוּא וּשְכִינְתֵּהּ
         <span class="shemot">(יאהדונהי)</span>
@@ -5589,10 +5590,25 @@
             });
         }
 
+        function setLeshemYichudVisible(isVisible) {
+            const leshemYichud = document.getElementById("leshemYichud");
+            if (!leshemYichud) {
+                return;
+            }
+
+            leshemYichud.hidden = !isVisible;
+
+            const toggleLink = document.querySelector("[data-toggle-leshem-yichud]");
+            if (toggleLink) {
+                toggleLink.setAttribute("aria-expanded", String(isVisible));
+            }
+        }
+
         function showCurrentDayAliyah() {
             const aliyot = Array.from(document.querySelectorAll(".aliya"));
             hideAllAliyot();
             hideEndingContent();
+            setLeshemYichudVisible(false);
 
             switch (new Date().getDay()) {
                 case 0:
@@ -5613,10 +5629,12 @@
                 case 5:
                     showAliyot([aliyot[5], aliyot[6]]);
                     showEndingContent();
+                    setLeshemYichudVisible(true);
                     return;
                 case 6:
                     showAliyah(aliyot[6]);
                     showEndingContent();
+                    setLeshemYichudVisible(true);
                     return;
             }
         }
@@ -5627,9 +5645,17 @@
                 return;
             }
 
+            if (link.hasAttribute("data-toggle-leshem-yichud")) {
+                event.preventDefault();
+                const leshemYichud = document.getElementById("leshemYichud");
+                setLeshemYichudVisible(Boolean(leshemYichud && leshemYichud.hidden));
+                return;
+            }
+
             if (link.hasAttribute("data-show-all-aliyot")) {
                 showAllAliyot();
                 showEndingContent();
+                setLeshemYichudVisible(false);
                 return;
             }
 
@@ -5644,9 +5670,18 @@
                 return;
             }
 
+            const aliyot = Array.from(document.querySelectorAll(".aliya"));
             hideAllAliyot();
             hideEndingContent();
             showAliyah(aliya);
+
+            if (aliyot.indexOf(aliya) === 6) {
+                showEndingContent();
+                setLeshemYichudVisible(true);
+                return;
+            }
+
+            setLeshemYichudVisible(false);
         }
 
         const aliyahLinks = document.getElementById("aliyusTableLinks");
@@ -5656,6 +5691,7 @@
 
         hideAllAliyot();
         hideEndingContent();
+        setLeshemYichudVisible(false);
 
         if (document.readyState === "complete") {
             showCurrentDayAliyah();
