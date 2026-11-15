@@ -178,6 +178,11 @@ ul#aliyusTableLinks {
         color: #1F00CC;
     }
 
+    .next_portion_verse_1 {
+        @extend .base-last-verse;
+        color: #1F00CC;
+    }
+
     .last_pasuk_mikra_2 {
         @extend .base-last-verse;
         color: green;

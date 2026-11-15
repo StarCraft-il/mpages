@@ -192,7 +192,7 @@ div.allText div.gemara-after-reading-src {
   line-height: 76px;
 }
 
-.base-pasuk, .lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .last_pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, .base-header, .lastVerse .header, #parashaContentRow .aliya .verse .pasuk2m1t .header, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
+.base-pasuk, .lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .next_portion_verse_1, .lastVerse .last_pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, .base-header, .lastVerse .header, #parashaContentRow .aliya .verse .pasuk2m1t .header, #parashaContentRow .aliya .verse .pasuk2m1t .header-mikra2, #parashaContentRow .aliya .verse .pasuk2m1t .header-taj {
   font-family: "mysbl_64_2" !important;
   font-weight: 100 !important;
   font-style: normal !important;
@@ -397,7 +397,7 @@ ul#aliyusTableLinks {
   word-spacing: 36px !important;
 }
 
-.lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .last_pasuk_mikra_1 {
+.lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .next_portion_verse_1, .lastVerse .last_pasuk_mikra_1 {
   font-size: 820%;
   line-height: 118%;
   padding-top: 14px;
@@ -405,6 +405,9 @@ ul#aliyusTableLinks {
   word-spacing: 36px !important;
 }
 .lastVerse .last_pasuk_mikra_1 {
+  color: #1F00CC;
+}
+.lastVerse .next_portion_verse_1 {
   color: #1F00CC;
 }
 .lastVerse .last_pasuk_mikra_2 {

@@ -106,13 +106,13 @@ ul#aliyusTableLinks {
   color: maroon;
 }
 
-.lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .last_pasuk_mikra_1 {
+.lastVerse .base-last-verse, .lastVerse .last_pasuk_mikra_2, .lastVerse .last_pasuk_mikra_1, .lastVerse .next_portion_verse_1 {
   font-size: 820%;
   line-height: 118%;
   padding-top: 14px;
   padding-bottom: 10px;
 }
-.lastVerse .last_pasuk_mikra_1 {
+.lastVerse .last_pasuk_mikra_1, .lastVerse .next_portion_verse_1 {
   color: #1F00CC;
 }
 .lastVerse .last_pasuk_mikra_2 {

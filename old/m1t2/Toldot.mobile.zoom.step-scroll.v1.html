@@ -3287,6 +3287,10 @@
         <div class="header">ויחזור הפסוק האחרון פעמיים ללא תרגום:</div>
         <div class="last_pasuk_mikra_1">וַיֵּ֥לֶךְ עֵשָׂ֖ו אֶל־ יִשְׁמָעֵ֑אל וַיִּקַּ֡ח אֶֽת־ מָחֲלַ֣ת&thinsp;<b>׀</b> בַּת־ יִשְׁמָעֵ֨אל בֶּן־ אַבְרָהָ֜ם אֲח֧וֹת נְבָי֛וֹת עַל־ נָשָׁ֖יו ל֥וֹ לְאִשָּֽׁה׃&nbsp;<span class="mam-spi-samekh">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
         <div class="last_pasuk_mikra_2">וַיֵּ֥לֶךְ עֵשָׂ֖ו אֶל־ יִשְׁמָעֵ֑אל וַיִּקַּ֡ח אֶֽת־ מָחֲלַ֣ת&thinsp;<b>׀</b> בַּת־ יִשְׁמָעֵ֨אל בֶּן־ אַבְרָהָ֜ם אֲח֧וֹת נְבָי֛וֹת עַל־ נָשָׁ֖יו ל֥וֹ לְאִשָּֽׁה׃&nbsp;<span class="mam-spi-samekh">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div class="header">ויקרא שלושה פסוקים מקרא בלבד מהפרשה הבאה:</div>
+            <div class="next_portion_verse_1">וַיֵּצֵ֥א יַעֲקֹ֖ב מִבְּאֵ֣ר שָׁ֑בַע וַיֵּ֖לֶךְ חָרָֽנָה׃</div>
+            <div class="next_portion_verse_1">וַיִּפְגַּ֨ע בַּמָּק֜וֹם וַיָּ֤לֶן שָׁם֙ כִּי־ בָ֣א הַשֶּׁ֔מֶשׁ וַיִּקַּח֙ מֵאַבְנֵ֣י הַמָּק֔וֹם וַיָּ֖שֶׂם מְרַֽאֲשֹׁתָ֑יו וַיִּשְׁכַּ֖ב בַּמָּק֥וֹם הַהֽוּא׃</div>
+            <div class="next_portion_verse_1">וַֽיַּחֲלֹ֗ם וְהִנֵּ֤ה סֻלָּם֙ מֻצָּ֣ב אַ֔רְצָה וְרֹאשׁ֖וֹ מַגִּ֣יעַ הַשָּׁמָ֑יְמָה וְהִנֵּה֙ מַלְאֲכֵ֣י אֱלֹהִ֔ים עֹלִ֥ים וְיֹרְדִ֖ים בּֽוֹ׃</div>
     </div>
 
 
@@ -4187,6 +4191,17 @@
             fullScreenCheckbox.checked = fullScreenEnabled;
         }
 
+        async function toggleFullScreen() {
+            fullScreenEnabled = !getFullScreenElement();
+            updateFullScreenCheckbox();
+            if (fullScreenEnabled) {
+                await requestFullScreen("Full screen enabled by double-click.");
+                return;
+            }
+
+            await closeFullScreenIfNeeded();
+        }
+
         function requestPendingFullScreen(event) {
             if (!fullScreenEnabled || !fullScreenActivationPending || getFullScreenElement()) {
                 return;
@@ -4215,6 +4230,14 @@
 
         document.addEventListener("fullscreenchange", updateFullScreenCheckbox);
         document.addEventListener("webkitfullscreenchange", updateFullScreenCheckbox);
+        fullScreenTarget.addEventListener("dblclick", function (event) {
+            if (event.target.closest("button, input, select, textarea, a, label")) {
+                return;
+            }
+
+            event.preventDefault();
+            toggleFullScreen();
+        });
         document.addEventListener("click", requestPendingFullScreen);
         document.addEventListener("touchend", requestPendingFullScreen, { passive: true });
 
