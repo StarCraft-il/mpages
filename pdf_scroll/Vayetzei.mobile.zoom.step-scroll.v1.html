@@ -535,7 +535,7 @@
 
     <div class="aliya" id="accordion_1_one">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="1_one_header"> ראשון</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_1_28_10_784">
@@ -914,7 +914,7 @@
     </div>
     <div class="aliya" id="accordion_2_two">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="2_two_header"> שני</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_2_29_1_797">
@@ -1400,7 +1400,7 @@
     </div>
     <div class="aliya" id="accordion_3_three">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="3_three_header"> שלישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_3_29_18_814">
@@ -2217,7 +2217,7 @@
     </div>
     <div class="aliya" id="accordion_4_four">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="4_four_header"> רביעי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_4_30_14_845">
@@ -2550,7 +2550,7 @@
     </div>
     <div class="aliya" id="accordion_5_five">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="5_five_header"> חמישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_5_30_28_859">
@@ -3279,7 +3279,7 @@
     </div>
     <div class="aliya" id="accordion_6_six">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="6_six_header"> שישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_6_31_17_891">
@@ -3876,7 +3876,7 @@
     </div>
     <div class="aliya" id="accordion_7_seven">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br />
+    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="7_seven_header"> שביעי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_7_31_43_917">
@@ -5623,6 +5623,27 @@
             });
         }
 
+        function hasVisibleText(element) {
+            return Boolean(element && !element.hidden && element.textContent.trim());
+        }
+
+        function updateStartOfPortionLinks() {
+            const aliyot = Array.from(document.querySelectorAll(".aliya"));
+            const leshemYichud = document.getElementById("leshemYichud");
+            let hasContentAbove = hasVisibleText(leshemYichud);
+
+            aliyot.forEach(function (aliya) {
+                const startOfPortionLink = aliya.querySelector(".toStartOfPortion[href=\"#parashaName\"]");
+                if (startOfPortionLink) {
+                    startOfPortionLink.hidden = !hasContentAbove;
+                }
+
+                if (!aliya.hidden && hasVisibleText(aliya.querySelector(".aliyaContainer"))) {
+                    hasContentAbove = true;
+                }
+            });
+        }
+
         function showCurrentDayAliyah() {
             const aliyot = Array.from(document.querySelectorAll(".aliya"));
             hideAllAliyot();
@@ -5632,28 +5653,35 @@
             switch (new Date().getDay()) {
                 case 0:
                     showAliyah(aliyot[0]);
+                    updateStartOfPortionLinks();
                     return;
                 case 1:
                     showAliyah(aliyot[1]);
+                    updateStartOfPortionLinks();
                     return;
                 case 2:
                     showAliyah(aliyot[2]);
+                    updateStartOfPortionLinks();
                     return;
                 case 3:
                     showAliyah(aliyot[3]);
+                    updateStartOfPortionLinks();
                     return;
                 case 4:
                     showAliyah(aliyot[4]);
+                    updateStartOfPortionLinks();
                     return;
                 case 5:
                     showAliyot([aliyot[5], aliyot[6]]);
                     showEndingContent();
                     setLeshemYichudVisible(true);
+                    updateStartOfPortionLinks();
                     return;
                 case 6:
                     showAliyah(aliyot[6]);
                     showEndingContent();
                     setLeshemYichudVisible(true);
+                    updateStartOfPortionLinks();
                     return;
             }
         }
@@ -5668,6 +5696,7 @@
                 showAllAliyot();
                 showEndingContent();
                 setLeshemYichudVisible(false);
+                updateStartOfPortionLinks();
                 return;
             }
 
@@ -5690,10 +5719,12 @@
             if (aliyot.indexOf(aliya) === 6) {
                 showEndingContent();
                 setLeshemYichudVisible(true);
+                updateStartOfPortionLinks();
                 return;
             }
 
             setLeshemYichudVisible(false);
+            updateStartOfPortionLinks();
         }
 
         const aliyahLinks = document.getElementById("aliyusTableLinks");
@@ -5710,11 +5741,13 @@
             event.preventDefault();
             const leshemYichud = document.getElementById("leshemYichud");
             setLeshemYichudVisible(Boolean(leshemYichud && leshemYichud.hidden));
+            updateStartOfPortionLinks();
         });
 
         hideAllAliyot();
         hideEndingContent();
         setLeshemYichudVisible(false);
+        updateStartOfPortionLinks();
 
         if (document.readyState === "complete") {
             showCurrentDayAliyah();
