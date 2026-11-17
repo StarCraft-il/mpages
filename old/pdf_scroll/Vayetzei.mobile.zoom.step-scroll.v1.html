@@ -143,6 +143,12 @@
                     margin-bottom: 6px;
                 }
 
+                #parashaContentRow .aliya .toLeshemYichud {
+                    display: inline-block;
+                    font-size: calc(1rem * var(--tmot-zoom-multiplier)) !important;
+                    margin-bottom: 6px;
+                }
+
                 #parashaContentRow .aliya .a-header {
                     display: inline-block;
                     font-size: calc(38px * var(--tmot-zoom-multiplier)) !important;
@@ -535,7 +541,7 @@
 
     <div class="aliya" id="accordion_1_one">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="1_one_header"> ראשון</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_1_28_10_784">
@@ -914,7 +920,7 @@
     </div>
     <div class="aliya" id="accordion_2_two">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="2_two_header"> שני</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_2_29_1_797">
@@ -1400,7 +1406,7 @@
     </div>
     <div class="aliya" id="accordion_3_three">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="3_three_header"> שלישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_3_29_18_814">
@@ -2217,7 +2223,7 @@
     </div>
     <div class="aliya" id="accordion_4_four">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="4_four_header"> רביעי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_4_30_14_845">
@@ -2550,7 +2556,7 @@
     </div>
     <div class="aliya" id="accordion_5_five">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="5_five_header"> חמישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_5_30_28_859">
@@ -3279,7 +3285,7 @@
     </div>
     <div class="aliya" id="accordion_6_six">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="6_six_header"> שישי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_6_31_17_891">
@@ -3876,7 +3882,7 @@
     </div>
     <div class="aliya" id="accordion_7_seven">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
-    <a class="toStartOfPortion" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
+    <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
 <span class="a-header" id="7_seven_header"> שביעי</span>
 <div class="aliyaContainer">
         <div class="verse" id="v_Verse_7_31_43_917">
@@ -5624,7 +5630,16 @@
         }
 
         function hasVisibleText(element) {
-            return Boolean(element && !element.hidden && element.textContent.trim());
+            if (!element || element.hidden) {
+                return false;
+            }
+
+            const content = element.cloneNode(true);
+            content.querySelectorAll("[hidden], #aliyusTableLinks, .toStartOfPortion, .toLeshemYichud, [data-show-all-aliyot]").forEach(function (excludedElement) {
+                excludedElement.remove();
+            });
+
+            return Boolean(content.textContent.trim());
         }
 
         function updateStartOfPortionLinks() {
@@ -5638,7 +5653,7 @@
                     startOfPortionLink.hidden = !hasContentAbove;
                 }
 
-                if (!aliya.hidden && hasVisibleText(aliya.querySelector(".aliyaContainer"))) {
+                if (!aliya.hidden && hasVisibleText(aliya)) {
                     hasContentAbove = true;
                 }
             });
