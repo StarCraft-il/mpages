@@ -49,11 +49,11 @@
         div.allText {
         }
 
-        div.chapterText {
-            font-family: mysbl_64 !important;
-            -webkit-transform: scaleX(0.94) !important;
-            letter-spacing: var(--tmot-letter-spacing) !important;
-        }
+            div.chapterText, div.allText div.after-reading-info, {
+                font-family: mysbl_64 !important;
+                -webkit-transform: scaleX(0.94) !important;
+                letter-spacing: var(--tmot-letter-spacing) !important;
+            }
 
         #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
         #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
@@ -102,6 +102,7 @@
             }
 
             div.allText,
+            div.allText div.after-reading-info,
             div.allText div.chapterText,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2 {
@@ -225,6 +226,7 @@
             #parashaContentRow .contentHeader,
             #parashaContentRow .lastVerse,
             div.allText,
+            div.after-reading-info,
             div.chapterText {
                 width: 100%;
                 max-width: 100%;
