@@ -147,15 +147,15 @@ div.allText span.book {
   font-weight: lighter;
   color: black;
 }
+div.allText span.godName {
+  font-family: "EFT_STAM SFARADI";
+  font-size: 82px;
+  color: black;
+}
 div.allText span.small {
   font-family: eft_sharvit_64 !important;
   font-size: 56px;
   line-height: 52px;
-  color: black;
-}
-div.allText span.godName {
-  font-family: "EFT_STAM SFARADI";
-  font-size: 82px;
   color: black;
 }
 div.allText div.after-reading-info {

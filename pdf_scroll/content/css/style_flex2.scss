@@ -283,16 +283,16 @@ div.allText {
             color: black;
         }
 
+        &.godName {
+            font-family: 'EFT_STAM SFARADI'; // 'StamSefaradCLM_64' !important;
+            font-size: ($prayAndRequestFontSize + 6px);
+            color: black;
+        }
+
         &.small {
             font-family: eft_sharvit_64 !important;
             font-size: ($prayAndRequestFontSize - 20px);
             line-height: ($prayAndRequestFontSize - 24px);
-            color: black;
-        }
-
-        &.godName {
-            font-family: 'EFT_STAM SFARADI'; // 'StamSefaradCLM_64' !important;
-            font-size: ($prayAndRequestFontSize + 6px);
             color: black;
         }
     }
