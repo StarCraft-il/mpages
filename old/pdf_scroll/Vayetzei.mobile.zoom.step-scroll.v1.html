@@ -143,6 +143,10 @@
                     margin-bottom: 6px;
                 }
 
+                #parashaContentRow .aliya .toStartOfPortion[hidden] {
+                    display: none !important;
+                }
+
                 #parashaContentRow .aliya .toLeshemYichud {
                     display: inline-block;
                     font-size: calc(1rem * var(--tmot-zoom-multiplier)) !important;
@@ -5648,10 +5652,14 @@
             let hasContentAbove = hasVisibleText(leshemYichud);
 
             aliyot.forEach(function (aliya) {
-                const startOfPortionLink = aliya.querySelector(".toStartOfPortion[href=\"#parashaName\"]");
-                if (startOfPortionLink) {
-                    startOfPortionLink.hidden = !hasContentAbove;
-                }
+                aliya.querySelectorAll(".toStartOfPortion[href=\"#parashaName\"]").forEach(function (startOfPortionLink) {
+                    const range = document.createRange();
+                    range.selectNodeContents(aliya);
+                    range.setEndBefore(startOfPortionLink);
+
+                    const contentBeforeLink = range.cloneContents();
+                    startOfPortionLink.hidden = !(hasContentAbove || (!aliya.hidden && hasVisibleText(contentBeforeLink)));
+                });
 
                 if (!aliya.hidden && hasVisibleText(aliya)) {
                     hasContentAbove = true;
