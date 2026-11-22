@@ -59,7 +59,8 @@
         #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
         #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1,
         .lastVerse .last_pasuk_mikra_1,
-        .lastVerse .last_pasuk_mikra_2 {
+        .lastVerse .last_pasuk_mikra_2,
+        .lastVerse .next_portion_verse_1 {
             letter-spacing: var(--tmot-letter-spacing) !important;
             word-spacing: var(--tmot-word-spacing) !important;
         }
@@ -143,9 +144,9 @@
                     margin-bottom: 6px;
                 }
 
-                #parashaContentRow .aliya .toStartOfPortion[hidden] {
-                    display: none !important;
-                }
+                    #parashaContentRow .aliya .toStartOfPortion[hidden] {
+                        display: none !important;
+                    }
 
                 #parashaContentRow .aliya .toLeshemYichud {
                     display: inline-block;
@@ -207,7 +208,8 @@
 
             .lastVerse .base-last-verse,
             .lastVerse .last_pasuk_mikra_1,
-            .lastVerse .last_pasuk_mikra_2 {
+            .lastVerse .last_pasuk_mikra_2,
+            .lastVerse .next_portion_verse_1 {
                 font-size: calc(32px * var(--tmot-zoom-multiplier)) !important;
                 line-height: var(--tmot-line-reading) !important;
                 letter-spacing: var(--tmot-letter-spacing) !important;
@@ -236,6 +238,7 @@
             .lastVerse .base-last-verse,
             .lastVerse .last_pasuk_mikra_2,
             .lastVerse .last_pasuk_mikra_1,
+            .lastVerse .next_portion_verse_1,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_onkelos_1,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1,
             #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2,
@@ -4479,7 +4482,7 @@
             const autoScrollEnabledCheckbox = document.getElementById("autoScrollEnabledCheckbox");
             const onkelosVisibilityCheckbox = document.getElementById("onkelosVisibilityCheckbox");
             const autoScrollDirectionCheckbox = document.getElementById("autoScrollDirectionCheckbox");
-            const verseTextSpacingSelector = "#parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, .lastVerse .last_pasuk_mikra_1, .lastVerse .last_pasuk_mikra_2";
+            const verseTextSpacingSelector = "#parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_1, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_mikra_2, #parashaContentRow .aliya .verse .pasuk2m1t .pasuk_taj_1, .lastVerse .last_pasuk_mikra_1, .lastVerse .last_pasuk_mikra_2, .lastVerse.next_portion_verse_1";
             const autoScrollStepButtons = document.querySelectorAll("[data-auto-scroll-control]");
             const autoScrollSpeedValue = document.getElementById("autoScrollSpeedValue");
             const autoScrollIdleDelayValue = document.getElementById("autoScrollIdleDelayValue");
