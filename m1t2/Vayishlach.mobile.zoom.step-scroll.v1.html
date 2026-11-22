@@ -97,6 +97,12 @@
                 line-height: calc(var(--tmot-line-reading) + 0.05) !important;
             }
 
+        .aliya-navigation-link {
+            margin-block: 10px;
+            font-size: calc(1.25rem * var(--tmot-zoom-multiplier));
+            line-height: calc(var(--tmot-line-reading) + 0.05);
+        }
+
             #torahStatistcsForPortion {
                 font-size: calc(0.95rem * var(--tmot-zoom-multiplier));
                 line-height: var(--tmot-line-medium);
@@ -492,13 +498,6 @@
         <div id="parashaName"><h1>פרשת וַיִּשְׁלַח</h1></div>
 <ul id="aliyusTableLinks">
     <li><a href="#parashaName" data-show-all-aliyot="true">כל העליות</a></li>
-        <li><a href="#1_one_header">ראשון - (10)</a></li>
-        <li><a href="#2_two_header">שני - (17)</a></li>
-        <li><a href="#3_three_header">שלישי - (8)</a></li>
-        <li><a href="#4_four_header">רביעי - (15)</a></li>
-        <li><a href="#5_five_header">חמישי - (42)</a></li>
-        <li><a href="#6_six_header">שישי - (37)</a></li>
-        <li><a href="#7_seven_header">שביעי - (24)</a></li>
 </ul>
     <div id="torahStatistcsForPortion">
         <span>סה"כ: 153 פסוקים בפרשה. לפי קובץ סטטיסטי: 153 פסוקים.</span>
@@ -549,6 +548,9 @@
 
 
 
+<div class="aliya-navigation-link">
+    <a href="#1_one_header">ראשון - (10)</a>
+</div>
     <div class="aliya" id="accordion_1_one">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -846,6 +848,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#2_two_header">שני - (17)</a>
+</div>
     <div class="aliya" id="accordion_2_two">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -1333,6 +1338,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#3_three_header">שלישי - (8)</a>
+</div>
     <div class="aliya" id="accordion_3_three">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -1574,6 +1582,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#4_four_header">רביעי - (15)</a>
+</div>
     <div class="aliya" id="accordion_4_four">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -2004,6 +2015,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#5_five_header">חמישי - (42)</a>
+</div>
     <div class="aliya" id="accordion_5_five">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -2963,6 +2977,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#6_six_header">שישי - (37)</a>
+</div>
     <div class="aliya" id="accordion_6_six">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -3802,6 +3819,9 @@
     </div>
 
     </div>
+<div class="aliya-navigation-link">
+    <a href="#7_seven_header">שביעי - (24)</a>
+</div>
     <div class="aliya" id="accordion_7_seven">
         <a class="toStartOfPortion" href="#parashaName">... &#8593 להתחלה</a>
     <a class="toLeshemYichud" href="#leshemYichud" data-toggle-leshem-yichud="true" aria-expanded="false">לשם יחוד קובה"ו...</a><br /><br />
@@ -5866,10 +5886,7 @@
             updateStartOfPortionLinks();
         }
 
-        const aliyahLinks = document.getElementById("aliyusTableLinks");
-        if (aliyahLinks) {
-            aliyahLinks.addEventListener("click", handleAliyahNavigation);
-        }
+        document.addEventListener("click", handleAliyahNavigation);
 
         document.addEventListener("click", function (event) {
             const link = event.target instanceof Element ? event.target.closest("[data-toggle-leshem-yichud]") : null;
